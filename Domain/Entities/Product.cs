@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Domain.Attributes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -20,6 +21,8 @@ namespace Domain.Entities
         public double Price { get; set; }
         public List<string> Traits { get; set; }
         public string ImageUrl { get; set; }
-        public bool IsActive { get; set; }
+        public bool IsActive { get; set; } = false;
+        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public DateTime UpdateAt { get; set; }
     }
 }

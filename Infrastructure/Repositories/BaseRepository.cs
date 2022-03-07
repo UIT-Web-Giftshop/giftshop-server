@@ -24,20 +24,20 @@ namespace Infrastructure.Repositories
 
         public void Dispose() => _context?.Dispose();
 
-        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
             return entity;
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public virtual async Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", id);
-            var data = await _collection.Find(filter).FirstOrDefaultAsync();
+            var filter = Builders<T>.Filter.Where(expression);
+            var data = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
             return data;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, CancellationToken cancellationToken = default)
+        public virtual async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Empty;
             if (expression != null)
@@ -55,21 +55,21 @@ namespace Infrastructure.Repositories
             return query;
         }
 
-        public async Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Eq("Id", entity.GetId());
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
             return affected.IsAcknowledged && affected.ModifiedCount > 0;
         }
 
-        public async Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Eq("Id", id);
             var affected = await _collection.DeleteOneAsync(filter, cancellationToken);
             return affected.IsAcknowledged && affected.DeletedCount > 0;
         }
 
-        public async Task<bool> RemoveManyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> RemoveManyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.DeleteManyAsync(filter, cancellationToken);

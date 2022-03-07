@@ -10,7 +10,7 @@ namespace Infrastructure.Interfaces
     public interface IBaseRepository<T> : IDisposable where T : class
     {
         Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
-        Task<T> GetByIdAsync(string id);
+        Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default);
         Task<IEnumerable<T>> GetManyAsync(
             Expression<Func<T, bool>> expression = null,
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
