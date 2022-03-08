@@ -32,8 +32,6 @@ namespace Application.Features.Products.Commands
                     return ResponseApi<Unit>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
                 }
 
-                existedProduct.Quantity = request.Quantity;
-                
                 var result = await _productRepository
                     .PatchOneFieldAsync(q => q.Id == request.Id, p => p.Quantity, request.Quantity, cancellationToken);
                 

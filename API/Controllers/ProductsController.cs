@@ -48,6 +48,13 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [HttpPatch("{id}/price/{price:double}")]
+        public async Task<IActionResult> UpdateOneProductPrice(string id, double price)
+        {
+            var result = await _mediator.Send(new PatchOneProductPrice.Command() { Id = id, Price = price });
+            return HandleResponseStatus(result);
+        }
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOneProduct(string id)
         {
