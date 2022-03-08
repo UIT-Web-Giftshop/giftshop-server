@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Paging;
 
 namespace Infrastructure.Interfaces
 {
@@ -28,7 +29,23 @@ namespace Infrastructure.Interfaces
             CancellationToken cancellationToken = default);
         
         /// <summary>
-        /// Get many documents from collection
+        /// Get documents and paging from collection
+        /// </summary>
+        /// <param name="pagingRequest"></param>
+        /// <param name="expression"></param>
+        /// <param name="sortBy"></param>
+        /// <param name="sortAscending"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        Task<IEnumerable<T>> GetPagingAsync(
+            PagingRequest pagingRequest,
+            Expression<Func<T, bool>> expression = null,
+            string sortBy = null,
+            bool sortAscending = true,
+            CancellationToken cancellationToken = default);
+        
+        /// <summary>
+        /// ONLY FOR TESTING, NOT TO USE
         /// </summary>
         /// <param name="expression"></param>
         /// <param name="orderBy"></param>

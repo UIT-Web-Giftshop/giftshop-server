@@ -1,8 +1,11 @@
+#nullable enable
 using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries;
 using Application.Features.Products.Vms;
+using Domain.Paging;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -25,6 +28,24 @@ namespace API.Controllers
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
             var result = await _mediator.Send(new GetOneProductBySku.Query() { Sku = sku });
+            return HandleResponseStatus(result);
+        }
+
+        [HttpGet()]
+        public async Task<IActionResult> GetPagingProducts(
+            [FromQuery] PagingRequest pagingRequest,
+            [FromQuery] string? sortBy,
+            [FromQuery] string? search,
+            [FromQuery] bool sortAscending = true,
+            CancellationToken cancellationToken = default)
+        {
+            var result = await _mediator.Send(new GetPagingProducts.Query()
+            {
+                PagingRequest = pagingRequest,
+                Search = search,
+                SortBy = sortBy,
+                IsSortAscending = sortAscending
+            }, cancellationToken);
             return HandleResponseStatus(result);
         }
 

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Commons
 {
-    public class ResponseApi<TData>
+    public class ResponseApi<TData> : IRequest<Unit>
     {
         public bool IsSuccess { get; set; }
         public int Code { get; set; }

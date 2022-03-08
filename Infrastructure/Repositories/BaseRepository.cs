@@ -4,6 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using MongoDB.Driver;
@@ -37,7 +38,31 @@ namespace Infrastructure.Repositories
             return data;
         }
 
-        public virtual async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, CancellationToken cancellationToken = default)
+        public virtual async Task<IEnumerable<T>> GetPagingAsync(
+            PagingRequest pagingRequest,
+            Expression<Func<T, bool>> expression = null,
+            string sortBy = null,
+            bool sortAscending = true, 
+            CancellationToken cancellationToken = default)
+        {
+            var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
+            var sortDefinition = sortAscending ? Builders<T>.Sort.Ascending(sortBy) : Builders<T>.Sort.Descending(sortBy);
+
+            var dataList = await _collection
+                .Find(filter)
+                .Sort(sortDefinition)
+                .Skip((pagingRequest.PageIndex - 1) * pagingRequest.PageSize)
+                .Limit(pagingRequest.PageSize)
+                .ToListAsync(cancellationToken);
+
+            return dataList;
+        }
+
+
+        public virtual async Task<IEnumerable<T>> GetManyAsync(
+            Expression<Func<T, bool>> expression = null, 
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Empty;
             if (expression != null)
@@ -46,16 +71,12 @@ namespace Infrastructure.Repositories
             }
 
             var dataList = await _collection.Find(filter).ToListAsync(cancellationToken);
-            var query = dataList.AsQueryable();
-            if (orderBy != null)
-            {
-                query = orderBy(query);
-            }
-
-            return query;
+            return dataList;
         }
 
-        public virtual async Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> UpdateAsync(
+            T entity, 
+            CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Eq("Id", entity.GetId());
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
@@ -75,7 +96,9 @@ namespace Infrastructure.Repositories
             return affected != null;
         }
 
-        public virtual async Task<bool> DeleteOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> DeleteOneAsync(
+            Expression<Func<T, bool>> expression,
+            CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.DeleteOneAsync(filter, cancellationToken);
