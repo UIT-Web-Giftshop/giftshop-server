@@ -1,7 +1,7 @@
 ﻿using Application.Commons;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace API.Controllers
 {
@@ -9,7 +9,7 @@ namespace API.Controllers
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
-        protected IMediator _mediator;
+        protected readonly IMediator _mediator;
 
         protected BaseApiController(IMediator mediator)
         {
@@ -18,14 +18,18 @@ namespace API.Controllers
 
         protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi)
         {
-            if (responseApi.IsSuccess && responseApi.Code == 200)
+            if (responseApi.IsSuccess)
             {
                 return Ok(responseApi);
             }
             
             //TODO: more handling
-            
-            return BadRequest(responseApi);
+            return responseApi.Code switch
+            {
+                StatusCodes.Status404NotFound => NotFound(responseApi),
+                StatusCodes.Status400BadRequest => BadRequest(responseApi),
+                _ => BadRequest(responseApi)
+            };
         }
     }
 }

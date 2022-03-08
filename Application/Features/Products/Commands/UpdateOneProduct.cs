@@ -11,10 +11,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Products.Commands
 {
-    public class AddOneProduct
+    public class UpdateOneProduct
     {
         public class Command : IRequest<ResponseApi<string>>
         {
+            public string Id { get; init; }
             public ProductVm Product { get; init; }
         }
         
@@ -31,16 +32,19 @@ namespace Application.Features.Products.Commands
 
             public async Task<ResponseApi<string>> Handle(Command request, CancellationToken cancellationToken)
             {
-                // Mapping
-                var entity = _mapper.Map<Product>(request.Product);
-                entity.CreatedAt = DateTime.Now;
+                var existedProduct = await _productRepository.GetOneAsync(p => p.Id == request.Id, cancellationToken);
+                if (existedProduct == null)
+                {
+                    return ResponseApi<string>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM);
+                }
+
+                _mapper.Map<ProductVm, Product>(request.Product, existedProduct);
+                existedProduct.UpdateAt = DateTime.UtcNow;
                 
-                // Repository action
-                var result = await _productRepository.AddAsync(entity, cancellationToken);
-                
-                return result == null 
-                    ? ResponseApi<string>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM) 
-                    : ResponseApi<string>.ResponseOk(result.Id, "Add product successfully");
+                var result = await _productRepository.UpdateAsync(existedProduct, cancellationToken);
+                return result 
+                    ? ResponseApi<string>.ResponseOk(existedProduct.Id, "Update product successfully") 
+                    : ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING);
             }
         }
     }

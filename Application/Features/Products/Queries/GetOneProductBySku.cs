@@ -12,11 +12,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Products.Queries
 {
-    public class GetOneProductById
+    public class GetOneProductBySku
     {
         public class Query : IRequest<ResponseApi<ProductVm>>
         {
-            public string Id { get; init; }
+            public string Sku { get; init; }
         }
         
         public class Handler : IRequestHandler<Query, ResponseApi<ProductVm>>
@@ -32,18 +32,15 @@ namespace Application.Features.Products.Queries
 
             public async Task<ResponseApi<ProductVm>> Handle(Query request, CancellationToken cancellationToken)
             {
-                // repository action
-                Expression<Func<Product, bool>> expression = p => p.Id == request.Id;
+                Expression<Func<Product, bool>> expression = p => p.Sku == request.Sku;
                 var product = await _productRepository.GetOneAsync(expression, cancellationToken);
-                
-                // mapping & return
+
                 if (product == null)
-                    return ResponseApi<ProductVm>.ResponseFail(StatusCodes.Status400BadRequest,
-                        ResponseConstants.ERROR_NOT_FOUND_ITEM);
-                
+                {
+                    return ResponseApi<ProductVm>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM);
+                }
                 var data = _mapper.Map<ProductVm>(product);
                 return ResponseApi<ProductVm>.ResponseOk(data);
-
             }
         }
     }
