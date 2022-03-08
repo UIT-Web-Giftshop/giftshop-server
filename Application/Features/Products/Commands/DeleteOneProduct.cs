@@ -28,11 +28,11 @@ namespace Application.Features.Products.Commands
                 var existedProduct = await _productRepository.GetOneAsync(p => p.Id == request.Id, cancellationToken);
                 if (existedProduct == null)
                 {
-                    return ResponseApi<bool>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM);
+                    return ResponseApi<bool>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
                 }
                 var result = await _productRepository.RemoveAsync(request.Id, cancellationToken);
                 return result 
-                    ? ResponseApi<bool>.ResponseOk(true, "Delete product successfully") 
+                    ? ResponseApi<bool>.ResponseOk(true, "Delete product success") 
                     : ResponseApi<bool>.ResponseFail(StatusCodes.Status500InternalServerError, ResponseConstants.ERROR_EXECUTING);
             }
         }

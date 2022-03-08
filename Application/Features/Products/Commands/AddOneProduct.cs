@@ -39,8 +39,8 @@ namespace Application.Features.Products.Commands
                 var result = await _productRepository.AddAsync(entity, cancellationToken);
                 
                 return result == null 
-                    ? ResponseApi<string>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM) 
-                    : ResponseApi<string>.ResponseOk(result.Id, "Add product successfully");
+                    ? ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING) 
+                    : ResponseApi<string>.ResponseOk(result.Id, "Add product success");
             }
         }
     }

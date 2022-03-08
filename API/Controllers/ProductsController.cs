@@ -34,10 +34,17 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
-        [HttpPut("id/{id}")]
-        public async Task<IActionResult> UpdateOneProduct(string id, [FromBody] ProductVm productVm)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> UpdateOneProductInfo(string id, [FromBody] ProductVm productVm)
         {
             var result = await _mediator.Send(new UpdateOneProduct.Command() { Id = id, Product = productVm });
+            return HandleResponseStatus(result);
+        }
+
+        [HttpPatch("{id}/quantity/{quantity:int}")]
+        public async Task<IActionResult> UpdateOneProductQuantity(string id, uint quantity)
+        {
+            var result = await _mediator.Send(new PatchOneProductQuantity.Command() { Id = id, Quantity = quantity });
             return HandleResponseStatus(result);
         }
 

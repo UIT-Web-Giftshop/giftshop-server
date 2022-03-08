@@ -16,6 +16,11 @@ namespace Infrastructure.Interfaces
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null,
             CancellationToken cancellationToken = default);
         Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default);
+        Task<bool> PatchOneFieldAsync<TValue>(
+            Expression<Func<T, bool>> expression, 
+            Expression<Func<T, TValue>> fieldName, 
+            TValue fieldValue, 
+            CancellationToken cancellationToken = default);
         Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default);
         Task<bool> RemoveManyAsync(
             Expression<Func<T, bool>> expression,

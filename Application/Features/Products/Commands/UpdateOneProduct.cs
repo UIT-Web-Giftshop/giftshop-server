@@ -35,7 +35,7 @@ namespace Application.Features.Products.Commands
                 var existedProduct = await _productRepository.GetOneAsync(p => p.Id == request.Id, cancellationToken);
                 if (existedProduct == null)
                 {
-                    return ResponseApi<string>.ResponseFail(StatusCodes.Status400BadRequest, ResponseConstants.ERROR_NOT_FOUND_ITEM);
+                    return ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
                 }
 
                 _mapper.Map<ProductVm, Product>(request.Product, existedProduct);
@@ -43,7 +43,7 @@ namespace Application.Features.Products.Commands
                 
                 var result = await _productRepository.UpdateAsync(existedProduct, cancellationToken);
                 return result 
-                    ? ResponseApi<string>.ResponseOk(existedProduct.Id, "Update product successfully") 
+                    ? ResponseApi<string>.ResponseOk(existedProduct.Id, "Update product success") 
                     : ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING);
             }
         }

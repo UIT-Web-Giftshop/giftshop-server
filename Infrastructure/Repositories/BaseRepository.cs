@@ -62,6 +62,19 @@ namespace Infrastructure.Repositories
             return affected.IsAcknowledged && affected.ModifiedCount > 0;
         }
 
+        public virtual async Task<bool> PatchOneFieldAsync<TValue>(
+            Expression<Func<T, bool>> expression, 
+            Expression<Func<T, TValue>> fieldName, 
+            TValue fieldValue,
+            CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<T>.Filter.Where(expression);
+            var update = Builders<T>.Update.Set(fieldName, fieldValue);
+            var options = new FindOneAndUpdateOptions<T>();
+            var affected = await _collection.FindOneAndUpdateAsync(filter, update, options, cancellationToken);
+            return affected != null;
+        }
+
         public virtual async Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Eq("Id", id);
