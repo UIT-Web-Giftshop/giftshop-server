@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries;
@@ -59,6 +60,13 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteOneProduct(string id)
         {
             var result = await _mediator.Send(new DeleteOneProduct.Command() { Id = id });
+            return HandleResponseStatus(result);
+        }
+
+        [HttpDelete("list")]
+        public async Task<IActionResult> DeleteManyProducts([FromBody] List<string> ids)
+        {
+            var result = await _mediator.Send(new DeleteListProducts.Command(){Ids = ids});
             return HandleResponseStatus(result);
         }
     }

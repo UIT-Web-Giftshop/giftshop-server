@@ -75,16 +75,19 @@ namespace Infrastructure.Repositories
             return affected != null;
         }
 
-        public virtual async Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> DeleteOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", id);
+            var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.DeleteOneAsync(filter, cancellationToken);
             return affected.IsAcknowledged && affected.DeletedCount > 0;
         }
-
-        public virtual async Task<bool> RemoveManyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+        
+        public virtual async Task<bool> DeleteManyAsync<TValue>(
+            Expression<Func<T, TValue>> expression,
+            IEnumerable<TValue> values,
+            CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Where(expression);
+            var filter = Builders<T>.Filter.In(expression, values);
             var affected = await _collection.DeleteManyAsync(filter, cancellationToken);
             return affected.IsAcknowledged && affected.DeletedCount > 0;
         }
