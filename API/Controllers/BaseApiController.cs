@@ -9,10 +9,12 @@ namespace API.Controllers
     [ApiController]
     public abstract class BaseApiController : ControllerBase
     {
-        private IMediator mediator;
-        protected IMediator _mediator => mediator ??= HttpContext
-            .RequestServices
-            .GetService<IMediator>();
+        protected IMediator _mediator;
+
+        protected BaseApiController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
 
         protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi)
         {

@@ -17,12 +17,12 @@ namespace Domain.Entities
         [BsonRequired]
         public string Name { get; set; }
         public string Description { get; set; }
-        public double Quantity { get; set; }
+        public uint Quantity { get; set; }
         public double Price { get; set; }
         public List<string> Traits { get; set; }
         public string ImageUrl { get; set; }
-        public bool IsActive { get; set; } = false;
-        public DateTime CreatedAt { get; set; } = DateTime.Now;
+        public bool IsActive { get; set; }
+        public DateTime CreatedAt { get; set; }
         public DateTime UpdateAt { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 using System.Reflection;
 using Application.Features.Products.Queries;
+using Application.Mapping;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
@@ -29,6 +30,7 @@ namespace API
             services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
 
             services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetOneProductById.Query).Assembly);
+            services.AddAutoMapper(Assembly.GetExecutingAssembly(), typeof(MappingProfiles).Assembly);
             
             services.AddScoped<IMongoContext, MongoContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
