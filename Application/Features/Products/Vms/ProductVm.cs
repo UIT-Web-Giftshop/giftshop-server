@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using ServiceStack.DataAnnotations;
+using System.ComponentModel.DataAnnotations;
 
 namespace Application.Features.Products.Vms
 {

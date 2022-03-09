@@ -38,7 +38,8 @@ namespace API
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
-
+            
+            
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
             

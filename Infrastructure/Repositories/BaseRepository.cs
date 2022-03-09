@@ -8,7 +8,6 @@ using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using MongoDB.Driver;
-using ServiceStack;
 
 namespace Infrastructure.Repositories
 {
@@ -75,10 +74,12 @@ namespace Infrastructure.Repositories
         }
 
         public virtual async Task<bool> UpdateAsync(
+            Expression<Func<T, bool>> expression,
             T entity, 
             CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", entity.GetId());
+            //TODO use expression for filter
+            var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
             return affected.IsAcknowledged && affected.ModifiedCount > 0;
         }

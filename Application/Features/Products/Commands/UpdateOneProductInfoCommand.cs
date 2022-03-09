@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
@@ -29,7 +30,8 @@ namespace Application.Features.Products.Commands
 
         public async Task<ResponseApi<Unit>> Handle(UpdateOneProductInfoCommand request, CancellationToken cancellationToken)
         {
-            var existedProduct = await _productRepository.GetOneAsync(p => p.Id == request.Id, cancellationToken);
+            Expression<Func<Product, bool>> expression = p => p.Id == request.Id;
+            var existedProduct = await _productRepository.GetOneAsync(expression, cancellationToken);
             if (existedProduct == null)
             {
                 return ResponseApi<Unit>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
@@ -38,7 +40,7 @@ namespace Application.Features.Products.Commands
             _mapper.Map<ProductVm, Product>(request.Product, existedProduct);
             existedProduct.UpdateAt = DateTime.UtcNow;
                 
-            var result = await _productRepository.UpdateAsync(existedProduct, cancellationToken);
+            var result = await _productRepository.UpdateAsync(expression, existedProduct, cancellationToken);
             return result 
                 ? ResponseApi<Unit>.ResponseOk(Unit.Value, "Update product success") 
                 : ResponseApi<Unit>.ResponseFail(ResponseConstants.ERROR_EXECUTING);

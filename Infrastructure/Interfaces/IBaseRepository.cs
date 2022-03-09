@@ -62,7 +62,10 @@ namespace Infrastructure.Interfaces
         /// <param name="entity"></param>
         /// <param name="cancellationToken"></param>
         /// <returns></returns>
-        Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default);
+        Task<bool> UpdateAsync(
+            Expression<Func<T, bool>> fieldName,
+            T entity, 
+            CancellationToken cancellationToken = default);
         
         /// <summary>
         /// Just update one field in document
