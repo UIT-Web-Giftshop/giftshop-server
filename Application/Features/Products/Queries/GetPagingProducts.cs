@@ -31,7 +31,8 @@ namespace Application.Features.Products.Queries
         public GetPagingProductQueryValidator()
         {
             RuleFor(x => x.PagingRequest!.PageIndex)
-                .GreaterThan(0);
+                .GreaterThan(0)
+                .LessThan(10000);
             RuleFor(x => x.PagingRequest!.PageSize)
                 .GreaterThan(0)
                 .LessThan(100);

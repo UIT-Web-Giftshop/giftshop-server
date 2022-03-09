@@ -38,7 +38,11 @@ namespace Application.Middlewares
             var responseEx = ResponseApi<Unit>.ResponseFail(statusCode, exception.Message);
             httpContext.Response.ContentType = "application/json";
             httpContext.Response.StatusCode = statusCode;
-            await httpContext.Response.WriteAsync(JsonSerializer.Serialize(responseEx));
+
+            var options = new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase };
+            var json = JsonSerializer.Serialize(responseEx, options);
+            
+            await httpContext.Response.WriteAsync(json);
         }
 
         private static int GetStatusCode(Exception exception)
