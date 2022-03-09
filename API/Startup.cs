@@ -1,4 +1,5 @@
 using System.Text.Json;
+using API.ServicesExtension;
 using Application.Features.Products.Queries;
 using Application.Mapping;
 using Application.Middlewares;
@@ -13,7 +14,6 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.OpenApi.Models;
 
 namespace API
 {
@@ -33,13 +33,12 @@ namespace API
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
-            
+            services.AddSwaggerService();
+
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
-            
-            
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
             

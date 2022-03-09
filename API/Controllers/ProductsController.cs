@@ -6,10 +6,12 @@ using Application.Features.Products.Commands;
 using Application.Features.Products.Queries;
 using Application.Features.Products.Vms;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [AllowAnonymous]
     public class ProductsController : BaseApiController
     {
         private readonly IMediator _mediator;
@@ -42,14 +44,6 @@ namespace API.Controllers
             [FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
-            // var request = new GetPagingProductsQuery()
-            // {
-            //     PagingRequest = pagingRequest,
-            //     Search = search,
-            //     SortBy = string.IsNullOrWhiteSpace(sortBy) ? default : sortBy,
-            //     IsSortAscending = sortAscending
-            // };
-            
             var result = await _mediator
                 .Send(query, cancellationToken);
             
