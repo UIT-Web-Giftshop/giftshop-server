@@ -5,7 +5,6 @@ using System.Threading.Tasks;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries;
 using Application.Features.Products.Vms;
-using Domain.Paging;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,81 +12,99 @@ namespace API.Controllers
 {
     public class ProductsController : BaseApiController
     {
-        public ProductsController(IMediator mediator) : base(mediator)
+        private readonly IMediator _mediator;
+
+        public ProductsController(IMediator mediator)
         {
+            _mediator = mediator;
         }
-        
+
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetOneProductById(string id)
         {
-            var result = await _mediator.Send(new GetOneProductById.Query { Id = id });
+            var result = await _mediator
+                .Send(new GetOneProductByIdQuery() { Id = id });
+            
             return HandleResponseStatus(result);
         }
-
+        
         [HttpGet("sku/{sku}")]
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
-            var result = await _mediator.Send(new GetOneProductBySku.Query() { Sku = sku });
+            var result = await _mediator
+                .Send(new GetOneProductBySkuQuery() { Sku = sku });
+            
             return HandleResponseStatus(result);
         }
 
-        [HttpGet()]
+        [HttpGet]
         public async Task<IActionResult> GetPagingProducts(
-            [FromQuery] PagingRequest pagingRequest,
-            [FromQuery] string? sortBy,
-            [FromQuery] string? search,
-            [FromQuery] bool sortAscending = true,
+            [FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator.Send(new GetPagingProducts.Query()
-            {
-                PagingRequest = pagingRequest,
-                Search = search,
-                SortBy = sortBy,
-                IsSortAscending = sortAscending
-            }, cancellationToken);
+            // var request = new GetPagingProductsQuery()
+            // {
+            //     PagingRequest = pagingRequest,
+            //     Search = search,
+            //     SortBy = string.IsNullOrWhiteSpace(sortBy) ? default : sortBy,
+            //     IsSortAscending = sortAscending
+            // };
+            
+            var result = await _mediator
+                .Send(query, cancellationToken);
+            
             return HandleResponseStatus(result);
         }
 
         [HttpPost]
         public async Task<IActionResult> AddOneProduct([FromBody] ProductVm addProductVm)
         {
-            var result = await _mediator.Send(new AddOneProduct.Command() { Product = addProductVm });
+            var result = await _mediator
+                .Send(new AddOneProductCommand() { Product = addProductVm });
+            
             return HandleResponseStatus(result);
         }
-
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateOneProductInfo(string id, [FromBody] ProductVm productVm)
         {
-            var result = await _mediator.Send(new UpdateOneProduct.Command() { Id = id, Product = productVm });
+            var result = await _mediator
+                .Send(new UpdateOneProductInfoCommand() { Id = id, Product = productVm });
+            
             return HandleResponseStatus(result);
         }
-
+        
         [HttpPatch("{id}/quantity/{quantity:int}")]
         public async Task<IActionResult> UpdateOneProductQuantity(string id, uint quantity)
         {
-            var result = await _mediator.Send(new PatchOneProductQuantity.Command() { Id = id, Quantity = quantity });
+            var result = await _mediator
+                .Send(new UpdateOneProductStockCommand() { Id = id, Quantity = quantity });
+            
             return HandleResponseStatus(result);
         }
-
+        
         [HttpPatch("{id}/price/{price:double}")]
         public async Task<IActionResult> UpdateOneProductPrice(string id, double price)
         {
-            var result = await _mediator.Send(new PatchOneProductPrice.Command() { Id = id, Price = price });
+            var result = await _mediator
+                .Send(new UpdateOneProductPriceCommand() { Id = id, Price = price });
+            
             return HandleResponseStatus(result);
         }
-
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOneProduct(string id)
         {
-            var result = await _mediator.Send(new DeleteOneProduct.Command() { Id = id });
+            var result = await _mediator
+                .Send(new DeleteOneProductCommand() { Id = id });
             return HandleResponseStatus(result);
         }
-
+        
         [HttpDelete("list")]
         public async Task<IActionResult> DeleteManyProducts([FromBody] List<string> ids)
         {
-            var result = await _mediator.Send(new DeleteListProducts.Command(){Ids = ids});
+            var result = await _mediator
+                .Send(new DeleteListProductsCommand(){Ids = ids});
             return HandleResponseStatus(result);
         }
     }

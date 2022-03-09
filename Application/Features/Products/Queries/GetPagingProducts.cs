@@ -1,6 +1,6 @@
-﻿#nullable enable
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
@@ -10,53 +10,60 @@ using Application.Features.Products.Vms;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Paging;
+using FluentValidation;
 using Infrastructure.Interfaces;
 using MediatR;
 
 namespace Application.Features.Products.Queries
 {
-    public class GetPagingProducts
+    public class GetPagingProductsQuery : IRequest<ResponseApi<PagingModel<ProductVm>>>
     {
-        public class Query : IRequest<ResponseApi<PagingModel<ProductVm>>>
+        public PagingRequest PagingRequest { get; init; }
+        public string Search { get; set; }
+        [DefaultValue("price")]
+        public string SortBy { get; set; }
+        [DefaultValue(false)]
+        public bool IsSortAscending { get; set; }
+    }
+
+    public sealed class GetPagingProductQueryValidator : AbstractValidator<GetPagingProductsQuery>
+    {
+        public GetPagingProductQueryValidator()
         {
-            public PagingRequest? PagingRequest { get; set; }
-            public string? Search { get; set; }
-            public string? SortBy { get; set; }
-            public bool IsSortAscending { get; set; }
+            RuleFor(x => x.PagingRequest!.PageIndex)
+                .GreaterThan(0);
+            RuleFor(x => x.PagingRequest!.PageSize)
+                .GreaterThan(0)
+                .LessThan(100);
+        }
+    }
+
+    public class GetPagingProductsHandler : IRequestHandler<GetPagingProductsQuery, ResponseApi<PagingModel<ProductVm>>>
+    {
+        private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
+
+        public GetPagingProductsHandler(IProductRepository productRepository, IMapper mapper)
+        {
+            _productRepository = productRepository;
+            _mapper = mapper;
         }
 
-        public class Handler : IRequestHandler<Query, ResponseApi<PagingModel<ProductVm>>>
+        public async Task<ResponseApi<PagingModel<ProductVm>>> Handle(GetPagingProductsQuery request, CancellationToken cancellationToken)
         {
-            private readonly IProductRepository _productRepository;
-            private readonly IMapper _mapper;
-
-            public Handler(IProductRepository productRepository, IMapper mapper)
-            {
-                _productRepository = productRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<ResponseApi<PagingModel<ProductVm>>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                if (string.IsNullOrWhiteSpace(request.SortBy))
-                {
-                    request.SortBy = "price";
-                }
-
-                Expression<Func<Product, bool>>? expression = string.IsNullOrWhiteSpace(request.Search)
-                    ? null
-                    : p => p.Name.Contains(request.Search);
-
-                var dataList = await _productRepository.GetPagingAsync(
-                    request.PagingRequest, 
-                    expression, 
-                    request.SortBy, 
-                    request.IsSortAscending, 
-                    cancellationToken);
-                
-                var data = _mapper.Map<List<ProductVm>>(dataList);
-                return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>{Total = dataList.Count(), Items = data});
-            }
+            Expression<Func<Product, bool>>? expression = string.IsNullOrWhiteSpace(request.Search)
+                ? null
+                : p => p.Name.Contains(request.Search);
+            
+            var dataList = await _productRepository.GetPagingAsync(
+                request.PagingRequest, 
+                expression, 
+                request.SortBy, 
+                request.IsSortAscending, 
+                cancellationToken);
+            
+            var data = _mapper.Map<List<ProductVm>>(dataList);
+            return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>{Total = dataList.Count(), Items = data});
         }
     }
 }

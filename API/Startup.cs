@@ -1,6 +1,8 @@
-using System.Reflection;
 using Application.Features.Products.Queries;
 using Application.Mapping;
+using Application.Middlewares;
+using Application.PipelineBehaviors;
+using FluentValidation;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
@@ -27,10 +29,15 @@ namespace API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
-            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
 
-            services.AddMediatR(Assembly.GetExecutingAssembly(), typeof(GetOneProductById.Query).Assembly);
-            services.AddAutoMapper(Assembly.GetExecutingAssembly(), typeof(MappingProfiles).Assembly);
+            services.AddSwaggerGen(c => { c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" }); });
+            
+            services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
+            services.AddAutoMapper(typeof(MappingProfiles).Assembly);
+            services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
+
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
+            services.AddTransient<ExceptionHandlingMiddleware>();
             
             services.AddScoped<IMongoContext, MongoContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
@@ -45,6 +52,7 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseHttpsRedirection();
 

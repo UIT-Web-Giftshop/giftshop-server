@@ -7,41 +7,36 @@ using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Interfaces;
 using MediatR;
-using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Products.Commands
 {
-    public class AddOneProduct
+    public class AddOneProductCommand : IRequest<ResponseApi<string>>
     {
-        public class Command : IRequest<ResponseApi<string>>
+        public ProductVm Product { get; init; }
+    }
+    
+    public class AddOneProductCommandHandler : IRequestHandler<AddOneProductCommand, ResponseApi<string>>
+    {
+        private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
+
+        public AddOneProductCommandHandler(IProductRepository productRepository, IMapper mapper)
         {
-            public ProductVm Product { get; init; }
+            _productRepository = productRepository;
+            _mapper = mapper;
         }
-        
-        public class Handler : IRequestHandler<Command, ResponseApi<string>>
+
+        public async Task<ResponseApi<string>> Handle(AddOneProductCommand request, CancellationToken cancellationToken)
         {
-            private readonly IProductRepository _productRepository;
-            private readonly IMapper _mapper;
-
-            public Handler(IProductRepository productRepository, IMapper mapper)
-            {
-                _productRepository = productRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<ResponseApi<string>> Handle(Command request, CancellationToken cancellationToken)
-            {
-                // Mapping
-                var entity = _mapper.Map<Product>(request.Product);
-                entity.CreatedAt = DateTime.Now;
+            var entity = _mapper.Map<Product>(request.Product);
+            entity.CreatedAt = DateTime.Now;
                 
-                // Repository action
-                var result = await _productRepository.AddAsync(entity, cancellationToken);
+            // Repository action
+            var result = await _productRepository.AddAsync(entity, cancellationToken);
                 
-                return result == null 
-                    ? ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING) 
-                    : ResponseApi<string>.ResponseOk(result.Id, "Add product success");
-            }
+            return result == null 
+                ? ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING) 
+                : ResponseApi<string>.ResponseOk(result.Id, "Add product success");
         }
     }
 }

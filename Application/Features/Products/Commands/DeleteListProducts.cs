@@ -7,33 +7,30 @@ using MediatR;
 
 namespace Application.Features.Products.Commands
 {
-    public class DeleteListProducts
+    public class DeleteListProductsCommand : IRequest<ResponseApi<Unit>>
     {
-        public class Command : IRequest<ResponseApi<Unit>>
+        public List<string> Ids { get; init; }
+    }
+    
+    public class DeleteListProductsCommandHandler : IRequestHandler<DeleteListProductsCommand, ResponseApi<Unit>>
+    {
+        private readonly IProductRepository _productRepository;
+
+        public DeleteListProductsCommandHandler(IProductRepository productRepository)
         {
-            public List<string> Ids { get; init; }
+            _productRepository = productRepository;
         }
-        
-        public class Handler : IRequestHandler<Command, ResponseApi<Unit>>
+
+        public async Task<ResponseApi<Unit>> Handle(DeleteListProductsCommand request, CancellationToken cancellationToken)
         {
-            private readonly IProductRepository _productRepository;
+            var result = await _productRepository.DeleteManyAsync(
+                p => p.Id,
+                request.Ids,
+                cancellationToken);
 
-            public Handler(IProductRepository productRepository)
-            {
-                _productRepository = productRepository;
-            }
-
-            public async Task<ResponseApi<Unit>> Handle(Command request, CancellationToken cancellationToken)
-            {
-                var result = await _productRepository.DeleteManyAsync(
-                    p => p.Id,
-                    request.Ids,
-                    cancellationToken);
-
-                return result 
-                    ? ResponseApi<Unit>.ResponseOk(Unit.Value, "Delete list products success") 
-                    : ResponseApi<Unit>.ResponseFail("Delete list products fail");
-            }
+            return result 
+                ? ResponseApi<Unit>.ResponseOk(Unit.Value, "Delete list products success") 
+                : ResponseApi<Unit>.ResponseFail("Delete list products fail");
         }
     }
 }

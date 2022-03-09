@@ -12,39 +12,34 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Products.Queries
 {
-    public class GetOneProductById
+    public class GetOneProductByIdQuery : IRequest<ResponseApi<ProductVm>>
     {
-        public class Query : IRequest<ResponseApi<ProductVm>>
-        {
-            public string Id { get; init; }
-        }
+        public string Id { get; init; }
+    }
+    
+    public class GetOneProductByIdHandler : IRequestHandler<GetOneProductByIdQuery, ResponseApi<ProductVm>>
+    {
+        private readonly IProductRepository _productRepository;
+        private readonly IMapper _mapper;
         
-        public class Handler : IRequestHandler<Query, ResponseApi<ProductVm>>
+        public GetOneProductByIdHandler(IProductRepository productRepository, IMapper mapper)
         {
-            private readonly IProductRepository _productRepository;
-            private readonly IMapper _mapper;
+            _productRepository = productRepository;
+            _mapper = mapper;
+        }
 
-            public Handler(IProductRepository productRepository, IMapper mapper)
-            {
-                _productRepository = productRepository;
-                _mapper = mapper;
-            }
-
-            public async Task<ResponseApi<ProductVm>> Handle(Query request, CancellationToken cancellationToken)
-            {
-                // repository action
-                Expression<Func<Product, bool>> expression = p => p.Id == request.Id;
-                var product = await _productRepository.GetOneAsync(expression, cancellationToken);
+        public async Task<ResponseApi<ProductVm>> Handle(GetOneProductByIdQuery request, CancellationToken cancellationToken)
+        {
+            Expression<Func<Product, bool>> expression = p => p.Id == request.Id;
+            var product = await _productRepository.GetOneAsync(expression, cancellationToken);
                 
-                // mapping & return
-                if (product == null)
-                    return ResponseApi<ProductVm>.ResponseFail(StatusCodes.Status400BadRequest,
-                        ResponseConstants.ERROR_NOT_FOUND_ITEM);
+            // mapping & return
+            if (product == null)
+                return ResponseApi<ProductVm>.ResponseFail(StatusCodes.Status400BadRequest,
+                    ResponseConstants.ERROR_NOT_FOUND_ITEM);
                 
-                var data = _mapper.Map<ProductVm>(product);
-                return ResponseApi<ProductVm>.ResponseOk(data);
-
-            }
+            var data = _mapper.Map<ProductVm>(product);
+            return ResponseApi<ProductVm>.ResponseOk(data);
         }
     }
 }
