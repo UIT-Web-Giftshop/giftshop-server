@@ -1,7 +1,4 @@
-﻿using System;
-using System.Threading;
-using System.Threading.Tasks;
-using Domain.Entities;
+﻿using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 
