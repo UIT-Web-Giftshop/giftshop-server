@@ -4,10 +4,10 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using MongoDB.Driver;
-using ServiceStack;
 
 namespace Infrastructure.Repositories
 {
@@ -24,20 +24,44 @@ namespace Infrastructure.Repositories
 
         public void Dispose() => _context?.Dispose();
 
-        public async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _collection.InsertOneAsync(entity, cancellationToken: cancellationToken);
             return entity;
         }
 
-        public async Task<T> GetByIdAsync(string id)
+        public virtual async Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", id);
-            var data = await _collection.Find(filter).FirstOrDefaultAsync();
+            var filter = Builders<T>.Filter.Where(expression);
+            var data = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
             return data;
         }
 
-        public async Task<IEnumerable<T>> GetManyAsync(Expression<Func<T, bool>> expression = null, Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, CancellationToken cancellationToken = default)
+        public virtual async Task<IEnumerable<T>> GetPagingAsync(
+            PagingRequest pagingRequest,
+            Expression<Func<T, bool>> expression = null,
+            string sortBy = null,
+            bool sortAscending = true, 
+            CancellationToken cancellationToken = default)
+        {
+            var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
+            var sortDefinition = sortAscending ? Builders<T>.Sort.Ascending(sortBy) : Builders<T>.Sort.Descending(sortBy);
+
+            var dataList = await _collection
+                .Find(filter)
+                .Sort(sortDefinition)
+                .Skip((pagingRequest.PageIndex - 1) * pagingRequest.PageSize)
+                .Limit(pagingRequest.PageSize)
+                .ToListAsync(cancellationToken);
+
+            return dataList;
+        }
+
+
+        public virtual async Task<IEnumerable<T>> GetManyAsync(
+            Expression<Func<T, bool>> expression = null, 
+            Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
+            CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Empty;
             if (expression != null)
@@ -46,32 +70,48 @@ namespace Infrastructure.Repositories
             }
 
             var dataList = await _collection.Find(filter).ToListAsync(cancellationToken);
-            var query = dataList.AsQueryable();
-            if (orderBy != null)
-            {
-                query = orderBy(query);
-            }
-
-            return query;
+            return dataList;
         }
 
-        public async Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> UpdateAsync(
+            Expression<Func<T, bool>> expression,
+            T entity, 
+            CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", entity.GetId());
+            //TODO use expression for filter
+            var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
             return affected.IsAcknowledged && affected.ModifiedCount > 0;
         }
 
-        public async Task<bool> RemoveAsync(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<bool> PatchOneFieldAsync<TValue>(
+            Expression<Func<T, bool>> expression, 
+            Expression<Func<T, TValue>> fieldName, 
+            TValue fieldValue,
+            CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Eq("Id", id);
+            var filter = Builders<T>.Filter.Where(expression);
+            var update = Builders<T>.Update.Set(fieldName, fieldValue);
+            var options = new FindOneAndUpdateOptions<T>();
+            var affected = await _collection.FindOneAndUpdateAsync(filter, update, options, cancellationToken);
+            return affected != null;
+        }
+
+        public virtual async Task<bool> DeleteOneAsync(
+            Expression<Func<T, bool>> expression,
+            CancellationToken cancellationToken = default)
+        {
+            var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.DeleteOneAsync(filter, cancellationToken);
             return affected.IsAcknowledged && affected.DeletedCount > 0;
         }
-
-        public async Task<bool> RemoveManyAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
+        
+        public virtual async Task<bool> DeleteManyAsync<TValue>(
+            Expression<Func<T, TValue>> expression,
+            IEnumerable<TValue> values,
+            CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Where(expression);
+            var filter = Builders<T>.Filter.In(expression, values);
             var affected = await _collection.DeleteManyAsync(filter, cancellationToken);
             return affected.IsAcknowledged && affected.DeletedCount > 0;
         }
