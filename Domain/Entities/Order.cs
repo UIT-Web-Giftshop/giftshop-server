@@ -35,6 +35,10 @@ namespace Domain.Entities
         public double Percent { get; set; }
     }
 
+    /// <summary>
+    /// Call GetOrderStatus() to get the status name.
+    /// See Web.Tests for example.
+    /// </summary>
     public enum OrderStatus : int
     {
         Pending = 0,
