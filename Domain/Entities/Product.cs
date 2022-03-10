@@ -12,9 +12,7 @@ namespace Domain.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
-        [BsonRequired]
         public string Sku { get; set; }
-        [BsonRequired]
         public string Name { get; set; }
         public string Description { get; set; }
         public uint Stock { get; set; }

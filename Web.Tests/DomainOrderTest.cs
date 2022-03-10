@@ -3,7 +3,7 @@ using Xunit;
 
 namespace Web.Tests
 {
-    [Collection("OrderCollection")]
+    [Collection("OrderDomain")]
     public class DomainOrderTest
     {
         [Fact]

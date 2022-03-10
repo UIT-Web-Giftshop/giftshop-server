@@ -33,8 +33,8 @@ namespace Infrastructure.Repositories
         public virtual async Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Where(expression);
-            var data = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
-            return data;
+            var data = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
+            return data.FirstOrDefault(cancellationToken);
         }
 
         public virtual async Task<IEnumerable<T>> GetPagingAsync(
@@ -48,15 +48,17 @@ namespace Infrastructure.Repositories
             var sortDefinition = sortAscending
                 ? Builders<T>.Sort.Ascending(sortBy)
                 : Builders<T>.Sort.Descending(sortBy);
-            
-            var dataList = await _collection
-                .Find(filter)
-                .Sort(sortDefinition)
-                .Skip((pagingRequest.PageIndex - 1) * pagingRequest.PageSize)
-                .Limit(pagingRequest.PageSize)
-                .ToListAsync(cancellationToken);
+            var options = new FindOptions<T, T>
+            {
+                Limit = pagingRequest.PageSize,
+                Skip = pagingRequest.PageSize * (pagingRequest.PageIndex - 1),
+                Sort = sortDefinition
+            };
 
-            return dataList;
+            var dataList = await _collection
+                .FindAsync(filter, options, cancellationToken);
+
+            return dataList.ToList(cancellationToken);
         }
         
         public virtual async Task<IEnumerable<T>> GetManyAsync(
