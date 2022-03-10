@@ -72,16 +72,16 @@ namespace Application.Features.Products.Queries
                 request.IsSortAscending, 
                 cancellationToken);
 
-            var totalCount = _saveFlagRepository
+            var totalCountTask = _saveFlagRepository
                 .GetOneAsync(x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), cancellationToken);
 
             var data = _mapper.Map<List<ProductVm>>(dataList);
 
-            Task.WaitAll(totalCount);
+            Task.WaitAll(totalCountTask);
             
             return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>
             {
-                AllTotalCount = totalCount.Result.CurrentCount, 
+                AllTotalCount = totalCountTask.Result.CurrentCount, 
                 ItemsCount = dataList.Count(), 
                 Items = data
             });
