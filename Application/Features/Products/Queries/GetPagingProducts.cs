@@ -57,9 +57,9 @@ namespace Application.Features.Products.Queries
 
         public async Task<ResponseApi<PagingModel<ProductVm>>> Handle(GetPagingProductsQuery request, CancellationToken cancellationToken)
         {
-            Expression<Func<Product, bool>>? expression = string.IsNullOrWhiteSpace(request.Search)
+            Expression<Func<Product, bool>> expression = string.IsNullOrWhiteSpace(request.Search)
                 ? null
-                : p => p.Name.Contains(request.Search);
+                : p => p.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
             
             var dataList = await _productRepository.GetPagingAsync(
                 request.PagingRequest, 

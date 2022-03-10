@@ -29,7 +29,7 @@ namespace Application.Features.Products.Queries
         }
         public async Task<ResponseApi<ProductVm>> Handle(GetOneProductBySkuQuery request, CancellationToken cancellationToken)
         {
-            Expression<Func<Product, bool>> expression = p => p.Sku == request.Sku;
+            Expression<Func<Product, bool>> expression = p => p.Sku.Equals(request.Sku, StringComparison.OrdinalIgnoreCase);
             var product = await _productRepository.GetOneAsync(expression, cancellationToken);
 
             if (product == null)
