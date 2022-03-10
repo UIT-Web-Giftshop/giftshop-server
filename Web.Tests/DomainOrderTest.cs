@@ -1,0 +1,26 @@
+﻿using Domain.Entities;
+using Xunit;
+
+namespace Web.Tests
+{
+    [Collection("OrderCollection")]
+    public class DomainOrderTest
+    {
+        [Fact]
+        [Trait("Category", "OrderStatus")]
+        public void GetOrderStatusName_GivenOrderStatus()
+        {
+            const OrderStatus orderStatus = OrderStatus.Delivered;
+            Assert.Equal(nameof(OrderStatus.Delivered), orderStatus.GetOrderStatus());
+        }
+
+        [Fact]
+        [Trait("Category", "OrderStatus")]
+        public void CompareOrderStatus_GivenOrderStatus_ShouldReturnTrue()
+        {
+            const OrderStatus orderStatus = OrderStatus.Success;
+            var result = orderStatus.GetOrderStatus() == nameof(OrderStatus.Success);
+            Assert.True(result);
+        }
+    }
+}
