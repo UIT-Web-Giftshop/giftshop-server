@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using Application.Features.Products.Vms;
 using AutoMapper;
+using Domain.Attributes;
 using Domain.Entities;
 using Domain.Paging;
 using FluentValidation;
@@ -18,7 +19,10 @@ namespace Application.Features.Products.Queries
 {
     public class GetPagingProductsQuery : IRequest<ResponseApi<PagingModel<ProductVm>>>
     {
-        public PagingRequest PagingRequest { get; set; }
+        [DefaultValue(1)]
+        public int PageIndex { get; set; }
+        [DefaultValue(20)]
+        public int PageSize { get; set; }
         public string Search { get; set; }
         [DefaultValue("price")]
         public string SortBy { get; set; }
@@ -30,10 +34,10 @@ namespace Application.Features.Products.Queries
     {
         public GetPagingProductQueryValidator()
         {
-            RuleFor(x => x.PagingRequest!.PageIndex)
+            RuleFor(x => x.PageIndex)
                 .GreaterThan(0)
                 .LessThan(10000);
-            RuleFor(x => x.PagingRequest!.PageSize)
+            RuleFor(x => x.PageSize)
                 .GreaterThan(0)
                 .LessThan(100);
         }
@@ -59,19 +63,28 @@ namespace Application.Features.Products.Queries
         {
             Expression<Func<Product, bool>> expression = string.IsNullOrWhiteSpace(request.Search)
                 ? null
-                : p => p.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase);
+                : p => p.Name.Contains(request.Search);
             
             var dataList = await _productRepository.GetPagingAsync(
-                request.PagingRequest, 
+                new PagingRequest(){PageIndex = request.PageIndex, PageSize = request.PageSize},
                 expression, 
                 request.SortBy, 
                 request.IsSortAscending, 
                 cancellationToken);
 
-            var totalCount = await _saveFlagRepository.GetOneAsync(x => x.CollectionName == "products", cancellationToken);
+            var totalCount = _saveFlagRepository
+                .GetOneAsync(x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), cancellationToken);
 
             var data = _mapper.Map<List<ProductVm>>(dataList);
-            return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>{AllTotalCount = totalCount.CurrentCount, ItemsCount = dataList.Count(), Items = data});
+
+            Task.WaitAll(totalCount);
+            
+            return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>
+            {
+                AllTotalCount = totalCount.Result.CurrentCount, 
+                ItemsCount = dataList.Count(), 
+                Items = data
+            });
         }
     }
 }

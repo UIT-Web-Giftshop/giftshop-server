@@ -13,7 +13,7 @@ namespace Infrastructure.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly IMongoContext _context;
+        protected readonly IMongoContext _context;
         private readonly IMongoCollection<T> _collection;
 
         protected BaseRepository(IMongoContext context)
@@ -45,8 +45,10 @@ namespace Infrastructure.Repositories
             CancellationToken cancellationToken = default)
         {
             var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
-            var sortDefinition = sortAscending ? Builders<T>.Sort.Ascending(sortBy) : Builders<T>.Sort.Descending(sortBy);
-
+            var sortDefinition = sortAscending
+                ? Builders<T>.Sort.Ascending(sortBy)
+                : Builders<T>.Sort.Descending(sortBy);
+            
             var dataList = await _collection
                 .Find(filter)
                 .Sort(sortDefinition)
@@ -56,8 +58,7 @@ namespace Infrastructure.Repositories
 
             return dataList;
         }
-
-
+        
         public virtual async Task<IEnumerable<T>> GetManyAsync(
             Expression<Func<T, bool>> expression = null, 
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
@@ -78,7 +79,6 @@ namespace Infrastructure.Repositories
             T entity, 
             CancellationToken cancellationToken = default)
         {
-            //TODO use expression for filter
             var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
             return affected.IsAcknowledged && affected.ModifiedCount > 0;

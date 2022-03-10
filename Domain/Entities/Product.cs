@@ -19,6 +19,7 @@ namespace Domain.Entities
         public string Description { get; set; }
         public uint Stock { get; set; }
         public double Price { get; set; }
+        public object Detail { get; set; }
         public List<string> Traits { get; set; }
         public string ImageUrl { get; set; }
         public bool IsActive { get; set; }
