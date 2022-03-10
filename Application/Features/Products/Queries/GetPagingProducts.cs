@@ -18,7 +18,7 @@ namespace Application.Features.Products.Queries
 {
     public class GetPagingProductsQuery : IRequest<ResponseApi<PagingModel<ProductVm>>>
     {
-        public PagingRequest PagingRequest { get; init; }
+        public PagingRequest PagingRequest { get; set; }
         public string Search { get; set; }
         [DefaultValue("price")]
         public string SortBy { get; set; }
@@ -42,11 +42,16 @@ namespace Application.Features.Products.Queries
     public class GetPagingProductsHandler : IRequestHandler<GetPagingProductsQuery, ResponseApi<PagingModel<ProductVm>>>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ISaveFlagRepository _saveFlagRepository;
         private readonly IMapper _mapper;
 
-        public GetPagingProductsHandler(IProductRepository productRepository, IMapper mapper)
+        public GetPagingProductsHandler(
+            IProductRepository productRepository, 
+            ISaveFlagRepository saveFlagRepository,
+            IMapper mapper)
         {
             _productRepository = productRepository;
+            _saveFlagRepository = saveFlagRepository;
             _mapper = mapper;
         }
 
@@ -62,9 +67,11 @@ namespace Application.Features.Products.Queries
                 request.SortBy, 
                 request.IsSortAscending, 
                 cancellationToken);
-            
+
+            var totalCount = await _saveFlagRepository.GetOneAsync(x => x.CollectionName == "products", cancellationToken);
+
             var data = _mapper.Map<List<ProductVm>>(dataList);
-            return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>{Total = dataList.Count(), Items = data});
+            return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>{AllTotalCount = totalCount.CurrentCount, ItemsCount = dataList.Count(), Items = data});
         }
     }
 }

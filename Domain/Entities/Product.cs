@@ -17,7 +17,7 @@ namespace Domain.Entities
         [BsonRequired]
         public string Name { get; set; }
         public string Description { get; set; }
-        public uint Quantity { get; set; }
+        public uint Stock { get; set; }
         public double Price { get; set; }
         public List<string> Traits { get; set; }
         public string ImageUrl { get; set; }

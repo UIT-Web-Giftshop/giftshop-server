@@ -10,7 +10,7 @@ namespace Application.Features.Products.Commands
     public class UpdateOneProductStockCommand : IRequest<ResponseApi<Unit>>
     {
         public string Id { get; init; }
-        public uint Quantity { get; init; }
+        public uint Stock { get; init; }
     }
     
     public class UpdateProductStockCommandHandler : IRequestHandler<UpdateOneProductStockCommand, ResponseApi<Unit>>
@@ -31,7 +31,7 @@ namespace Application.Features.Products.Commands
             }
 
             var result = await _productRepository
-                .PatchOneFieldAsync(q => q.Id == request.Id, p => p.Quantity, request.Quantity, cancellationToken);
+                .PatchOneFieldAsync(q => q.Id == request.Id, p => p.Stock, request.Stock, cancellationToken);
                 
             return result 
                 ? ResponseApi<Unit>.ResponseOk(Unit.Value, "Update product's quantity success") 

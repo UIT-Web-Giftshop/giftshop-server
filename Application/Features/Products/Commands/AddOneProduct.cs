@@ -18,12 +18,14 @@ namespace Application.Features.Products.Commands
     public class AddOneProductCommandHandler : IRequestHandler<AddOneProductCommand, ResponseApi<string>>
     {
         private readonly IProductRepository _productRepository;
+        private readonly ISaveFlagRepository _saveFlagRepository;
         private readonly IMapper _mapper;
 
-        public AddOneProductCommandHandler(IProductRepository productRepository, IMapper mapper)
+        public AddOneProductCommandHandler(IProductRepository productRepository, IMapper mapper, ISaveFlagRepository saveFlagRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
+            _saveFlagRepository = saveFlagRepository;
         }
 
         public async Task<ResponseApi<string>> Handle(AddOneProductCommand request, CancellationToken cancellationToken)
@@ -33,7 +35,7 @@ namespace Application.Features.Products.Commands
                 
             // Repository action
             var result = await _productRepository.AddAsync(entity, cancellationToken);
-                
+
             return result == null 
                 ? ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_EXECUTING) 
                 : ResponseApi<string>.ResponseOk(result.Id, "Add product success");

@@ -68,11 +68,11 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
         
-        [HttpPatch("{id}/quantity/{quantity:int}")]
-        public async Task<IActionResult> UpdateOneProductQuantity(string id, uint quantity)
+        [HttpPatch("{id}/quantity/{stock:int}")]
+        public async Task<IActionResult> UpdateOneProductStock(string id, uint stock)
         {
             var result = await _mediator
-                .Send(new UpdateOneProductStockCommand() { Id = id, Quantity = quantity });
+                .Send(new UpdateOneProductStockCommand() { Id = id, Stock = stock });
             
             return HandleResponseStatus(result);
         }
