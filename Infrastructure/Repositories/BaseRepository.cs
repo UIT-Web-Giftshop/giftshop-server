@@ -48,7 +48,6 @@ namespace Infrastructure.Repositories
             PagingRequest pagingRequest,
             Expression<Func<T, bool>> expression = null,
             Expression<Func<T, object>> sortBy = null,
-            Expression<Func<T, object>> thenSortBy = null,
             bool sortAscending = true, 
             CancellationToken cancellationToken = default)
         {

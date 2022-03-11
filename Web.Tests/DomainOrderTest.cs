@@ -16,7 +16,7 @@ namespace Web.Tests
 
         [Fact]
         [Trait("Category", "OrderStatus")]
-        public void CompareOrderStatus_GivenOrderStatus_ShouldReturnTrue()
+        public void CompareOrderStatus_GivenOrderStatus_ReturnTrue()
         {
             const OrderStatus orderStatus = OrderStatus.Success;
             var result = orderStatus.GetOrderStatus() == nameof(OrderStatus.Success);

@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Linq.Expressions;
 using System.Threading;
 using Domain.Entities;
+using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
 using Infrastructure.Repositories;
@@ -59,7 +61,7 @@ namespace Web.Tests
 
         [Fact]
         [Trait("Category", "ProductRepository")]
-        public async void ProductRepository_GetOneProductAsync_ShouldReturnProduct()
+        public async void ProductRepository_GetOneProductAsync_ReturnProduct()
         {
             // arrange
             var expectedProduct = _fixture.SampleData[0];
@@ -84,6 +86,39 @@ namespace Web.Tests
                 It.IsAny<ExpressionFilterDefinition<Product>>(),
                 It.IsAny<FindOptions<Product,Product>>(),
                 It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        [Trait("Category", "ProductRepository")]
+        public async void ProductRepository_GetPagingProducts_ReturnPagingModel()
+        {
+            // arrange
+            Mock.Get(_mockCollection)
+                .Setup(x => x.FindAsync(
+                    It.IsAny<FilterDefinition<Product>>(),
+                    It.IsAny<FindOptions<Product, Product>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_mockAsyncCursor);
+            Mock.Get(_mockContext)
+                .Setup(x => x.GetCollection<Product>())
+                .Returns(_mockCollection);
+
+            // act
+            var repo = new ProductRepository(_mockContext, _mockSaveFlagRepository);
+            var result = await repo.GetPagingAsync(
+                new PagingRequest() { PageSize = 20, PageIndex = 1 },
+                null,
+                q => q.Price,
+                default);
+
+            // assert
+            Assert.NotNull(result);
+            Assert.Equal(3, result.Count());
+            Mock.Get(_mockCollection)
+                .Verify(x => x.FindAsync(
+                    It.IsAny<FilterDefinition<Product>>(),
+                    It.IsAny<FindOptions<Product, Product>>(),
+                    It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

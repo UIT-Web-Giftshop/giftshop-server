@@ -33,7 +33,7 @@ namespace Web.Tests
 
         [Fact]
         [Trait("Category", "Context")]
-        public void MongoContext_GetCollection_ShouldSuccess()
+        public void MongoContext_GetCollection()
         {
             // arrange
             var mockConfigure = new MockIConfigurationService().MockSettings();

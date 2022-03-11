@@ -69,7 +69,6 @@ namespace Application.Features.Products.Queries
             var dataList = await _productRepository.GetPagingAsync(
                 new PagingRequest(){PageIndex = request.PageIndex, PageSize = request.PageSize},
                 expression, 
-                q => q.IsActive,
                 sortExpr,
                 request.IsSortAscending,
                 cancellationToken);
