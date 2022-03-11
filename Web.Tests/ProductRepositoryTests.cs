@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Threading;
-using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
@@ -13,73 +12,78 @@ using Xunit;
 
 namespace Web.Tests
 {
-    [Collection("ProductRepository")]
-    public class ProductRepositoryTests
+    public class ProductRepositoryFixture
     {
-        private IMongoCollection<Product> _mockCollection;
-        private IMongoContext _mockContext;
-        private Product _product;
-        private List<Product> _list => new();
+        public List<Product> SampleData = ProductResource.ListProducts();
+    }
+    
+    [Collection("ProductRepository")]
+    public class ProductRepositoryTests : IClassFixture<ProductRepositoryFixture>
+    {
+        private readonly IMongoCollection<Product> _mockCollection;
+        private readonly IMongoContext _mockContext;
+        private readonly ISaveFlagRepository _mockSaveFlagRepository;
+        private readonly ProductRepositoryFixture _fixture;
+        private readonly IEnumerable<Product> _mockEnumerable;
+        private readonly IAsyncCursor<Product> _mockAsyncCursor;
 
-        public ProductRepositoryTests()
+        public ProductRepositoryTests(ProductRepositoryFixture fixture)
         {
-            _product = new Product()
-            {
-                Id = "6227538b5f2c8331916327cb",
-                Sku = "xUnitTest",
-                Name = "xUnit",
-                Description = "xUnit Test description",
-                Stock = 10
-            };
-            _list.Add(_product);
+            _fixture = fixture;
             _mockCollection = Mock.Of<IMongoCollection<Product>>();
             _mockContext = Mock.Of<IMongoContext>();
+            Mock.Get(_mockContext)
+                .Setup(x => x.GetCollection<Product>())
+                .Returns(_mockCollection);
+            _mockSaveFlagRepository = Mock.Of<ISaveFlagRepository>();
+            Mock.Get(_mockSaveFlagRepository)
+                .Setup(x => x.GetOneAsync(
+                    It.IsAny<Expression<Func<SaveFlag, bool>>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(new SaveFlag() { CollectionName = "products", CurrentCount = _fixture.SampleData.Count });
+            _mockEnumerable = Mock.Of<IEnumerable<Product>>();
+            Mock.Get(_mockEnumerable)
+                .Setup(x => x.GetEnumerator())
+                .Returns(_fixture.SampleData.GetEnumerator());
+            _mockAsyncCursor = Mock.Of<IAsyncCursor<Product>>();
+            Mock.Get(_mockAsyncCursor).Setup(x => x.Current).Returns(_mockEnumerable);
+            Mock.Get(_mockAsyncCursor)
+                .SetupSequence(x => x.MoveNextAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(true)
+                .ReturnsAsync(false);
+            Mock.Get(_mockAsyncCursor)
+                .SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
+                .Returns(true)
+                .Returns(false);
         }
 
         [Fact]
         [Trait("Category", "ProductRepository")]
-        public async void ProductRepository_GetManyProductAsync_ShouldSuccess()
+        public async void ProductRepository_GetOneProductAsync_ShouldReturnProduct()
         {
             // arrange
-            // mock MoveNext
-            var cursor = Mock.Of<IAsyncCursor<Product>>();
-            Mock.Get(cursor)
-                .Setup(x => x.Current)
-                .Returns(_list);
-            Mock.Get(cursor)
-                .SetupSequence(x => x.MoveNext(It.IsAny<CancellationToken>()))
-                .Returns(true)
-                .Returns(false);
-            // mock FindAsync
-            Mock.Get(_mockCollection)
-                .Setup(op =>
-                    op.FindAsync(It.IsAny<FilterDefinition<Product>>(),
-                        It.IsAny<FindOptions<Product>>(),
-                        It.IsAny<CancellationToken>()))
-                .ReturnsAsync(cursor);
-            // mock GetCollection
-            Mock.Get(_mockContext)
-                .Setup(x => x.GetCollection<Product>())
-                .Returns(_mockCollection);
-            // mock SaveFlag
-            var saveFlag = Mock.Of<ISaveFlagRepository>();
-            var repository = new ProductRepository(_mockContext, saveFlag);
-
-            // act
-            var result = await repository.GetManyAsync();
+            var expectedProduct = _fixture.SampleData[0];
+            Expression<Func<Product, bool>> expression = x => x.Id == expectedProduct.Id;
             
-            // assert
-            foreach (var item in result)
-            {
-                Assert.NotNull(item);
-                Assert.Equal(item.Sku, _product.Sku);
-                Assert.Equal(item.Id, _product.Id);
-            }
+            // mock collection find
             Mock.Get(_mockCollection)
-                .Verify(x => x.FindAsync(
-                    It.IsAny<FilterDefinition<Product>>(),
-                    It.IsAny<FindOptions<Product>>(),
-                    It.IsAny<CancellationToken>()), Times.Once);
+                .Setup(x => x.FindAsync(
+                    It.IsAny<ExpressionFilterDefinition<Product>>(),
+                    It.IsAny<FindOptions<Product,Product>>(),
+                    It.IsAny<CancellationToken>()))
+                .ReturnsAsync(_mockAsyncCursor);
+            
+            // act
+            var repository = new ProductRepository(_mockContext, _mockSaveFlagRepository);
+            var result = await repository.GetOneAsync(expression);
+
+            // assert
+            Assert.NotNull(result);
+            Assert.Equal(expectedProduct.Name, result.Name);
+            Mock.Get(_mockCollection).Verify(x => x.FindAsync(
+                It.IsAny<ExpressionFilterDefinition<Product>>(),
+                It.IsAny<FindOptions<Product,Product>>(),
+                It.IsAny<CancellationToken>()), Times.Once);
         }
     }
 }

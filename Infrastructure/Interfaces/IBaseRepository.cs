@@ -40,7 +40,8 @@ namespace Infrastructure.Interfaces
         Task<IEnumerable<T>> GetPagingAsync(
             PagingRequest pagingRequest,
             Expression<Func<T, bool>> expression = null,
-            string sortBy = null,
+            Expression<Func<T, object>> sortBy = null,
+            Expression<Func<T, object>> thenSortBy = null,
             bool sortAscending = true,
             CancellationToken cancellationToken = default);
         

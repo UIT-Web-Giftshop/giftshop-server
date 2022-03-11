@@ -33,14 +33,22 @@ namespace Infrastructure.Repositories
         public virtual async Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Where(expression);
-            var data = await _collection.FindAsync(filter, cancellationToken: cancellationToken);
-            return data.FirstOrDefault(cancellationToken);
+            var cursor = await _collection.FindAsync(filter, null, cancellationToken: cancellationToken);
+            while (await cursor.MoveNextAsync(cancellationToken))
+            {
+                using var iter = cursor.Current.GetEnumerator();
+                iter.MoveNext();
+                return iter.Current;
+            }
+
+            return null;
         }
 
         public virtual async Task<IEnumerable<T>> GetPagingAsync(
             PagingRequest pagingRequest,
             Expression<Func<T, bool>> expression = null,
-            string sortBy = null,
+            Expression<Func<T, object>> sortBy = null,
+            Expression<Func<T, object>> thenSortBy = null,
             bool sortAscending = true, 
             CancellationToken cancellationToken = default)
         {
@@ -58,7 +66,12 @@ namespace Infrastructure.Repositories
             var dataList = await _collection
                 .FindAsync(filter, options, cancellationToken);
 
-            return dataList.ToList(cancellationToken);
+            while (await dataList.MoveNextAsync(cancellationToken))
+            {
+                return dataList.Current;
+            }
+
+            return null;
         }
         
         public virtual async Task<IEnumerable<T>> GetManyAsync(
@@ -66,12 +79,7 @@ namespace Infrastructure.Repositories
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
             CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Empty;
-            if (expression != null)
-            {
-                filter = Builders<T>.Filter.Where(expression);
-            }
-
+            var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
             var dataList = await _collection.Find(filter).ToListAsync(cancellationToken);
             return dataList;
         }

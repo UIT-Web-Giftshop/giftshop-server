@@ -64,12 +64,14 @@ namespace Application.Features.Products.Queries
             Expression<Func<Product, bool>> expression = string.IsNullOrWhiteSpace(request.Search)
                 ? null
                 : p => p.Name.Contains(request.Search);
-            
+            Expression<Func<Product, object>> sortExpr = q => q.Price;
+
             var dataList = await _productRepository.GetPagingAsync(
                 new PagingRequest(){PageIndex = request.PageIndex, PageSize = request.PageSize},
                 expression, 
-                request.SortBy, 
-                request.IsSortAscending, 
+                q => q.IsActive,
+                sortExpr,
+                request.IsSortAscending,
                 cancellationToken);
 
             var totalCountTask = _saveFlagRepository
