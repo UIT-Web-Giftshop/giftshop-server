@@ -42,18 +42,27 @@ namespace Application.Features.Images.Commands
                 return ResponseApi<Unit>.ResponseFail("File is not image");
             }
 
-            //TODO generate image uid
-            var prodImageUid = product.Id + "prod" + product.ImageUrl.Length;
+            // image uid
+            var prodImageUid = product.Id + "prod";
             
-            var upload =
-                await _awsS3BucketService.UploadFileAsync(
+            // upload to s3
+            var upload = await _awsS3BucketService.UploadFileAsync(
                     readFile.Stream, 
                      "products/" + prodImageUid,
                     request.File.ContentType);
+
+            if (!upload)
+            {
+                return ResponseApi<Unit>.ResponseFail("Upload file fail");
+            }
             
-            return upload 
-                ? ResponseApi<Unit>.ResponseOk(Unit.Value) 
-                : ResponseApi<Unit>.ResponseFail("Upload file fail"); 
+            // save image uid to product imageUrl
+            var update = await _productRepository.PatchOneFieldAsync(
+                x => x.Id == product.Id,
+                x => x.ImageUrl,
+                prodImageUid,
+                cancellationToken);
+            return ResponseApi<Unit>.ResponseOk(Unit.Value, "Upload file success");
         }
     }
 }
