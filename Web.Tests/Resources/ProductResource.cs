@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Domain.Entities;
 
-namespace Web.Tests
+namespace Web.Tests.Resources
 {
     public static class ProductResource
     {

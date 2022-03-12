@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

@@ -2,7 +2,7 @@
 using System.Threading.Tasks;
 using Domain.Entities;
 
-namespace Infrastructure.Interfaces
+namespace Infrastructure.Interfaces.Repositories
 {
     public interface ISaveFlagRepository : IBaseRepository<SaveFlag>
     {

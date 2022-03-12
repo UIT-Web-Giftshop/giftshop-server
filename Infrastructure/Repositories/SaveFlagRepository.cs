@@ -6,6 +6,7 @@ using Domain.Attributes;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories

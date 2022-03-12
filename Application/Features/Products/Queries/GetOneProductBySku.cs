@@ -7,6 +7,7 @@ using Application.Features.Products.Vms;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
