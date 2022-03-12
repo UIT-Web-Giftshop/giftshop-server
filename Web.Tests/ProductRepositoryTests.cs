@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using MongoDB.Driver;
 using Moq;

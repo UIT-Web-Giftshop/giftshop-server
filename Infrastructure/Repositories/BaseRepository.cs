@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories

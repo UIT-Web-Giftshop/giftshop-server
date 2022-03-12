@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Paging;
 
-namespace Infrastructure.Interfaces
+namespace Infrastructure.Interfaces.Repositories
 {
     public interface IBaseRepository<T> : IDisposable where T : class
     {

@@ -13,6 +13,7 @@ using Domain.Entities;
 using Domain.Paging;
 using FluentValidation;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
 
 namespace Application.Features.Products.Queries
