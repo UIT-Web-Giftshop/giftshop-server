@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
+using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
@@ -14,7 +15,16 @@ namespace Application.Features.Images.Commands
         public string ProductId { get; set; }
         public IFormFile File { get; set; }
     }
-    
+
+    public sealed class AddProductImageQueryValidator : AbstractValidator<AddOneProductImageQuery>
+    {
+        public AddProductImageQueryValidator()
+        {
+            RuleFor(x => x.ProductId).NotEmpty();
+            RuleFor(x => x.File).NotNull();
+        }
+    }
+
     public class AddOneProductImageHandler : IRequestHandler<AddOneProductImageQuery, ResponseApi<Unit>>
     {
         private readonly IProductRepository _productRepository;

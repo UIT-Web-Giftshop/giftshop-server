@@ -6,6 +6,7 @@ using Application.Commons;
 using Application.Features.Products.Vms;
 using AutoMapper;
 using Domain.Entities;
+using FluentValidation;
 using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
@@ -18,6 +19,15 @@ namespace Application.Features.Products.Commands
         public ProductVm Product { get; init; }
     }
     
+    public sealed class UpdateOneProductInfoCommandValidator : AbstractValidator<UpdateOneProductInfoCommand>
+    {
+        public UpdateOneProductInfoCommandValidator()
+        {
+            RuleFor(x => x.Id).NotEmpty();
+            RuleFor(x => x.Product).NotNull();
+        }
+    }
+
     public class UpdateOneProductInfoCommandHandler : IRequestHandler<UpdateOneProductInfoCommand, ResponseApi<Unit>>
     {
         private readonly IProductRepository _productRepository;
