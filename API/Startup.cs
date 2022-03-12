@@ -8,7 +8,6 @@ using Application.PipelineBehaviors;
 using Domain.Settings;
 using FluentValidation;
 using Infrastructure.Context;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using Infrastructure.Repositories;
@@ -39,6 +38,7 @@ namespace API
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddSwaggerService();
+            services.AddAuthenticationService(Configuration);
 
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
@@ -55,6 +55,7 @@ namespace API
 
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<AWSS3Settings>(appSettingsSection.GetSection("AWSS3Settings"));
+            services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
