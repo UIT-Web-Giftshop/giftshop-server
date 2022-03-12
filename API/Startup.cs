@@ -15,6 +15,7 @@ using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -53,6 +54,8 @@ namespace API
             services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
             services.AddScoped<IAWSS3BucketService, AWSS3BucketService>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<AWSS3Settings>(appSettingsSection.GetSection("AWSS3Settings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
@@ -74,6 +77,8 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

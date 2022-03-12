@@ -8,9 +8,9 @@ namespace Infrastructure.Services
 {
     public class Accessor : IAccessor
     {
-        private readonly HttpContextAccessor _contextAccessor;
+        private readonly IHttpContextAccessor _contextAccessor;
 
-        public Accessor(HttpContextAccessor contextAccessor)
+        public Accessor(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }

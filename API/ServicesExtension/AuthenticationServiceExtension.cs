@@ -14,9 +14,9 @@ namespace API.ServicesExtension
             this IServiceCollection services,
             IConfiguration configuration)
         {
-            var authenticationSettings = configuration.GetSection("AuthenticationSettings");
+            var authSettings = configuration.GetSection("ServicesSettings:AuthenticationSettings");
             var signingKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(authenticationSettings.GetSection("SecretKey").Value));
+                Encoding.UTF8.GetBytes(authSettings.GetSection("SecretKey").Value));
 
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(opts =>
