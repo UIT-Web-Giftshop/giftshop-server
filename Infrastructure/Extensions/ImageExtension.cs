@@ -34,12 +34,10 @@ namespace Infrastructure.Extensions
                     return failure;
                 }
                 
-                // read file
+                // read file content & check pattern
                 byte[] buffer = new byte[IMAGE_MINIMUM_BYTES];
                 stream.Read(buffer, 0, IMAGE_MINIMUM_BYTES);
                 var content = Encoding.UTF8.GetString(buffer);
-                
-                // check image content
                 if (Regex.IsMatch(
                         content, 
                         @"<script|<html|<head|<title|<body|<pre|<table|<a\s+href|<img|<plaintext|<cross\-domain\-policy",

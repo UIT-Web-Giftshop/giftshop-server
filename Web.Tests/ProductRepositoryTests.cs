@@ -11,6 +11,7 @@ using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Repositories;
 using MongoDB.Driver;
 using Moq;
+using Web.Tests.Resources;
 using Xunit;
 
 namespace Web.Tests

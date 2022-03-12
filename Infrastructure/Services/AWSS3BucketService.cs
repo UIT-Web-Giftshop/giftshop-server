@@ -62,6 +62,12 @@ namespace Infrastructure.Services
                 Key = key
             };
             var response = await _amazonS3.GetObjectAsync(getRequest);
+            
+            if (response == null)
+            {
+                return null;
+            }
+            
             return response.HttpStatusCode == HttpStatusCode.OK 
                 ? response.ResponseStream 
                 : Stream.Null;
