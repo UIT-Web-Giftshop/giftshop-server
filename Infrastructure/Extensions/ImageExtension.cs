@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -20,9 +21,10 @@ namespace Infrastructure.Extensions
                 return failure;
             
             // try to read the file and check the first byte
+            Stream stream;
             try
             {
-                var stream = file.OpenReadStream();
+                stream = file.OpenReadStream();
                 // open stream
                 if (!stream.CanRead)
                 {
@@ -46,12 +48,26 @@ namespace Infrastructure.Extensions
                     return failure;
                 }
 
-                return new ImageExtensionModel(true, stream);
+                // return new ImageExtensionModel(true, stream);
             }
             catch (Exception)
             {
                 return failure;
             }
+
+            // try to instantiate Bitmap
+            try
+            {
+                using (var bitmap = new Bitmap(file.OpenReadStream()))
+                {
+                }
+            }
+            catch (Exception)
+            {
+                return failure;
+            }
+            
+            return new ImageExtensionModel(true, stream);
         }
 
         /// <summary>
