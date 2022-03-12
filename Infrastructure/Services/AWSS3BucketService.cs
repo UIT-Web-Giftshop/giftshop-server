@@ -64,7 +64,7 @@ namespace Infrastructure.Services
             var response = await _amazonS3.GetObjectAsync(getRequest);
             return response.HttpStatusCode == HttpStatusCode.OK 
                 ? response.ResponseStream 
-                : null;
+                : Stream.Null;
         }
 
         public async Task<bool> DeleteFileAsync(string key)

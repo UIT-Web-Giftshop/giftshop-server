@@ -43,11 +43,12 @@ namespace Application.Features.Images.Commands
             }
 
             //TODO generate image uid
+            var prodImageUid = product.Id + "prod" + product.ImageUrl.Length;
             
             var upload =
                 await _awsS3BucketService.UploadFileAsync(
                     readFile.Stream, 
-                    request.File.FileName,
+                     "products/" + prodImageUid,
                     request.File.ContentType);
             
             return upload 
