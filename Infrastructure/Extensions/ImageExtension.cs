@@ -21,10 +21,9 @@ namespace Infrastructure.Extensions
                 return failure;
             
             // try to read the file and check the first byte
-            Stream stream;
             try
             {
-                stream = file.OpenReadStream();
+                var stream = file.OpenReadStream();
                 // open stream
                 if (!stream.CanRead)
                 {
@@ -48,26 +47,12 @@ namespace Infrastructure.Extensions
                     return failure;
                 }
 
-                // return new ImageExtensionModel(true, stream);
+                return new ImageExtensionModel(true, stream);
             }
             catch (Exception)
             {
                 return failure;
             }
-
-            // try to instantiate Bitmap
-            try
-            {
-                using (var bitmap = new Bitmap(file.OpenReadStream()))
-                {
-                }
-            }
-            catch (Exception)
-            {
-                return failure;
-            }
-            
-            return new ImageExtensionModel(true, stream);
         }
 
         /// <summary>
