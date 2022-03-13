@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Domain.Paging;
 
-namespace Infrastructure.Interfaces
+namespace Infrastructure.Interfaces.Repositories
 {
     public interface IBaseRepository<T> : IDisposable where T : class
     {
@@ -40,7 +40,7 @@ namespace Infrastructure.Interfaces
         Task<IEnumerable<T>> GetPagingAsync(
             PagingRequest pagingRequest,
             Expression<Func<T, bool>> expression = null,
-            string sortBy = null,
+            Expression<Func<T, object>> sortBy = null,
             bool sortAscending = true,
             CancellationToken cancellationToken = default);
         

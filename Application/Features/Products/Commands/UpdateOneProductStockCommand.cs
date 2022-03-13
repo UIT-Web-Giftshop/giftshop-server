@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Commons;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 

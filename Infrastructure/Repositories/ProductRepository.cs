@@ -1,10 +1,9 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories
 {
@@ -22,13 +21,8 @@ namespace Infrastructure.Repositories
             if (addedProduct == null) 
                 return null;
             
-            Expression<Func<SaveFlag, bool>> expression = x => x.CollectionName == "products";
-            var productCounts = await _saveFlagRepository.GetOneAsync(expression, cancellationToken);
-            await _saveFlagRepository.PatchOneFieldAsync(
-                expression, 
-                p => p.CurrentCount,
-                productCounts.CurrentCount + 1,
-                cancellationToken);
+            // Save total products count
+            await _saveFlagRepository.AutoIncrementFlag<Product>(cancellationToken);
 
             return addedProduct;
         }

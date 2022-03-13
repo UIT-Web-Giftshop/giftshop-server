@@ -25,6 +25,11 @@ namespace Infrastructure.Context
             GC.SuppressFinalize(this);
         }
 
+        public IMongoDatabase GetContextDatabase()
+        {
+            return this.MongoDatabase;
+        }
+
         public IMongoCollection<T> GetCollection<T>() where T : class
         {
             Configure();

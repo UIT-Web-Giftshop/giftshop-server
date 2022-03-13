@@ -7,13 +7,14 @@ using System.Threading.Tasks;
 using Domain.Paging;
 using Infrastructure.Context;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
     public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
     {
-        private readonly IMongoContext _context;
+        protected readonly IMongoContext _context;
         private readonly IMongoCollection<T> _collection;
 
         protected BaseRepository(IMongoContext context)
@@ -33,42 +34,52 @@ namespace Infrastructure.Repositories
         public virtual async Task<T> GetOneAsync(Expression<Func<T, bool>> expression, CancellationToken cancellationToken = default)
         {
             var filter = Builders<T>.Filter.Where(expression);
-            var data = await _collection.Find(filter).FirstOrDefaultAsync(cancellationToken);
-            return data;
+            var cursor = await _collection.FindAsync(filter, null, cancellationToken: cancellationToken);
+            while (await cursor.MoveNextAsync(cancellationToken))
+            {
+                using var iter = cursor.Current.GetEnumerator();
+                iter.MoveNext();
+                return iter.Current;
+            }
+
+            return null;
         }
 
         public virtual async Task<IEnumerable<T>> GetPagingAsync(
             PagingRequest pagingRequest,
             Expression<Func<T, bool>> expression = null,
-            string sortBy = null,
+            Expression<Func<T, object>> sortBy = null,
             bool sortAscending = true, 
             CancellationToken cancellationToken = default)
         {
             var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
-            var sortDefinition = sortAscending ? Builders<T>.Sort.Ascending(sortBy) : Builders<T>.Sort.Descending(sortBy);
+            var sortDefinition = sortAscending
+                ? Builders<T>.Sort.Ascending(sortBy)
+                : Builders<T>.Sort.Descending(sortBy);
+            var options = new FindOptions<T, T>
+            {
+                Limit = pagingRequest.PageSize,
+                Skip = pagingRequest.PageSize * (pagingRequest.PageIndex - 1),
+                Sort = sortDefinition
+            };
 
             var dataList = await _collection
-                .Find(filter)
-                .Sort(sortDefinition)
-                .Skip((pagingRequest.PageIndex - 1) * pagingRequest.PageSize)
-                .Limit(pagingRequest.PageSize)
-                .ToListAsync(cancellationToken);
+                .FindAsync(filter, options, cancellationToken);
 
-            return dataList;
+            while (await dataList.MoveNextAsync(cancellationToken))
+            {
+                return dataList.Current;
+            }
+
+            return null;
         }
-
-
+        
         public virtual async Task<IEnumerable<T>> GetManyAsync(
             Expression<Func<T, bool>> expression = null, 
             Func<IQueryable<T>, IOrderedQueryable<T>> orderBy = null, 
             CancellationToken cancellationToken = default)
         {
-            var filter = Builders<T>.Filter.Empty;
-            if (expression != null)
-            {
-                filter = Builders<T>.Filter.Where(expression);
-            }
-
+            var filter = expression != null ? Builders<T>.Filter.Where(expression) : Builders<T>.Filter.Empty;
             var dataList = await _collection.Find(filter).ToListAsync(cancellationToken);
             return dataList;
         }
@@ -78,7 +89,6 @@ namespace Infrastructure.Repositories
             T entity, 
             CancellationToken cancellationToken = default)
         {
-            //TODO use expression for filter
             var filter = Builders<T>.Filter.Where(expression);
             var affected = await _collection.ReplaceOneAsync(filter, entity, cancellationToken: cancellationToken);
             return affected.IsAcknowledged && affected.ModifiedCount > 0;

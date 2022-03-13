@@ -7,6 +7,7 @@ using Application.Features.Products.Vms;
 using AutoMapper;
 using Domain.Entities;
 using Infrastructure.Interfaces;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
@@ -29,7 +30,7 @@ namespace Application.Features.Products.Queries
         }
         public async Task<ResponseApi<ProductVm>> Handle(GetOneProductBySkuQuery request, CancellationToken cancellationToken)
         {
-            Expression<Func<Product, bool>> expression = p => p.Sku.Equals(request.Sku, StringComparison.OrdinalIgnoreCase);
+            Expression<Func<Product, bool>> expression = p => p.Sku.Equals(request.Sku);
             var product = await _productRepository.GetOneAsync(expression, cancellationToken);
 
             if (product == null)

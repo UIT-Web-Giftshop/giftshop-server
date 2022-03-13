@@ -1,0 +1,3 @@
+﻿<script>
+    let hello = 'hello world';
+</script>
