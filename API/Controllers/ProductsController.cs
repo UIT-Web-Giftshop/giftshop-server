@@ -14,11 +14,9 @@ namespace API.Controllers
     [AllowAnonymous]
     public class ProductsController : BaseApiController
     {
-        private readonly IMediator _mediator;
-
-        public ProductsController(IMediator mediator)
+        public ProductsController(IMediator _mediator) : base(_mediator)
         {
-            _mediator = mediator;
+
         }
 
         [HttpGet("id/{id}")]

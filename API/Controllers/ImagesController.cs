@@ -12,11 +12,11 @@ namespace API.Controllers
     [AllowAnonymous]
     public class ImagesController : BaseApiController
     {
-        private readonly IMediator _mediator;
+        //private readonly IMediator mediator;
 
-        public ImagesController(IMediator mediator)
+        public ImagesController(IMediator _mediator) : base(_mediator)
         {
-            _mediator = mediator;
+            //this.mediator = _mediator;
         }
 
         [HttpPost("product/{productId}")]
@@ -31,12 +31,10 @@ namespace API.Controllers
         }
 
         [HttpGet("product/{key}")]
-        public async Task<IActionResult> GetOneProductImage(
-            string key,
-            CancellationToken cancellationToken)
+        public async Task<IActionResult> GetOneProductImage(string key, CancellationToken cancellationToken)
         {
-            var result = await _mediator
-                .Send(new GetOneProductImageQuery(){Key = key}, cancellationToken);
+            var result = await this._mediator.Send(new GetOneProductImageQuery() { Key = key }, 
+                cancellationToken);
             return File(result.Data, "image/jpeg");
         }
     }

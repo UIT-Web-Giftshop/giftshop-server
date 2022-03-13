@@ -1,10 +1,9 @@
 ﻿using System;
-using Domain.Attributes;
+using Application.Features.Objects.Vms;
 
-namespace Domain.Entities
+namespace Application.Features.Users.Vms
 {
-    [BsonCollection("users")]
-    public class User : IdentifiableObject
+    public class UserVm : ObjectVm
     {
         public string Email { get; set; }
 

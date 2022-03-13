@@ -8,7 +8,6 @@ using Application.PipelineBehaviors;
 using Domain.Settings;
 using FluentValidation;
 using Infrastructure.Context;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using Infrastructure.Repositories;
@@ -24,19 +23,18 @@ namespace API
 {
     public class Startup
     {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
         public IConfiguration Configuration { get; }
+
+        public Startup(IConfiguration Configuration)
+        {
+            this.Configuration = Configuration;
+        }
 
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers()
-                .AddJsonOptions(options =>
-                    options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+            services.AddControllers().AddJsonOptions(options => 
+                options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddSwaggerService();
 
@@ -52,6 +50,8 @@ namespace API
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
             services.AddScoped<IAWSS3BucketService, AWSS3BucketService>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
 
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<AWSS3Settings>(appSettingsSection.GetSection("AWSS3Settings"));
@@ -66,6 +66,7 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseHttpsRedirection();
