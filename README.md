@@ -22,5 +22,6 @@
 ### For use MongoClient web browser
 - Connection string `mongodb://contextdb:27017`
 - Select database `giftshop-demo` like picture
-- ![img_1.png](img_1.png)
-- Enjoy query selector and docker magic ^^
+- ![image](https://user-images.githubusercontent.com/87169853/158118838-8c6c3f0d-9f95-46a3-bc1d-8906846d9ead.png)
+
+- Enjoy docker magic with fun ^^
