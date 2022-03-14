@@ -52,12 +52,12 @@ namespace API
             services.AddScoped<IMongoContext, MongoContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
-            services.AddScoped<IAWSS3BucketService, AWSS3BucketService>();
+            services.AddScoped<ICloudinaryService, CloudinaryService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
-            services.Configure<AWSS3Settings>(appSettingsSection.GetSection("AWSS3Settings"));
+            services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
         }
 
