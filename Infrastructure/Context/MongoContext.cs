@@ -1,6 +1,7 @@
 ﻿using System;
 using Domain.Attributes;
 using Infrastructure.ConventionConfigure;
+using Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 

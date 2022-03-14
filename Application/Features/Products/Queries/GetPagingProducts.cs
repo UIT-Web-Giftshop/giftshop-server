@@ -74,6 +74,17 @@ namespace Application.Features.Products.Queries
                 request.IsSortAscending,
                 cancellationToken);
 
+            // check if there's not anything in collection
+            if (dataList.Count() == 0)
+            {
+                return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>()
+                {
+                    AllTotalCount = 0,
+                    ItemsCount = 0,
+                    Items = null
+                });
+            }
+            
             var totalCountTask = _saveFlagRepository
                 .GetOneAsync(x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), cancellationToken);
 
