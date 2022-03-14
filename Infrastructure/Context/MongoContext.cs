@@ -49,9 +49,6 @@ namespace Infrastructure.Context
             MongoConventionConfigure.Configure();
             MongoClient = new MongoClient(_configuration["MongoSettings:ConnectionString"]);
             MongoDatabase = MongoClient.GetDatabase(_configuration["MongoSettings:Database"]);
-            
-            // Seed data
-            MongoDatabase.Seed();
         }
     }
 }
