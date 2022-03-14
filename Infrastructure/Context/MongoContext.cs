@@ -1,6 +1,7 @@
 ﻿using System;
 using Domain.Attributes;
 using Infrastructure.ConventionConfigure;
+using Infrastructure.Persistence;
 using Microsoft.Extensions.Configuration;
 using MongoDB.Driver;
 
@@ -48,6 +49,9 @@ namespace Infrastructure.Context
             MongoConventionConfigure.Configure();
             MongoClient = new MongoClient(_configuration["MongoSettings:ConnectionString"]);
             MongoDatabase = MongoClient.GetDatabase(_configuration["MongoSettings:Database"]);
+            
+            // Seed data
+            MongoDatabase.Seed();
         }
     }
 }

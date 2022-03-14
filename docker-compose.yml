@@ -1,0 +1,25 @@
+version: '3.4'
+
+services:
+  # contextdb mongodb
+  contextdb:
+    image: mongo
+    
+  # mongoclient
+  mongoclient:
+    image: mongoclient/mongoclient
+    depends_on:
+      - contextdb
+    ports:
+      - "3000:3000"
+    
+  
+  # server api
+  giftshop-api:
+    image: giftshop-api:dev
+    build:
+      context: .
+      dockerfile: API/Dockerfile
+      
+volumes:
+  contextdb:
