@@ -12,7 +12,9 @@
 ### Run with docker
 - Run `dotnet dev-certs https -eq $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p local`
 - Run `dotnet dev-certs https --trust`
-- At solution folder run `docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml up -d` to start API
-- run `docker-compose down` to stop API
+- At solution folder run `docker-compose -f .\docker-compose.yml -f .\docker-compose.override.yml up -d` to start API for the latest build
+- If no need to build again, just run `docker-compose up -d`
+- run `docker-compose down` to stop all service
 - Open browser `https://localhost:5001/swagger`, `http://localhost:5000/swagger` for API
-- Open browser `http://localhost:3000/` for MongoDb GUI
+- Open browser `http://localhost:3000/` for MongoDb GUI or use interact with mongo shell in docker
+- More detail usage on dockerhub https://hub.docker.com/

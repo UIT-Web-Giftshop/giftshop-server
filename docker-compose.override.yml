@@ -20,11 +20,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - ASPNETCORE_URLS=https://+:443;http://+:80
       - ASPNETCORE_Kestrel__Certificates__Default__Password=local
-      - ASPNETCORE_Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ASPNETCORE_Kestrel__Certificates__Default__Path=/root/.aspnet/https/aspnetapp.pfx
       - MongoSettings:ConnectionString=mongodb://contextdb:27017/
       - MongoSettings:Database=giftshop-demo
     ports:
       - "5000:80"
       - "5001:443"
     volumes:
-      - ~/.aspnet/https:/https:ro
+      - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https
