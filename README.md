@@ -25,3 +25,4 @@
 - ![image](https://user-images.githubusercontent.com/87169853/158118838-8c6c3f0d-9f95-46a3-bc1d-8906846d9ead.png)
 
 - Enjoy docker magic with fun ^^
+- * Use SeedData endpoint for seeding some sample data 
