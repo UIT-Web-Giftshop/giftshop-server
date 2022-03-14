@@ -1,38 +1,51 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using Domain.Attributes;
+using System.Threading.Tasks;
 using Domain.Entities;
+using Infrastructure.Interfaces.Repositories;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
-using MongoDB.Driver;
 
-namespace Infrastructure.Persistence
+namespace API.Controllers
 {
-    public static class SeedData
+    [Route("api/[controller]")]
+    [ApiController]
+    public class SeedDataController : ControllerBase
     {
-        /// <summary>
-        /// Seed data to database
-        /// </summary>
-        /// <param name="database"></param>
-        public static void Seed(this IMongoDatabase database)
+        private readonly IWebHostEnvironment _env;
+        private readonly IProductRepository _productRepository;
+
+        public SeedDataController(IWebHostEnvironment env, IProductRepository productRepository)
         {
-            // check and seed some data for product collection
-            var productCollection = database.GetCollection<Product>(BsonCollection.GetCollectionName<Product>());
-            var existedData = productCollection
-                .Find(q => true).Any();
-            if (!existedData)
-            {
-                var products = InstantiateProducts();
-                productCollection.InsertMany(products);
-                var saveFlagName = BsonCollection.GetCollectionName<SaveFlag>();
-                database.GetCollection<SaveFlag>(saveFlagName)
-                    .InsertOne(new SaveFlag()
-                    {
-                        CollectionName = BsonCollection.GetCollectionName<Product>(), CurrentCount = products.Count()
-                    });
-            }
+            _env = env;
+            _productRepository = productRepository;
         }
-        
+
+        [HttpPost("products")]
+        public async Task<IActionResult> SeedProducts()
+        {
+            if (_env.IsDevelopment())
+            {
+                // add products
+                try
+                {
+                    var products = InstantiateProducts();
+                    foreach (var item in products)
+                    {
+                        await _productRepository.AddAsync(item);
+                    }
+                }
+                catch (Exception e)
+                {
+                    return BadRequest(e.Message);
+                }
+                return Ok();
+            }
+
+            return BadRequest();
+        }
         
         /// <summary>
         /// Init a list of products for seeding
