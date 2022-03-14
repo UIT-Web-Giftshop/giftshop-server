@@ -5,15 +5,7 @@ services:
   contextdb:
     image: mongo
     
-  # mongoclient
-  mongoclient:
-    image: mongoclient/mongoclient
-    depends_on:
-      - contextdb
-    ports:
-      - "3000:3000"
-    
-  
+
   # server api
   giftshop-api:
     image: giftshop-api:dev
@@ -23,4 +15,3 @@ services:
       
 volumes:
   contextdb:
-  aspnet-cert:

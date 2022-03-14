@@ -1,9 +1,8 @@
-﻿using System;
-using Domain.Attributes;
+﻿using Domain.Attributes;
 
 namespace Domain.Entities
 {
-    [BsonCollection("save-flags")]
+    [BsonCollection("saveFlags")]
     public class SaveFlag
     {
         public string CollectionName { get; set; }
