@@ -1,6 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
+using Domain.Models;
 using FluentValidation;
 using Infrastructure.Extensions;
 using Infrastructure.Interfaces.Repositories;
@@ -10,7 +11,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Images.Commands
 {
-    public class AddOneProductImageQuery : IRequest<ResponseApi<Unit>>
+    public class AddOneProductImageQuery : IRequest<ResponseApi<string>>
     {
         public string ProductId { get; set; }
         public IFormFile File { get; set; }
@@ -25,54 +26,42 @@ namespace Application.Features.Images.Commands
         }
     }
 
-    public class AddOneProductImageHandler : IRequestHandler<AddOneProductImageQuery, ResponseApi<Unit>>
+    public class AddOneProductImageHandler : IRequestHandler<AddOneProductImageQuery, ResponseApi<string>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly IAWSS3BucketService _awsS3BucketService;
+        private readonly ICloudinaryService _cloudinaryService;
 
-        public AddOneProductImageHandler(IProductRepository productRepository, IAWSS3BucketService awsS3BucketService)
+        public AddOneProductImageHandler(IProductRepository productRepository, ICloudinaryService cloudinaryService)
         {
             _productRepository = productRepository;
-            _awsS3BucketService = awsS3BucketService;
+            _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<ResponseApi<Unit>> Handle(AddOneProductImageQuery request, CancellationToken cancellationToken)
+        public async Task<ResponseApi<string>> Handle(AddOneProductImageQuery request, CancellationToken cancellationToken)
         {
             // check product is existed
             var product = await _productRepository.GetOneAsync(x => x.Id == request.ProductId, cancellationToken);
             if (product == null)
             {
-                return ResponseApi<Unit>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
+                return ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
             }
 
-            // check file is image
-            var readFile = request.File.IsImage();
-            if (!readFile.IsValid)
+            // Delete old image
+            if (product.ImageUrl is not null)
             {
-                return ResponseApi<Unit>.ResponseFail(StatusCodes.Status400BadRequest, "File is not image");
-            }
-
-            // image uid
-            var prodImageUid = product.Id + "prod";
-            
-            // upload to s3
-            var upload = await _awsS3BucketService.UploadFileAsync(
-                    readFile.Stream, 
-                     "products/" + prodImageUid,
-                    request.File.ContentType);
-
-            if (!upload)
-            {
-                return ResponseApi<Unit>.ResponseFail(StatusCodes.Status503ServiceUnavailable, "Upload file fail");
+                var split = product.ImageUrl.Split('/');
+                var publicId = split[^1].Split('.')[0];
+                await _cloudinaryService.DeleteImage(publicId);
             }
             
-            // save image uid to product imageUrl
-            var update = await _productRepository.PatchOneFieldAsync(
-                x => x.Id == product.Id,
-                x => x.ImageUrl,
-                prodImageUid,
-                cancellationToken);
-            return ResponseApi<Unit>.ResponseOk(Unit.Value, "Upload file success");
+            // put image to cloudinary
+            // don't need to check result, because if it's fail, it will throw exception
+            var putResult = await _cloudinaryService.PutImage(request.File);
+
+            var affectedProductImage = _productRepository
+                .PatchOneFieldAsync(x => x.Id == product.Id, x => x.ImageUrl, putResult.ImageUrl, cancellationToken);
+            
+            return ResponseApi<string>.ResponseOk(putResult.ImageUrl, "Add image success");
         }
     }
 }
