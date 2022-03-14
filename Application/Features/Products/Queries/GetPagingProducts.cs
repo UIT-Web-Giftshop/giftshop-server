@@ -74,16 +74,44 @@ namespace Application.Features.Products.Queries
                 request.IsSortAscending,
                 cancellationToken);
 
-            var totalCountTask = _saveFlagRepository
-                .GetOneAsync(x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), cancellationToken);
+            // check if there's not anything in collection
+            if (dataList.Count() == 0)
+            {
+                return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>()
+                {
+                    AllTotalCount = 0,
+                    ItemsCount = 0,
+                    Items = null
+                });
+            }
+
+            // Attempt to get total count of products
+            SaveFlag saveFlag;
+            try
+            {
+                saveFlag = await _saveFlagRepository
+                    .GetOneAsync(
+                        x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), 
+                        cancellationToken);
+            }
+            catch (Exception e)
+            {
+                await _saveFlagRepository.AddAsync(new SaveFlag()
+                {
+                    CollectionName = BsonCollection.GetCollectionName<Product>(),
+                    CurrentCount = dataList.Count()
+                }, cancellationToken);
+                saveFlag = await _saveFlagRepository
+                    .GetOneAsync(
+                        x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), 
+                        cancellationToken);
+            }
 
             var data = _mapper.Map<List<ProductVm>>(dataList);
 
-            Task.WaitAll(totalCountTask);
-            
             return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>
             {
-                AllTotalCount = totalCountTask.Result.CurrentCount, 
+                AllTotalCount = saveFlag.CurrentCount, 
                 ItemsCount = dataList.Count(), 
                 Items = data
             });

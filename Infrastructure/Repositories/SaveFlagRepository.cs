@@ -50,7 +50,7 @@ namespace Infrastructure.Repositories
                 await base.PatchOneFieldAsync(
                     expression,
                     x => x.CurrentCount,
-                    flagCount.CurrentCount++,
+                    flagCount.CurrentCount + 1,
                     cancellationToken);
             }
             else
