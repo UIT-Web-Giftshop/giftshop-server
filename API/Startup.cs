@@ -1,6 +1,5 @@
 using System;
 using System.Text.Json;
-using Amazon.S3;
 using API.ServicesExtension;
 using Application.Features.Products.Queries;
 using Application.Mapping;
@@ -51,8 +50,7 @@ namespace API
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
             services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
-            services.AddAWSService<IAmazonS3>();
-            
+
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
             
@@ -60,12 +58,14 @@ namespace API
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddTransient<IMailService, MailService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
             
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
+            services.Configure<MailSettings>(appSettingsSection.GetSection("MailSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
