@@ -2,7 +2,6 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 

@@ -12,7 +12,6 @@ using Domain.Attributes;
 using Domain.Entities;
 using Domain.Paging;
 using FluentValidation;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 
