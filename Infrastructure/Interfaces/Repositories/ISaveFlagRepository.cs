@@ -8,5 +8,8 @@ namespace Infrastructure.Interfaces.Repositories
     {
         Task AutoIncrementFlag<TCollection>(CancellationToken cancellationToken = default) 
             where TCollection : class;
+        
+        Task AutoDecrementFlag<TCollection>(CancellationToken cancellationToken = default) 
+            where TCollection : class;
     }
 }
