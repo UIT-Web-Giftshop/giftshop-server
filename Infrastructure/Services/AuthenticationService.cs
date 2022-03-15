@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Domain.Entities;
 using Domain.Settings;
@@ -24,7 +25,7 @@ namespace Infrastructure.Services
             _authSettings = authSettings.Value;
         }
 
-        public string Authenticate(User user)
+        public string GenerateAccessToken(User user)
         {
             var claims = new List<Claim>();
             // add claim to subject list
@@ -48,6 +49,15 @@ namespace Infrastructure.Services
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public string GenerateRefreshToken(string ipAddress)
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[64];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+
+            return null;
         }
 
         public List<Claim> ValidateToken(string token)

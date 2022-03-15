@@ -1,9 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Domain.Models;
 using FluentValidation;
-using Infrastructure.Extensions;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using MediatR;
@@ -58,6 +56,11 @@ namespace Application.Features.Images.Commands
             // don't need to check result, because if it's fail, it will throw exception
             var putResult = await _cloudinaryService.PutImage(request.File);
 
+            if (putResult is null)
+            {
+                return ResponseApi<string>.ResponseFail(StatusCodes.Status500InternalServerError, "Error in read file");
+            }
+            
             var affectedProductImage = _productRepository
                 .PatchOneFieldAsync(x => x.Id == product.Id, x => x.ImageUrl, putResult.ImageUrl, cancellationToken);
             

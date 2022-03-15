@@ -1,3 +1,4 @@
+using System;
 using System.Text.Json;
 using Amazon.S3;
 using API.ServicesExtension;
@@ -38,6 +39,12 @@ namespace API
                 .AddJsonOptions(options =>
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
+            services.AddDistributedMemoryCache();
+            services.AddSession(opts =>
+            {
+                opts.IdleTimeout = TimeSpan.FromMinutes(30);
+            });
+            
             services.AddSwaggerService();
             services.AddAuthenticationService(Configuration);
 
@@ -70,6 +77,9 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
             }
+
+            app.UseSession();
+            
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseHttpsRedirection();
