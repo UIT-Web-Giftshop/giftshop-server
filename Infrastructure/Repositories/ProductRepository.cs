@@ -1,8 +1,9 @@
-﻿using System.Threading;
+﻿using System;
+using System.Linq.Expressions;
+using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Context;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories
@@ -25,6 +26,18 @@ namespace Infrastructure.Repositories
             await _saveFlagRepository.AutoIncrementFlag<Product>(cancellationToken);
 
             return addedProduct;
+        }
+
+        public override async Task<bool> DeleteOneAsync(Expression<Func<Product, bool>> expression, CancellationToken cancellationToken = default)
+        {
+            var deletedProduct = await base.DeleteOneAsync(expression, cancellationToken);
+            if (!deletedProduct)
+                return false;
+            
+            // decrement total products count
+            await _saveFlagRepository.AutoDecrementFlag<Product>(cancellationToken);
+
+            return true;
         }
     }
 }

@@ -7,9 +7,9 @@ using Xunit;
 
 namespace Web.Tests
 {
-    public class MockIConfigurationService : Mock<IConfiguration>
+    internal class MockIConfigurationMongo : Mock<IConfiguration>
     {
-        public MockIConfigurationService MockSettings()
+        public MockIConfigurationMongo MockSettings()
         {
             SetupGet(x => x[It.Is<string>(s => s == "MongoSettings:ConnectionString")])
                 .Returns("mongodb://contextdb:27017");
@@ -36,7 +36,7 @@ namespace Web.Tests
         public void MongoContext_GetCollection()
         {
             // arrange
-            var mockConfigure = new MockIConfigurationService().MockSettings();
+            var mockConfigure = new MockIConfigurationMongo().MockSettings();
 
             _mockClient
                 .Setup(x => x.GetDatabase(mockConfigure.Object["MongoSettings:Database"], null))

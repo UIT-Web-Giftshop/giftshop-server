@@ -7,7 +7,6 @@ using Application.Features.Products.Vms;
 using AutoMapper;
 using Domain.Entities;
 using FluentValidation;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 
