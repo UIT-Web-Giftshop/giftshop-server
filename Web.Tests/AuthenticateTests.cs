@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using Domain.Entities;
+using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Services;
 using Microsoft.Extensions.Logging;
@@ -40,7 +41,7 @@ namespace Web.Tests
 
         [Fact]
         [Trait("Category", "Authentication")]
-        public void Authenticate_GivenUser_ReturnTokenString()
+        public void GenerateAccessToken_GivenUser_ReturnTokenString()
         {
             // arrange
 
@@ -75,15 +76,33 @@ namespace Web.Tests
         public void ValidateToken_GivenExpireToken_ReturnInvalidClaim()
         {
             // arrange
-            var token = _authService.GenerateAccessToken(_user);
 
             // act
+            var token = _authService.GenerateAccessToken(_user);
             var claim = _authService.ValidateToken(token);
             var exp = claim.Find(q => q.Type == "exp")?.Value;
             var nowStamp = new DateTimeOffset(DateTime.UtcNow.AddMinutes(10)).ToUnixTimeSeconds();
 
             // assert
             Assert.False(long.Parse(exp) > nowStamp);
+        }
+
+        [Fact] 
+        [Trait("Category", "Authentication")]
+        public void GenerateRefreshToken_GivenUser_ReturnTokenString()
+        {
+            // arrange
+            var ip = "127.0.0.1";
+
+            // act
+            var token = _authService.GenerateRefreshToken(ip);
+
+            // assert
+            Assert.IsType<RefreshTokenModel>(token);
+            Assert.IsType<DateTime>(token.ExpiredAt);
+            Assert.True(DateTime.UtcNow.AddDays(7) > token.ExpiredAt);
+            Assert.NotNull(token.Token);
+            Assert.Equal(ip, token.IpAddress);
         }
     }
 }

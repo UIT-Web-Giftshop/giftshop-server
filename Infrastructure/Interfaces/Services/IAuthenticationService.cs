@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using Domain.Entities;
+using Domain.Models;
 
 namespace Infrastructure.Interfaces.Services
 {
@@ -17,7 +18,7 @@ namespace Infrastructure.Interfaces.Services
         /// Generate a refresh token for user which is valid for 7 days
         /// </summary>
         /// <returns></returns>
-        string GenerateRefreshToken(string ipAddress);
+        RefreshTokenModel GenerateRefreshToken(string ipAddress);
         
         /// <summary>
         /// Parse access token and return claims list

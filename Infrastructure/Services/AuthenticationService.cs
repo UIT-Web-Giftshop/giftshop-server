@@ -6,11 +6,13 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Domain.Entities;
+using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 
 namespace Infrastructure.Services
 {
@@ -51,13 +53,20 @@ namespace Infrastructure.Services
             return tokenHandler.WriteToken(token);
         }
 
-        public string GenerateRefreshToken(string ipAddress)
+        public RefreshTokenModel GenerateRefreshToken(string ipAddress)
         {
             using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
             var randomBytes = new byte[64];
             rngCryptoServiceProvider.GetBytes(randomBytes);
 
-            return null;
+            var refreshToken = new RefreshTokenModel()
+            {
+                IpAddress = ipAddress,
+                Token = Convert.ToBase64String(randomBytes),
+                ExpiredAt = DateTime.UtcNow.AddDays(7)
+            };
+            
+            return refreshToken;
         }
 
         public List<Claim> ValidateToken(string token)
