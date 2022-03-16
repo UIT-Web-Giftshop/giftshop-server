@@ -12,7 +12,7 @@ namespace Web.Tests
         public MockIConfigurationService MockSettings()
         {
             SetupGet(x => x[It.Is<string>(s => s == "MongoSettings:ConnectionString")])
-                .Returns("mongodb://localhost:27017");
+                .Returns("mongodb://contextdb:27017");
             SetupGet(x => x[It.Is<string>(s => s == "MongoSettings:Database")])
                 .Returns("giftshop-demo");
             return this;

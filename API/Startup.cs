@@ -15,6 +15,7 @@ using Infrastructure.Services;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -37,6 +38,7 @@ namespace API
                 options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddSwaggerService();
+            services.AddAuthenticationService(Configuration);
 
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
@@ -53,8 +55,11 @@ namespace API
             services.AddScoped<IUserRepository, UserRepository>();
             services.AddScoped<IOrderRepository, OrderRepository>();
 
+            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<AWSS3Settings>(appSettingsSection.GetSection("AWSS3Settings"));
+            services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -74,6 +79,8 @@ namespace API
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }

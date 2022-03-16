@@ -49,7 +49,7 @@ namespace Application.Features.Images.Commands
             var readFile = request.File.IsImage();
             if (!readFile.IsValid)
             {
-                return ResponseApi<Unit>.ResponseFail("File is not image");
+                return ResponseApi<Unit>.ResponseFail(StatusCodes.Status400BadRequest, "File is not image");
             }
 
             // image uid
@@ -63,7 +63,7 @@ namespace Application.Features.Images.Commands
 
             if (!upload)
             {
-                return ResponseApi<Unit>.ResponseFail("Upload file fail");
+                return ResponseApi<Unit>.ResponseFail(StatusCodes.Status503ServiceUnavailable, "Upload file fail");
             }
             
             // save image uid to product imageUrl
