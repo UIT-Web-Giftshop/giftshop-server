@@ -2,6 +2,7 @@ using System.Text.Json;
 using Amazon.S3;
 using API.ServicesExtension;
 using Application.Features.Products.Queries;
+using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Mapping;
 using Application.Middlewares;
 using Application.PipelineBehaviors;
@@ -42,7 +43,7 @@ namespace API
 
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
+            services.AddValidatorsFromAssembly(typeof(GetPagingProductsQueryValidator).Assembly);
             services.AddAWSService<IAmazonS3>();
             
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));

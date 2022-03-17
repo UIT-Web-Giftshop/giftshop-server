@@ -5,8 +5,8 @@ using MediatR;
 
 namespace Application.Features.Orders.Queries.GetOneOrderById
 {
-    public class GetOneOrderByIdQuery : GetOneObjectQuery, IRequest<ResponseApi<OrderVm>>
+    public class GetOneOrderByIdQuery : GetOneObjectByIdQuery, IRequest<ResponseApi<OrderVm>>
     {
-        public string Id { get; set; }
+
     }
 }

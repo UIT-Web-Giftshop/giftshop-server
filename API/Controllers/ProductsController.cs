@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands;
-using Application.Features.Products.Queries;
+using Application.Features.Products.Queries.GetOneProductById;
+using Application.Features.Products.Queries.GetOneProductBySku;
+using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Features.Products.Vms;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -22,29 +24,22 @@ namespace API.Controllers
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetOneProductById(string id)
         {
-            var result = await _mediator
-                .Send(new GetOneProductByIdQuery() { Id = id });
-            
+            var result = await this._mediator.Send(new GetOneProductByIdQuery() { Id = id });
             return HandleResponseStatus(result);
         }
         
         [HttpGet("sku/{sku}")]
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
-            var result = await _mediator
-                .Send(new GetOneProductBySkuQuery() { Sku = sku });
-            
+            var result = await this._mediator.Send(new GetOneProductBySkuQuery() { Sku = sku });
             return HandleResponseStatus(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPagingProducts(
-            [FromQuery] GetPagingProductsQuery query,
+        public async Task<IActionResult> GetPagingProducts([FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator
-                .Send(query, cancellationToken);
-            
+            var result = await this._mediator.Send(query, cancellationToken);
             return HandleResponseStatus(result);
         }
 

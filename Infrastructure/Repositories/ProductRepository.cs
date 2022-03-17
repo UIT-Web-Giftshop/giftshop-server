@@ -2,7 +2,6 @@
 using System.Threading.Tasks;
 using Domain.Entities;
 using Infrastructure.Context;
-using Infrastructure.Interfaces;
 using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories

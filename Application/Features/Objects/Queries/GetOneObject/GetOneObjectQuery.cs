@@ -1,8 +1,6 @@
-﻿using Domain.Entities;
-
-namespace Application.Features.Objects.Queries.GetOneObject
+﻿namespace Application.Features.Objects.Queries.GetOneObject
 {
-    public class GetOneObjectQuery
+    public abstract class GetOneObjectQuery : Query
     {
 
     }

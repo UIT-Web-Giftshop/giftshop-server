@@ -32,8 +32,13 @@ namespace API.Controllers
 
         [HttpGet("product/{key}")]
         public async Task<IActionResult> GetOneProductImage(string key, CancellationToken cancellationToken)
+        //public async Task<IActionResult> GetOneProductImage(
+        //    string key, 
+        //    CancellationToken cancellationToken)
         {
-            var result = await this._mediator.Send(new GetOneProductImageQuery() { Key = key }, 
+            //var result = await this.mediator
+            //    .Send(new GetOneProductImageQuery(){Key = key}, cancellationToken);
+            var result = await this._mediator.Send(new GetOneProductImageQuery() { Key = key },
                 cancellationToken);
             return File(result.Data, "image/jpeg");
         }

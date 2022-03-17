@@ -3,15 +3,12 @@ using Infrastructure.Interfaces.Repositories;
 
 namespace Application.Features.Objects.Queries.GetOneObject
 {
-    public abstract class GetOneObjectHandler<T> where T : class
+    public abstract class GetOneObjectHandler<T> : Handler<T> where T : class
     {
-        protected readonly IBaseRepository<T> _baseRepository;
-        protected readonly IMapper _mapper;
-
-        public GetOneObjectHandler(IBaseRepository<T> _baseRepository, IMapper _mapper)
+        public GetOneObjectHandler(IBaseRepository<T> _baseRepository, IMapper _mapper) : 
+            base(_baseRepository, _mapper)
         {
-            this._baseRepository = _baseRepository;
-            this._mapper = _mapper;
+
         }
     }
 }

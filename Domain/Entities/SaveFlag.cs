@@ -1,5 +1,4 @@
-﻿using System;
-using Domain.Attributes;
+﻿using Domain.Attributes;
 
 namespace Domain.Entities
 {
@@ -7,6 +6,7 @@ namespace Domain.Entities
     public class SaveFlag
     {
         public string CollectionName { get; set; }
+
         public long CurrentCount { get; set; } 
     }
 }

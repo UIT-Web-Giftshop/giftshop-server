@@ -5,11 +5,11 @@ using System.Threading.Tasks;
 using Application.Commons;
 using Application.Features.Objects.Queries.GetOneObject;
 using Application.Features.Orders.Vms;
-using Application.Features.Users.Queries.GetOneUserById;
 using AutoMapper;
 using Domain.Entities.Order;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 
 namespace Application.Features.Orders.Queries.GetOneOrderById
 {
@@ -27,6 +27,13 @@ namespace Application.Features.Orders.Queries.GetOneOrderById
         {
             Expression<Func<Order, bool>> expression = p => p.Id == request.Id;
             var order = await this._baseRepository.GetOneAsync(expression, cancellationToken);
+
+            if (order == null)
+            {
+                return ResponseApi<OrderVm>.ResponseFail(StatusCodes.Status400BadRequest,
+                    ResponseConstants.ERROR_NOT_FOUND_ITEM);
+            }
+
             var data = this._mapper.Map<OrderVm>(order);
             return ResponseApi<OrderVm>.ResponseOk(data);
         }

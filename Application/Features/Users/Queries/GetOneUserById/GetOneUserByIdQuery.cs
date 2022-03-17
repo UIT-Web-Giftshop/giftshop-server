@@ -5,8 +5,8 @@ using MediatR;
 
 namespace Application.Features.Users.Queries.GetOneUserById
 {
-    public class GetOneUserByIdQuery : GetOneObjectQuery, IRequest<ResponseApi<UserVm>>
+    public class GetOneUserByIdQuery : GetOneObjectByIdQuery, IRequest<ResponseApi<UserVm>>
     {
-        public string Id { get; set; }
+
     }
 }
