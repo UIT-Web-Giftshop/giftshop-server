@@ -4,12 +4,13 @@ using System.Threading.Tasks;
 using Application.Features.Users.Queries.GetOneUserByEmail;
 using Application.Features.Users.Queries.GetOneUserById;
 using Application.Features.Users.Queries.GetPagingUsers;
+using Application.Features.Users.Vms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class UsersController : BaseApiController
+    public class UsersController : ObjectsController<UserVm>
     {
         public UsersController(IMediator _mediator) : base(_mediator)
         {

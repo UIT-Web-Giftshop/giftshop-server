@@ -1,14 +1,11 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
 using Application.Features.Objects.Vms;
-using FluentValidation;
 
 namespace Application.Features.Products.Vms
 {
     public class ProductVm : ObjectVm
     {
-        public string Id { get; set; }
-
         public string Sku { get; set; }
 
         public string Name { get; set; }

@@ -20,11 +20,5 @@ namespace Application.Features.Users.Vms
         public string Address { get; set; }
 
         public bool IsActive { get; set; }
-
-        public DateTime LastLogin { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
     }
 }

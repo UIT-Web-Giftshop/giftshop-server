@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using Application.Features.Objects.Vms;
 using Domain.Entities.Order;
 
@@ -18,9 +17,5 @@ namespace Application.Features.Orders.Vms
         public bool IsPaid { get; set; }
 
         public OrderStatus Status { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime SuccessAt { get; set; }
     }
 }

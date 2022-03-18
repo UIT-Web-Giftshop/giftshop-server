@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Features.Objects.Commands.AddOneObject;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
@@ -14,7 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [AllowAnonymous]
-    public class ProductsController : BaseApiController
+    public class ProductsController : ObjectsController<ProductVm>
     {
         public ProductsController(IMediator _mediator) : base(_mediator)
         {
@@ -40,15 +41,6 @@ namespace API.Controllers
             CancellationToken cancellationToken = default)
         {
             var result = await this._mediator.Send(query, cancellationToken);
-            return HandleResponseStatus(result);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddOneProduct([FromBody] ProductVm addProductVm)
-        {
-            var result = await _mediator
-                .Send(new AddOneProductCommand() { Product = addProductVm });
-            
             return HandleResponseStatus(result);
         }
         

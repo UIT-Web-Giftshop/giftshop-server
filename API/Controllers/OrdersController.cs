@@ -3,12 +3,13 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Orders.Queries.GetOneOrderById;
 using Application.Features.Orders.Queries.GetPagingOrders;
+using Application.Features.Orders.Vms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class OrdersController : BaseApiController
+    public class OrdersController : ObjectsController<OrderVm>
     {
         public OrdersController(IMediator _mediator) : base(_mediator)
         {

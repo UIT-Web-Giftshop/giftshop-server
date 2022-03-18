@@ -14,9 +14,6 @@ namespace Application.Features.Users.Vms
             RuleFor(x => x.LastName).NotNull();
             RuleFor(x => x.IsActive).NotNull();
             RuleFor(x => x.DateOfBirth).LessThan(DateTime.Now);
-            RuleFor(x => x.LastLogin).LessThan(DateTime.Now);
-            RuleFor(x => x.CreatedAt).LessThan(DateTime.Now);
-            RuleFor(x => x.UpdatedAt).LessThan(DateTime.Now);
         }
     }
 }

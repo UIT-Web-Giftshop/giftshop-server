@@ -1,7 +1,7 @@
 ﻿using AutoMapper;
 using Infrastructure.Interfaces.Repositories;
 
-namespace Application.Features.Objects.Queries
+namespace Application.Features.Objects
 {
     public abstract class Handler<T> where T : class
     {
