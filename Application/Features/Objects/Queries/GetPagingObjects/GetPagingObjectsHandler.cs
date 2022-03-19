@@ -5,7 +5,6 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Application.Features.Products.Queries.GetPagingProducts;
 using AutoMapper;
 using Domain.Attributes;
 using Domain.Entities;
@@ -61,7 +60,7 @@ namespace Application.Features.Objects.Queries.GetPagingObjects
             catch (Exception)
             {
                 await this._saveFlagRepository.AddAsync(new SaveFlag() {
-                    CollectionName = BsonCollection.GetCollectionName<V>(), 
+                    CollectionName = BsonCollection.GetCollectionName<T>(), 
                     CurrentCount = dataList.Count() }, cancellationToken);
 
                 saveFlag = await this._saveFlagRepository.GetOneAsync(

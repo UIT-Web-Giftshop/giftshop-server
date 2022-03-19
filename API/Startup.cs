@@ -57,6 +57,8 @@ namespace API
             services.AddScoped<IMongoContext, MongoContext>();
             services.AddScoped<IProductRepository, ProductRepository>();
             services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IOrderRepository, OrderRepository>();
             services.AddScoped<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();
 

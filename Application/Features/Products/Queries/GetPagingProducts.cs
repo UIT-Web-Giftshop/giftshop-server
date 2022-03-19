@@ -64,6 +64,8 @@ namespace Application.Features.Products.Queries
             Expression<Func<Product, bool>> expression = string.IsNullOrWhiteSpace(request.Search)
                 ? null
                 : p => p.Name.Contains(request.Search);
+            
+            //todo: default sort by price, extract more sort option later
             Expression<Func<Product, object>> sortExpr = q => q.Price;
 
             var dataList = await _productRepository.GetPagingAsync(
@@ -93,7 +95,7 @@ namespace Application.Features.Products.Queries
                         x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), 
                         cancellationToken);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 await _saveFlagRepository.AddAsync(new SaveFlag()
                 {

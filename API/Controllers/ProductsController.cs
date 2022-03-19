@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Objects.Commands.AddOneObject;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
@@ -37,7 +36,8 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPagingProducts([FromQuery] GetPagingProductsQuery query,
+        public async Task<IActionResult> GetPagingProducts(
+            [FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
             var result = await this._mediator.Send(query, cancellationToken);

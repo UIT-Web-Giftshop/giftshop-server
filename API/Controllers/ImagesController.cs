@@ -1,7 +1,6 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Images.Commands;
-using Application.Features.Images.Queries;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -28,19 +27,6 @@ namespace API.Controllers
             var request = new AddOneProductImageQuery() { ProductId = productId, File = file };
             var result = await _mediator.Send(request, cancellationToken);
             return HandleResponseStatus(result);
-        }
-
-        [HttpGet("product/{key}")]
-        public async Task<IActionResult> GetOneProductImage(string key, CancellationToken cancellationToken)
-        //public async Task<IActionResult> GetOneProductImage(
-        //    string key, 
-        //    CancellationToken cancellationToken)
-        {
-            //var result = await this.mediator
-            //    .Send(new GetOneProductImageQuery(){Key = key}, cancellationToken);
-            var result = await this._mediator.Send(new GetOneProductImageQuery() { Key = key },
-                cancellationToken);
-            return File(result.Data, "image/jpeg");
         }
     }
 }

@@ -25,7 +25,7 @@ namespace API.Controllers
                 await _mailService.SendAsync(request);
                 return Ok();
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 return BadRequest();
             }
