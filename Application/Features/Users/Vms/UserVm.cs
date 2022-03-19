@@ -1,10 +1,9 @@
 ﻿using System;
-using Domain.Attributes;
+using Application.Features.Objects.Vms;
 
-namespace Domain.Entities
+namespace Application.Features.Users.Vms
 {
-    [BsonCollection("users")]
-    public class User : IdentifiableObject
+    public class UserVm : ObjectVm
     {
         public string Email { get; set; }
 
@@ -21,16 +20,5 @@ namespace Domain.Entities
         public string Address { get; set; }
 
         public bool IsActive { get; set; }
-
-        public DateTime LastLogin { get; set; }
-
-        public DateTime CreatedAt { get; set; }
-
-        public DateTime UpdatedAt { get; set; }
-
-        public string GetFullName()
-        {
-            return this.FirstName + " " + this.LastName;
-        }
     }
 }

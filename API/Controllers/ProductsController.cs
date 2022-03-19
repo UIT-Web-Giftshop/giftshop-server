@@ -2,8 +2,11 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Features.Objects.Commands.AddOneObject;
 using Application.Features.Products.Commands;
-using Application.Features.Products.Queries;
+using Application.Features.Products.Queries.GetOneProductById;
+using Application.Features.Products.Queries.GetOneProductBySku;
+using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Features.Products.Vms;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -12,50 +15,32 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [AllowAnonymous]
-    public class ProductsController : BaseApiController
+    public class ProductsController : ObjectsController<ProductVm>
     {
-        private readonly IMediator _mediator;
-
-        public ProductsController(IMediator mediator)
+        public ProductsController(IMediator _mediator) : base(_mediator)
         {
-            _mediator = mediator;
+
         }
 
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetOneProductById(string id)
         {
-            var result = await _mediator
-                .Send(new GetOneProductByIdQuery() { Id = id });
-            
+            var result = await this._mediator.Send(new GetOneProductByIdQuery() { Id = id });
             return HandleResponseStatus(result);
         }
         
         [HttpGet("sku/{sku}")]
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
-            var result = await _mediator
-                .Send(new GetOneProductBySkuQuery() { Sku = sku });
-            
+            var result = await this._mediator.Send(new GetOneProductBySkuQuery() { Sku = sku });
             return HandleResponseStatus(result);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPagingProducts(
-            [FromQuery] GetPagingProductsQuery query,
+        public async Task<IActionResult> GetPagingProducts([FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
-            var result = await _mediator
-                .Send(query, cancellationToken);
-            
-            return HandleResponseStatus(result);
-        }
-
-        [HttpPost]
-        public async Task<IActionResult> AddOneProduct([FromBody] ProductVm addProductVm)
-        {
-            var result = await _mediator
-                .Send(new AddOneProductCommand() { Product = addProductVm });
-            
+            var result = await this._mediator.Send(query, cancellationToken);
             return HandleResponseStatus(result);
         }
         

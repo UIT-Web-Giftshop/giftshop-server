@@ -6,6 +6,7 @@ namespace Domain.Entities
     public class SaveFlag
     {
         public string CollectionName { get; set; }
+
         public long CurrentCount { get; set; } 
     }
 }

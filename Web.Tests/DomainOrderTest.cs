@@ -1,4 +1,4 @@
-﻿using Domain.Entities;
+﻿using Domain.Entities.Order;
 using Xunit;
 
 namespace Web.Tests
