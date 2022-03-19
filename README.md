@@ -20,4 +20,4 @@
 - Mongoshell docs https://docs.mongodb.com/manual/reference/mongo-shell/
 
 - Enjoy docker magic with fun ^^
-- *Use SeedData endpoint for seeding some sample data
+- *Use SeedData endpoint for seeding some sample data*
