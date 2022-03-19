@@ -32,5 +32,10 @@ namespace Domain.Entities
         {
             return this.FirstName + " " + this.LastName;
         }
+
+        public override void Update()
+        {
+            this.UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

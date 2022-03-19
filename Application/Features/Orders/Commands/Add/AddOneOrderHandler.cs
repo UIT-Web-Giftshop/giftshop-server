@@ -1,10 +1,10 @@
-﻿using Application.Features.Objects.Commands.AddOneObject;
+﻿using Application.Features.Objects.Commands.Add;
 using Application.Features.Orders.Vms;
 using AutoMapper;
 using Domain.Entities.Order;
 using Infrastructure.Interfaces.Repositories;
 
-namespace Application.Features.Orders.Commands
+namespace Application.Features.Orders.Commands.Add
 {
     public class AddOneOrderHandler : AddOneObjectHandler<Order, OrderVm>
     {

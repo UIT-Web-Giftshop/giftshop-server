@@ -27,6 +27,11 @@ namespace Domain.Entities
 
         public DateTime CreatedAt { get; set; }
 
-        public DateTime UpdateAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public override void Update()
+        {
+            this.UpdatedAt = DateTime.UtcNow;
+        }
     }
 }

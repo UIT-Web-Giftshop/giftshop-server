@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Objects.Commands.AddOneObject;
 using Application.Features.Products.Commands;
+using Application.Features.Products.Commands.Update.UpdateOneFiledOfProduct.UpdatePriceOfProduct;
+using Application.Features.Products.Commands.Update.UpdateOneFiledOfProduct.UpdateStockOfProduct;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
@@ -43,34 +44,23 @@ namespace API.Controllers
             var result = await this._mediator.Send(query, cancellationToken);
             return HandleResponseStatus(result);
         }
-        
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOneProductInfo(string id, [FromBody] ProductVm productVm)
-        {
-            var result = await _mediator
-                .Send(new UpdateOneProductInfoCommand() { Id = id, Product = productVm });
-            
-            return HandleResponseStatus(result);
-        }
-        
+
         [HttpPatch("{id}/quantity/{stock:int}")]
-        public async Task<IActionResult> UpdateOneProductStock(string id, uint stock)
+        public async Task<IActionResult> UpdateStockOfProduct(string id, uint stock)
         {
-            var result = await _mediator
-                .Send(new UpdateOneProductStockCommand() { Id = id, Stock = stock });
-            
+            var result = await this._mediator.Send(new UpdateStockOfProductCommand() { Id = id, 
+                Stock = stock });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpPatch("{id}/price/{price:double}")]
-        public async Task<IActionResult> UpdateOneProductPrice(string id, double price)
+        public async Task<IActionResult> UpdatePriceOfProduct(string id, double price)
         {
-            var result = await _mediator
-                .Send(new UpdateOneProductPriceCommand() { Id = id, Price = price });
-            
+            var result = await this._mediator.Send(new UpdatePriceOfProductCommand() { Id = id, 
+                Price = price });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteOneProduct(string id)
         {

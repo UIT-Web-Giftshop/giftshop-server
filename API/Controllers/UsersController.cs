@@ -1,6 +1,7 @@
 #nullable enable
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Features.Users.Commands.Update.UpdateOneFiledOfUser.UpdatePasswordOfUser;
 using Application.Features.Users.Queries.GetOneUserByEmail;
 using Application.Features.Users.Queries.GetOneUserById;
 using Application.Features.Users.Queries.GetPagingUsers;
@@ -36,6 +37,14 @@ namespace API.Controllers
             CancellationToken cancellationToken = default)
         {
             var result = await this._mediator.Send(query, cancellationToken);
+            return HandleResponseStatus(result);
+        }
+        
+        [HttpPatch("{id}/password/{password}")]
+        public async Task<IActionResult> UpdatePasswordOfUser(string id, string password)
+        {
+            var result = await this._mediator.Send(new UpdatePasswordOfUserCommand() { Id = id, Password 
+                = password });
             return HandleResponseStatus(result);
         }
     }
