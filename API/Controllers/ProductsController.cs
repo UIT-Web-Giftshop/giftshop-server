@@ -9,6 +9,7 @@ using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Features.Products.Vms;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -16,7 +17,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [AllowAnonymous]
-    public class ProductsController : ObjectsController<ProductVm>
+    public class ProductsController : ObjectsController<ProductVm, Product>
     {
         public ProductsController(IMediator _mediator) : base(_mediator)
         {
@@ -58,22 +59,6 @@ namespace API.Controllers
         {
             var result = await this._mediator.Send(new UpdatePriceOfProductCommand() { Id = id, 
                 Price = price });
-            return HandleResponseStatus(result);
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOneProduct(string id)
-        {
-            var result = await _mediator
-                .Send(new DeleteOneProductCommand() { Id = id });
-            return HandleResponseStatus(result);
-        }
-        
-        [HttpDelete("list")]
-        public async Task<IActionResult> DeleteManyProducts([FromBody] List<string> ids)
-        {
-            var result = await _mediator
-                .Send(new DeleteListProductsCommand(){Ids = ids});
             return HandleResponseStatus(result);
         }
     }

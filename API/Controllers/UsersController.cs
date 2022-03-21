@@ -6,12 +6,13 @@ using Application.Features.Users.Queries.GetOneUserByEmail;
 using Application.Features.Users.Queries.GetOneUserById;
 using Application.Features.Users.Queries.GetPagingUsers;
 using Application.Features.Users.Vms;
+using Domain.Entities;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class UsersController : ObjectsController<UserVm>
+    public class UsersController : ObjectsController<UserVm, User>
     {
         public UsersController(IMediator _mediator) : base(_mediator)
         {
