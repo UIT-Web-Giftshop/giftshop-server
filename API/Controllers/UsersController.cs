@@ -1,4 +1,5 @@
 #nullable enable
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Users.Commands.Update.UpdateOneFiledOfUser.UpdatePasswordOfUser;
@@ -47,6 +48,31 @@ namespace API.Controllers
             var result = await this._mediator.Send(new UpdatePasswordOfUserCommand() { Id = id, Password 
                 = password });
             return HandleResponseStatus(result);
+        }
+
+        [HttpPost]
+        public override async Task<IActionResult> AddOneObject([FromBody] UserVm addedUserVm)
+        {
+            return await base.AddOneObject(addedUserVm);
+        }
+
+        [HttpPut("{id}")]
+        public override async Task<IActionResult> UpdateOneObjectInfo(string id,
+            [FromBody] UserVm updatedUserVm)
+        {
+            return await base.UpdateOneObjectInfo(id, updatedUserVm);
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteOneObject(string id)
+        {
+            return await base.DeleteOneObject(id);
+        }
+
+        [HttpDelete("list")]
+        public override async Task<IActionResult> DeleteListObjects([FromBody] List<string> ids)
+        {
+            return await base.DeleteListObjects(ids);
         }
     }
 }

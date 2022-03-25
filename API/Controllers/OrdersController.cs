@@ -31,5 +31,30 @@ namespace API.Controllers
             var result = await this._mediator.Send(query, cancellationToken);
             return HandleResponseStatus(result);
         }
+
+        [HttpPost]
+        public override async Task<IActionResult> AddOneObject([FromBody] OrderVm addedOrderVm)
+        {
+            return await base.AddOneObject(addedOrderVm);
+        }
+
+        [HttpPut("{id}")]
+        public override async Task<IActionResult> UpdateOneObjectInfo(string id,
+            [FromBody] OrderVm updatedOrderVm)
+        {
+            return await base.UpdateOneObjectInfo(id, updatedOrderVm);
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteOneObject(string id)
+        {
+            return await base.DeleteOneObject(id);
+        }
+
+        [HttpDelete("list")]
+        public override async Task<IActionResult> DeleteListObjects([FromBody] List<string> ids)
+        {
+            return await base.DeleteListObjects(ids);
+        }
     }
 }

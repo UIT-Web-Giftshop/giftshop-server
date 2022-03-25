@@ -20,14 +20,14 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddOneObject([FromBody] T addedObjectVm)
+        public virtual async Task<IActionResult> AddOneObject([FromBody] T addedObjectVm)
         {
             var result = await this._mediator.Send(new AddOneObjectCommand<T>() { Data = addedObjectVm });
             return HandleResponseStatus(result);
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOneObjectInfo(string id, [FromBody] T updatedObjectVm)
+        public virtual async Task<IActionResult> UpdateOneObjectInfo(string id, [FromBody] T updatedObjectVm)
         {
             var result = await this._mediator.Send(new UpdateOneObjectCommand<T>() { Id = id, 
                 Data = updatedObjectVm });
@@ -35,14 +35,14 @@ namespace API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOneObject(string id)
+        public virtual async Task<IActionResult> DeleteOneObject(string id)
         {
             var result = await this._mediator.Send(new DeleteOneObjectCommand<V>() { Id = id });
             return HandleResponseStatus(result);
         }
 
         [HttpDelete("list")]
-        public async Task<IActionResult> DeleteListObjects([FromBody] List<string> ids)
+        public virtual async Task<IActionResult> DeleteListObjects([FromBody] List<string> ids)
         {
             var result = await this._mediator.Send(new DeleteListObjectsCommand<V>() { Ids = ids });
             return HandleResponseStatus(result);

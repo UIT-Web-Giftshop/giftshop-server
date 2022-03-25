@@ -61,5 +61,30 @@ namespace API.Controllers
                 Price = price });
             return HandleResponseStatus(result);
         }
+
+        [HttpPost]
+        public override async Task<IActionResult> AddOneObject([FromBody] ProductVm addedProductVm)
+        {
+            return await base.AddOneObject(addedProductVm);
+        }
+
+        [HttpPut("{id}")]
+        public override async Task<IActionResult> UpdateOneObjectInfo(string id, 
+            [FromBody] ProductVm updatedProductVm)
+        {
+            return await base.UpdateOneObjectInfo(id, updatedProductVm);
+        }
+
+        [HttpDelete("{id}")]
+        public override async Task<IActionResult> DeleteOneObject(string id)
+        {
+            return await base.DeleteOneObject(id);
+        }
+
+        [HttpDelete("list")]
+        public override async Task<IActionResult> DeleteListObjects([FromBody] List<string> ids)
+        {
+            return await base.DeleteListObjects(ids);
+        }
     }
 }
