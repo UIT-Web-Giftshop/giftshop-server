@@ -55,11 +55,11 @@ namespace API
             services.AddTransient<ExceptionHandlingMiddleware>();
             
             services.AddScoped<IMongoContext, MongoContext>();
-            services.AddScoped<IProductRepository, ProductRepository>();
-            services.AddScoped<ISaveFlagRepository, SaveFlagRepository>();
-            services.AddScoped<IUserRepository, UserRepository>();
-            services.AddScoped<IOrderRepository, OrderRepository>();
-            services.AddScoped<ICloudinaryService, CloudinaryService>();
+            services.AddTransient<IProductRepository, ProductRepository>();
+            services.AddTransient<ISaveFlagRepository, SaveFlagRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
