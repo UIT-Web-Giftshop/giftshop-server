@@ -29,9 +29,9 @@ namespace Infrastructure.Services
 
         public string GenerateAccessToken(User user)
         {
-            var claims = new List<Claim>();
-            // add claim to subject list
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            var claims = new List<Claim> {
+                new Claim(ClaimTypes.NameIdentifier, user.Id) 
+            };
             //todo add roles
 
             // credentials
