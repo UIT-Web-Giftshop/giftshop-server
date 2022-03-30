@@ -34,6 +34,7 @@ namespace Application.Features.Auths.SignupUser
 
             var user = _mapper.Map<User>(request);
             user.Password = new PasswordHasher<User>().HashPassword(user, request.Password);
+            user.IsActive = true;   // TODO: need to verify email
             user.CreatedAt = DateTime.UtcNow;
             
             try
@@ -43,7 +44,7 @@ namespace Application.Features.Auths.SignupUser
             }
             catch (Exception)
             {
-                throw new Exception();
+                throw new Exception("Server error");
             }
         }
     }

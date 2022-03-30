@@ -23,11 +23,13 @@ namespace Application.Features.Auths.SigninUser
         public async Task<ResponseApi<SignInResponseModel>> Handle(SignInUserCommand request, CancellationToken cancellationToken)
         {
             var existedUser = await _userRepository.GetOneAsync(q => q.Email == request.Email, cancellationToken);
+            // check account is existed
             if (existedUser is null)
             {
                 return ResponseApi<SignInResponseModel>.ResponseFail("Email or password is incorrect");
             }
-
+            
+            // validate password
             var validatePassword =
                 new PasswordHasher<User>().VerifyHashedPassword(existedUser, existedUser.Password, request.Password);
             if (validatePassword == PasswordVerificationResult.Failed)
@@ -35,8 +37,10 @@ namespace Application.Features.Auths.SigninUser
                 return ResponseApi<SignInResponseModel>.ResponseFail("Email or password is incorrect");
             }
 
+            // generate token
             var accessToken = _authenticationService.GenerateAccessToken(existedUser);
             var returnModel = new SignInResponseModel() { AccessToken = accessToken };
+            
             return ResponseApi<SignInResponseModel>.ResponseOk(returnModel);
         }
     }
