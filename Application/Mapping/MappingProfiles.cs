@@ -15,7 +15,7 @@ namespace Application.Mapping
             CreateMap<Product, ProductVm>().ReverseMap();
             CreateMap<User, UserVm>().ReverseMap();
             CreateMap<Order, OrderVm>().ReverseMap();
-            CreateMap<SignupUserCommand, User>().ReverseMap();
+            CreateMap<SignUpUserCommand, User>().ReverseMap();
         }
     }
 }

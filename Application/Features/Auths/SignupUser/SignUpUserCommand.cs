@@ -5,7 +5,7 @@ using MediatR;
 
 namespace Application.Features.Auths.SignupUser
 {
-    public class SignupUserCommand : IRequest<ResponseApi<Unit>>
+    public class SignUpUserCommand : IRequest<ResponseApi<Unit>>
     {
         public string Email { get; set; }
         public string Password { get; set; }
@@ -15,9 +15,9 @@ namespace Application.Features.Auths.SignupUser
         public DateTime DateOfBirth { get; set; }
     }
 
-    public class SignupUserCommandValidator : AbstractValidator<SignupUserCommand>
+    public class SignUpUserCommandValidator : AbstractValidator<SignUpUserCommand>
     {
-        public SignupUserCommandValidator()
+        public SignUpUserCommandValidator()
         {
             RuleFor(x => x.Email)
                 .NotEmpty().WithMessage("Email is required")

@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using Application.Features.Auths.SigninUser;
 using Application.Features.Auths.SignupUser;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -15,7 +16,7 @@ namespace API.Controllers
         [AllowAnonymous]
         [HttpPost("signup")]
         public async Task<IActionResult> SignUpAccount(
-            [FromBody] SignupUserCommand command)
+            [FromBody] SignUpUserCommand command)
         {
             var response = await _mediator.Send(command);
             return HandleResponseStatus(response);
@@ -23,9 +24,11 @@ namespace API.Controllers
 
         [AllowAnonymous]
         [HttpPost("signin")]
-        public async Task<IActionResult> SignIn()
+        public async Task<IActionResult> SignIn(
+            [FromBody] SignInUserCommand command)
         {
-            return Ok("signin");
+            var response = await _mediator.Send(command);
+            return HandleResponseStatus(response);
         }
     }
 }
