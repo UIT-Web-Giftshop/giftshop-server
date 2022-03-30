@@ -28,14 +28,14 @@ namespace Web.Tests
     public class AuthenticateTests
     {
         private readonly AuthenticationService _authService;
-        private readonly string _email = "test@gm.com";
+        private readonly string _id = "6227538b5f2c8331916327cb";
         private readonly User _user;
 
         public AuthenticateTests()
         {
             var mockOptions = new MockIConfigurationAuth().Setup();
             var mockLogger = Mock.Of<ILogger<AuthenticationService>>();
-            _user = new User(){Email = _email};
+            _user = new User(){Id = _id};
             _authService = new AuthenticationService(mockOptions.Object, mockLogger);
         }
 
@@ -62,12 +62,12 @@ namespace Web.Tests
             
             // act
             var claim = _authService.ValidateToken(token);
-            var email = claim.Find(q => q.Type == ClaimTypes.Email)?.Value;
+            var id = claim.Find(q => q.Type == ClaimTypes.NameIdentifier)?.Value;
             var exp = claim.Find(q => q.Type == "exp")?.Value;
             var nowStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
             
             // assert
-            Assert.Equal(_email, email);
+            Assert.Equal(_id, id);
             Assert.True(long.Parse(exp) > nowStamp);
         }
         
