@@ -3,7 +3,7 @@ version: '3.4'
 services:
   # contextdb mongodb
   contextdb:
-    image: mongo
+    image: mvertes/alpine-mongo
     
 
   # server api
