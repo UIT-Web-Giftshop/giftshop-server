@@ -11,7 +11,9 @@ namespace API.ServicesExtension
                 opt.AddPolicy("AnyOrigin", builder =>
                 {
                     builder.AllowAnyOrigin()
-                        .AllowAnyMethod();
+                        .AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowCredentials();
                 });
             });
             
