@@ -2,8 +2,9 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Domain.Entities;
+using Domain.Models;
 using Infrastructure.Interfaces.Repositories;
-using Microsoft.AspNetCore.Hosting;
+using Infrastructure.Interfaces.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Hosting;
 using MongoDB.Bson;
@@ -12,21 +13,23 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SeedDataController : ControllerBase
+    public class TestsController : ControllerBase
     {
-        private readonly IWebHostEnvironment _env;
+        private readonly IHostEnvironment _hostEnv;
         private readonly IProductRepository _productRepository;
+        private readonly IMailService _mailService;
 
-        public SeedDataController(IWebHostEnvironment env, IProductRepository productRepository)
+        public TestsController(IHostEnvironment hostEnv, IProductRepository productRepository, IMailService mailService)
         {
-            _env = env;
+            _hostEnv = hostEnv;
             _productRepository = productRepository;
+            _mailService = mailService;
         }
 
-        [HttpPost("products")]
-        public async Task<IActionResult> SeedProducts()
+        [HttpPost("seed-products")]
+        public async Task<IActionResult> SeedProduct()
         {
-            if (_env.IsDevelopment())
+            if (_hostEnv.IsDevelopment())
             {
                 // add products
                 try
@@ -45,6 +48,20 @@ namespace API.Controllers
             }
 
             return BadRequest();
+        }
+
+        [HttpPost("send-email")]
+        public async Task<IActionResult> SendEmail([FromForm] MailRequestModel requestModel)
+        {
+            try
+            {
+                await _mailService.SendAsync(requestModel);
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
         
         /// <summary>

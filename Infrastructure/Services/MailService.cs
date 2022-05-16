@@ -22,7 +22,7 @@ namespace Infrastructure.Services
         public async Task SendAsync(MailRequestModel request)
         {
             var email = new MimeMessage();
-            email.Sender = MailboxAddress.Parse(_mailSettings.Username);
+            email.From.Add(MailboxAddress.Parse(_mailSettings.EmailFrom));
             email.To.Add(MailboxAddress.Parse(request.To));
             email.Subject = request.Subject;
 
@@ -39,16 +39,17 @@ namespace Infrastructure.Services
                         fileBytes = ms.ToArray();
                     }
 
-                    builder.Attachments.Add(file.FileName, fileBytes, ContentType.Parse(file.ContentType));
+                    builder.Attachments.Add(file.Name, fileBytes, ContentType.Parse(file.ContentType));
                 }
             }
 
             builder.HtmlBody = request.Body;
             email.Body = builder.ToMessageBody();
+            
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
             smtp.Authenticate(_mailSettings.Username, _mailSettings.Password);
-            await smtp.SendAsync(email);
+            smtp.Send(email);
             smtp.Disconnect(true);
         }
     }
