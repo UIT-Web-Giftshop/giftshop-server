@@ -82,13 +82,14 @@ namespace API
             }
 
             app.UseSession();
-            app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseRouting();
+            
             app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
+            app.UseMiddleware<ExceptionHandlingMiddleware>();
 
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();
 
             app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
         }
