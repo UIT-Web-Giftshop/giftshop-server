@@ -47,6 +47,7 @@ namespace API
             
             services.AddSwaggerService();
             services.AddAuthenticationService(Configuration);
+            services.AddCorsService();
 
             services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);

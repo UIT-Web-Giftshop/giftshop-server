@@ -11,9 +11,9 @@ namespace API.ServicesExtension
             {
                 opt.AddPolicy(Constants.CORS_ANY_ORIGIN_POLICY, builder =>
                 {
-                    builder.AllowAnyOrigin()
-                        .AllowAnyMethod()
-                        .AllowAnyHeader();
+                    builder.AllowAnyMethod()
+                        .AllowAnyHeader()
+                        .AllowAnyOrigin();
                 });
             });
             
