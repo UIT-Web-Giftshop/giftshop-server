@@ -1,5 +1,6 @@
 using System;
 using System.Text.Json;
+using API.Commons;
 using API.ServicesExtension;
 using Application.Features.Products.Queries;
 using Application.Mapping;
@@ -84,7 +85,7 @@ namespace API
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseHttpsRedirection();
             app.UseRouting();
-            app.UseCors("AnyOrigin");
+            app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
 
             app.UseAuthorization();
             app.UseAuthentication();

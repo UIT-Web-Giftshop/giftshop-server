@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using API.Commons;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace API.ServicesExtension
 {
@@ -8,7 +9,7 @@ namespace API.ServicesExtension
         {
             services.AddCors(opt =>
             {
-                opt.AddPolicy("AnyOrigin", builder =>
+                opt.AddPolicy(Constants.CORS_ANY_ORIGIN_POLICY, builder =>
                 {
                     builder.AllowAnyOrigin()
                         .AllowAnyMethod()

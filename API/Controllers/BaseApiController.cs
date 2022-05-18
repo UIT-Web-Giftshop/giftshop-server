@@ -1,5 +1,7 @@
-﻿using Application.Commons;
+﻿using API.Commons;
+using Application.Commons;
 using MediatR;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -7,6 +9,7 @@ namespace API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [EnableCors(Constants.CORS_ANY_ORIGIN_POLICY)]
     public abstract class BaseApiController : ControllerBase
     {
         protected readonly IMediator _mediator;
