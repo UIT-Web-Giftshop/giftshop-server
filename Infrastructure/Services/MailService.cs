@@ -52,5 +52,20 @@ namespace Infrastructure.Services
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
         }
+
+        public async Task SendWithTemplate(string templateName, string to, object[] args)
+        {
+            // TODO: use template from database
+            const string htmlRaw = "Hello {0}, this is test template email from {1}";
+            var html = string.Format(htmlRaw, args);
+            var request = new MailRequestModel
+            {
+                Body = html,
+                Subject = templateName,
+                To = to
+            };
+            
+            await SendAsync(request);
+        }
     }
 }
