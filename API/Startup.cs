@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Serilog;
 
 namespace API
 {
@@ -88,6 +89,15 @@ namespace API
             
             app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseSerilogRequestLogging(opts =>
+            {
+                opts.MessageTemplate =
+                    "{IpAddress} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+                opts.EnrichDiagnosticContext = (context, httpContext) =>
+                {
+                    context.Set("IpAddress", httpContext.Connection.RemoteIpAddress);
+                };
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();
