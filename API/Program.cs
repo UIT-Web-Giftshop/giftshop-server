@@ -10,9 +10,10 @@ namespace API
     {
         public static void Main(string[] args)
         {
+            var aspnetEnv = Environment.GetEnvironmentVariable("ASPNET_ENVIRONMENT");
             var config = new ConfigurationBuilder()
                 .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT") ?? "Production"}.json", optional: true)
+                .AddJsonFile($"appsettings.{aspnetEnv ?? "Production"}.json", optional: true)
                 .AddEnvironmentVariables()
                 .Build();
 
@@ -22,7 +23,7 @@ namespace API
 
             try
             {
-                Log.Information("Starting web host");
+                Log.Information("Starting web host in {0} mode", aspnetEnv);
                 var builder = CreateHostBuilder(args);
                 builder.Build().Run();
             }
@@ -32,6 +33,7 @@ namespace API
             }
             finally
             {
+                Log.Information("Web host stopped");
                 Log.CloseAndFlush();
             }
         }
