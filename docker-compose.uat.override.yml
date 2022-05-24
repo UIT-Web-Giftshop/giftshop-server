@@ -16,3 +16,4 @@ services:
       - "443:443"
     volumes:
       - ~/.aspnet/https:/https:ro
+      - applogs:/app/logs
