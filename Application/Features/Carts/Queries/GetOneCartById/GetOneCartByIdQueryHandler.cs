@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
@@ -29,8 +30,8 @@ namespace Application.Features.Carts.Queries.GetOneCartById
             var lookup = new BsonDocument(
                 "$lookup", 
                 new BsonDocument("from", BsonCollection.GetCollectionName<Product>())
-                .Add("localField", "items.productId")
-                .Add("foreignField", "_id")
+                .Add("localField", "items.sku")
+                .Add("foreignField", "sku")
                 .Add("as", "products"));
 
             var cart = await _cartRepository.Aggregate()
@@ -41,10 +42,13 @@ namespace Application.Features.Carts.Queries.GetOneCartById
             if (cart is null)
                 return ResponseApi<CartViewModel>.ResponseFail("No cart found");
             
-            var index = 0;
-            foreach (var item in cart.Items)
+            foreach (var p in cart.Products)
             {
-                cart.Products[index++].Quantity = item.Quantity;
+                foreach (var item in cart.Items.Where(item => p.Sku == item.Sku))
+                {
+                    p.Quantity = item.Quantity;
+                    break;
+                }
             }
 
             return ResponseApi<CartViewModel>.ResponseOk(_mapper.Map<CartViewModel>(cart));

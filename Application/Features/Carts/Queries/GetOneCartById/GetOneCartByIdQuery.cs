@@ -6,6 +6,6 @@ namespace Application.Features.Carts.Queries.GetOneCartById
 {
     public class GetOneCartByIdQuery : IRequest<ResponseApi<CartViewModel>>
     {
-        public string Id { get; set; }
+        public string Id { get; set; } // TODO: remove this later
     }
 }

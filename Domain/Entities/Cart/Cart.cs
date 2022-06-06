@@ -23,12 +23,32 @@ namespace Domain.Entities.Cart
 
             foreach (var i in Items)
             {
-                if (i.ProductId != item.ProductId) continue;
+                if (i.Sku != item.Sku) continue;
                 i.Quantity += item.Quantity;
                 return true;
             }
             
             return Items.Add(item);
+        }
+
+        public bool RemoveItem(CartItem item)
+        {
+            if (Items is null) return false;
+
+            foreach (var e in Items)
+            {
+                if (e.Sku != item.Sku) continue;
+                
+                if (e.Quantity < item.Quantity) return false;
+                    
+                if (e.Quantity == item.Quantity) 
+                    return Items.Remove(e);
+                    
+                e.Quantity -= item.Quantity;
+                return true;
+            }
+
+            return false;
         }
     }
 }

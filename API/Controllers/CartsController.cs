@@ -21,9 +21,18 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> UpdateCartItem(
-            [FromBody] UpdateCartItemByIdCommand command,
+        [HttpPut("/add")]
+        public async Task<IActionResult> UpdateAddCartItem(
+            [FromBody] UpdateAddCartItemCommand command,
+            CancellationToken cancellationToken)
+        {
+            var data = await _mediator.Send(command, cancellationToken);
+            return HandleResponseStatus(data);
+        }
+
+        [HttpPut("/remove")]
+        public async Task<IActionResult> UpdateDeleteCartItem(
+            [FromBody] UpdateDeleteCartItemCommand command,
             CancellationToken cancellationToken)
         {
             var data = await _mediator.Send(command, cancellationToken);

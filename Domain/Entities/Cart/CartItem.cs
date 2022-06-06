@@ -1,10 +1,8 @@
-﻿using MongoDB.Bson;
-
-namespace Domain.Entities.Cart
+﻿namespace Domain.Entities.Cart
 {
     public class CartItem
     {
-        public ObjectId ProductId { get; set; }
+        public string Sku { get; set; }
         public int Quantity { get; set; }
     }
 }
