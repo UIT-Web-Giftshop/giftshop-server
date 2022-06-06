@@ -7,6 +7,7 @@ using Domain.Entities;
 using Domain.Entities.Cart;
 using Domain.Entities.Order;
 using Domain.ViewModels.Cart;
+using Domain.ViewModels.Wishlist;
 
 namespace Application.Mapping
 {
@@ -19,6 +20,7 @@ namespace Application.Mapping
             CreateMap<Order, OrderVm>().ReverseMap();
             CreateMap<SignUpUserCommand, User>().ReverseMap();
             CreateMap<Cart, CartViewModel>().ReverseMap();
+            CreateMap<Wishlist, WishlistViewModel>().ReverseMap();
         }
     }
 }

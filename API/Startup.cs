@@ -64,6 +64,7 @@ namespace API
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<ICartRepository, CartRepository>();
+            services.AddTransient<IWishlistRepository, WishlistRepository>();
             
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();

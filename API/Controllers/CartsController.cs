@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Carts.Commands.UpdateCartItemById;
-using Application.Features.Carts.Queries.GetOneCartById;
+using Application.Features.Carts.Commands.UpdateOneCartItem;
+using Application.Features.Carts.Queries.GetOneCart;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -17,7 +17,7 @@ namespace API.Controllers
         public async Task<IActionResult> GetOneCartById(string id)
         {
             var data = await _mediator.Send(
-                new GetOneCartByIdQuery { Id = id });
+                new GetOneCartQuery { Id = id });
             return HandleResponseStatus(data);
         }
 

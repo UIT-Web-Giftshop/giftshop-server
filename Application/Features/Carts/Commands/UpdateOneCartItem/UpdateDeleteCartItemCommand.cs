@@ -1,6 +1,6 @@
 ﻿using FluentValidation;
 
-namespace Application.Features.Carts.Commands.UpdateCartItemById
+namespace Application.Features.Carts.Commands.UpdateOneCartItem
 {
     public class UpdateDeleteCartItemCommand : UpdateAddCartItemCommand
     {

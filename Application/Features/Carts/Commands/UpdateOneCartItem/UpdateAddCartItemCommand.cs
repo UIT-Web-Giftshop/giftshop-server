@@ -2,7 +2,7 @@
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.Carts.Commands.UpdateCartItemById
+namespace Application.Features.Carts.Commands.UpdateOneCartItem
 {
     public class UpdateAddCartItemCommand : IRequest<ResponseApi<Unit>>
     {

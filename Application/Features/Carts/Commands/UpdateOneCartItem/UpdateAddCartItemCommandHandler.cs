@@ -2,16 +2,12 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Domain.Attributes;
 using Domain.Entities.Cart;
-using Infrastructure.Extensions;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
-using MongoDB.Bson;
-using MongoDB.Driver;
 
-namespace Application.Features.Carts.Commands.UpdateCartItemById
+namespace Application.Features.Carts.Commands.UpdateOneCartItem
 {
     public class UpdateAddCartItemCommandHandler : IRequestHandler<UpdateAddCartItemCommand, ResponseApi<Unit>>
     {
@@ -54,18 +50,17 @@ namespace Application.Features.Carts.Commands.UpdateCartItemById
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.InternalServerError, ResponseConstants.ERROR_EXECUTING);
 
             // update
-            var result = await _cartRepository.UpdateOneAsync(
+            var updated = await _cartRepository.UpdateOneAsync(
                 cart.Id,
                 x => x.Set(y => y.Items, cart.Items),
                 true,
                 cancellationToken);
 
 
-            // return response
-            return result.AnyDocumentModified()
-                ? ResponseApi<Unit>.ResponseOk(Unit.Value, "Add item to cart success")
-                : ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.InternalServerError,
-                    ResponseConstants.ERROR_EXECUTING);
+            if (!updated.AnyDocumentModified())
+                return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.InternalServerError, ResponseConstants.ERROR_EXECUTING);
+            
+            return ResponseApi<Unit>.ResponseOk(Unit.Value, "Thêm sản phẩm vào giỏ hàng thành công");
         }
     }
 }

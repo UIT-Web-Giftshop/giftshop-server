@@ -12,9 +12,9 @@ using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
 
-namespace Application.Features.Carts.Queries.GetOneCartById
+namespace Application.Features.Carts.Queries.GetOneCart
 {
-    public class GetOneCartByIdQueryHandler : IRequestHandler<GetOneCartByIdQuery, ResponseApi<CartViewModel>>
+    public class GetOneCartByIdQueryHandler : IRequestHandler<GetOneCartQuery, ResponseApi<CartViewModel>>
     {
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
@@ -25,7 +25,7 @@ namespace Application.Features.Carts.Queries.GetOneCartById
             _mapper = mapper;
         }
 
-        public async Task<ResponseApi<CartViewModel>> Handle(GetOneCartByIdQuery request, CancellationToken cancellationToken)
+        public async Task<ResponseApi<CartViewModel>> Handle(GetOneCartQuery request, CancellationToken cancellationToken)
         {
             var lookup = new BsonDocument(
                 "$lookup", 
@@ -40,7 +40,7 @@ namespace Application.Features.Carts.Queries.GetOneCartById
                 .FirstOrDefaultAsync(cancellationToken);
             
             if (cart is null)
-                return ResponseApi<CartViewModel>.ResponseFail("No cart found");
+                return ResponseApi<CartViewModel>.ResponseFail("Không tìm thấy giỏ hàng");
             
             foreach (var p in cart.Products)
             {

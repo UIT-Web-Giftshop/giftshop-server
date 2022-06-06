@@ -7,7 +7,7 @@ using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 
-namespace Application.Features.Carts.Commands.UpdateCartItemById
+namespace Application.Features.Carts.Commands.UpdateOneCartItem
 {
     public class UpdateDeleteCartItemCommandHandler : IRequestHandler<UpdateDeleteCartItemCommand, ResponseApi<Unit>>
     {
@@ -39,7 +39,7 @@ namespace Application.Features.Carts.Commands.UpdateCartItemById
             if (!updated.AnyDocumentModified())
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.InternalServerError, ResponseConstants.ERROR_EXECUTING);
             
-            return ResponseApi<Unit>.ResponseOk(Unit.Value);
+            return ResponseApi<Unit>.ResponseOk(Unit.Value, "Cập nhật giỏ hàng thành công");
         }
     }
 }
