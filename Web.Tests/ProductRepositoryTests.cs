@@ -42,9 +42,9 @@ namespace Web.Tests
             _mockSaveFlagRepository = Mock.Of<ISaveFlagRepository>();
             Mock.Get(_mockSaveFlagRepository)
                 .Setup(x => x.GetOneAsync(
-                    It.IsAny<Expression<Func<SaveFlag, bool>>>(),
+                    It.IsAny<Expression<Func<CountCollection, bool>>>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new SaveFlag() { CollectionName = "products", CurrentCount = _fixture.SampleData.Count });
+                .ReturnsAsync(new CountCollection() { CollectionName = "products", CurrentCount = _fixture.SampleData.Count });
             _mockEnumerable = Mock.Of<IEnumerable<Product>>();
             Mock.Get(_mockEnumerable)
                 .Setup(x => x.GetEnumerator())

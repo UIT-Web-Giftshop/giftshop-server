@@ -4,7 +4,9 @@ using Application.Features.Products.Vms;
 using Application.Features.Users.Vms;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Entities.Cart;
 using Domain.Entities.Order;
+using Domain.ViewModels.Cart;
 
 namespace Application.Mapping
 {
@@ -16,6 +18,7 @@ namespace Application.Mapping
             CreateMap<User, UserVm>().ReverseMap();
             CreateMap<Order, OrderVm>().ReverseMap();
             CreateMap<SignUpUserCommand, User>().ReverseMap();
+            CreateMap<Cart, CartViewModel>().ReverseMap();
         }
     }
 }

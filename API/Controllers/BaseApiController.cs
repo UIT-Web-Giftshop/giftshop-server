@@ -20,15 +20,15 @@ namespace API.Controllers
         {
             if (responseApi.Success)
             {
-                return Ok(responseApi);
+                return StatusCode(responseApi.Status, responseApi.Data);
             }
             
-            //TODO: more handling
+            //TODO: more handling, refactor status code response
             return responseApi.Status switch
             {
-                StatusCodes.Status404NotFound => NotFound(responseApi),
-                StatusCodes.Status400BadRequest => BadRequest(responseApi),
-                _ => BadRequest(responseApi)
+                StatusCodes.Status404NotFound => NotFound(responseApi.Message),
+                StatusCodes.Status400BadRequest => BadRequest(responseApi.Message),
+                _ => BadRequest(responseApi.Message)
             };
         }
     }

@@ -50,27 +50,27 @@ namespace Application.Features.Objects.Queries.GetPagingObjects
             }
 
             // Attempt to get total count of products
-            SaveFlag saveFlag;
+            CountCollection countCollection;
 
             try
             {
-                saveFlag = await this._saveFlagRepository.GetOneAsync( 
+                countCollection = await this._saveFlagRepository.GetOneAsync( 
                     x => x.CollectionName == BsonCollection.GetCollectionName<T>(), cancellationToken);
             }
             catch (Exception)
             {
-                await this._saveFlagRepository.AddAsync(new SaveFlag() {
+                await this._saveFlagRepository.AddAsync(new CountCollection() {
                     CollectionName = BsonCollection.GetCollectionName<T>(), 
                     CurrentCount = dataList.Count() }, cancellationToken);
 
-                saveFlag = await this._saveFlagRepository.GetOneAsync(
+                countCollection = await this._saveFlagRepository.GetOneAsync(
                     x => x.CollectionName == BsonCollection.GetCollectionName<T>(), cancellationToken);
             }
 
             var data = this._mapper.Map<List<V>>(dataList);
 
             return ResponseApi<PagingModel<V>>.ResponseOk(new PagingModel<V> { AllTotalCount = 
-                saveFlag.CurrentCount, ItemsCount = dataList.Count(), Items = data });
+                countCollection.CurrentCount, ItemsCount = dataList.Count(), Items = data });
         }
     }
 }

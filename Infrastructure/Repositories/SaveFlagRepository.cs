@@ -10,13 +10,13 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
-    public class SaveFlagRepository : BaseRepository<SaveFlag>, ISaveFlagRepository
+    public class SaveFlagRepository : BaseRepository<CountCollection>, ISaveFlagRepository
     {
         public SaveFlagRepository(IMongoContext context) : base(context)
         {
         }
 
-        public override async Task<SaveFlag> GetOneAsync(Expression<Func<SaveFlag, bool>> expression, CancellationToken cancellationToken = default)
+        public override async Task<CountCollection> GetOneAsync(Expression<Func<CountCollection, bool>> expression, CancellationToken cancellationToken = default)
         {
             var count = await base.GetOneAsync(expression, cancellationToken);
             if (count != null) return count;
@@ -28,7 +28,7 @@ namespace Infrastructure.Repositories
             var collection = database.GetCollection<object>(exprValue);
             var docsCount = await collection
                 .CountDocumentsAsync(Builders<object>.Filter.Empty, cancellationToken: cancellationToken);
-            var newFlag = new SaveFlag()
+            var newFlag = new CountCollection()
             {
                 CollectionName = exprValue,
                 CurrentCount = docsCount
@@ -40,7 +40,7 @@ namespace Infrastructure.Repositories
         public virtual async Task AutoIncrementFlag<TCollection>(CancellationToken cancellationToken = default) 
             where TCollection : class
         {
-            Expression<Func<SaveFlag, bool>> expression = x =>
+            Expression<Func<CountCollection, bool>> expression = x =>
                 x.CollectionName == BsonCollection.GetCollectionName<TCollection>();
 
             var flagCount = await base.GetOneAsync(expression, cancellationToken);
@@ -58,7 +58,7 @@ namespace Infrastructure.Repositories
                 var documentsCount = await targetCollection
                     .CountDocumentsAsync(Builders<TCollection>.Filter.Empty, cancellationToken: cancellationToken);
 
-                var newFlag = new SaveFlag()
+                var newFlag = new CountCollection()
                 {
                     CollectionName = BsonCollection.GetCollectionName<TCollection>(),
                     CurrentCount = documentsCount
@@ -70,7 +70,7 @@ namespace Infrastructure.Repositories
         public async Task AutoDecrementFlag<TCollection>(CancellationToken cancellationToken = default) 
             where TCollection : class
         {
-            Expression<Func<SaveFlag, bool>> expression = x =>
+            Expression<Func<CountCollection, bool>> expression = x =>
                 x.CollectionName == BsonCollection.GetCollectionName<TCollection>();
 
             var flagCount = await base.GetOneAsync(expression, cancellationToken);
@@ -88,7 +88,7 @@ namespace Infrastructure.Repositories
                 var documentsCount = await targetCollection
                     .CountDocumentsAsync(Builders<TCollection>.Filter.Empty, cancellationToken: cancellationToken);
 
-                var newFlag = new SaveFlag()
+                var newFlag = new CountCollection()
                 {
                     CollectionName = BsonCollection.GetCollectionName<TCollection>(),
                     CurrentCount = documentsCount

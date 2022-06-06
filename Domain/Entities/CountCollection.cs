@@ -2,8 +2,8 @@
 
 namespace Domain.Entities
 {
-    [BsonCollection("saveFlags")]
-    public class SaveFlag
+    [BsonCollection("countCollection")]
+    public class CountCollection
     {
         public string CollectionName { get; set; }
 

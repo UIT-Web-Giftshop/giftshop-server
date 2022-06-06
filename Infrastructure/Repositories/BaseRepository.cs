@@ -23,8 +23,6 @@ namespace Infrastructure.Repositories
             _collection = context.GetCollection<T>();
         }
 
-        public void Dispose() => _context?.Dispose();
-
         public virtual async Task<T> AddAsync(T entity, CancellationToken cancellationToken = default)
         {
             await _collection.InsertOneAsync(entity, cancellationToken: cancellationToken);

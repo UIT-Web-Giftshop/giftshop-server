@@ -57,11 +57,14 @@ namespace API
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
             
-            services.AddScoped<IMongoContext, MongoContext>();
+            services.AddSingleton<IMongoContext, MongoContext>();
+            
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ISaveFlagRepository, SaveFlagRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<ICartRepository, CartRepository>();
+            
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();
 
