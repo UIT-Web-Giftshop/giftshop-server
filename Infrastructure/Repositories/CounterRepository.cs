@@ -16,7 +16,8 @@ namespace Infrastructure.Repositories
         {
         }
 
-        public override async Task<CounterCollection> FindOneAsync(Expression<Func<CounterCollection, bool>> filter, CancellationToken cancellationToken = default)
+        public override async Task<CounterCollection> FindOneAsync(Expression<Func<CounterCollection, bool>> filter,
+            CancellationToken cancellationToken = default)
         {
             var counter = await base.FindOneAsync(filter, cancellationToken);
             if (counter is not null)
@@ -25,9 +26,12 @@ namespace Infrastructure.Repositories
             return await ResolveEmptyCollectionCounter(filter, cancellationToken);
         }
 
-        public virtual async Task IncreaseCounter<TCollection>(CancellationToken cancellationToken = default) 
+        public virtual async Task IncreaseAsync<TCollection>(int value = 1,
+            CancellationToken cancellationToken = default)
             where TCollection : class
         {
+            if (value == 0) return;
+
             Expression<Func<CounterCollection, bool>> filter = x =>
                 x.CollectionName == BsonCollection.GetCollectionName<TCollection>();
 
@@ -36,7 +40,7 @@ namespace Infrastructure.Repositories
             {
                 await base.UpdateOneAsync(
                     filter,
-                    x => x.Set(c => c.CurrentCount, counter.CurrentCount + 1),
+                    x => x.Set(c => c.CurrentCount, counter.CurrentCount + value),
                     false,
                     cancellationToken);
             }
@@ -46,9 +50,11 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task DecreaseCounter<TCollection>(CancellationToken cancellationToken = default) 
+        public async Task DecreaseAsync<TCollection>(int value = 1, CancellationToken cancellationToken = default)
             where TCollection : class
         {
+            if (value == 0) return;
+
             Expression<Func<CounterCollection, bool>> filter = x =>
                 x.CollectionName == BsonCollection.GetCollectionName<TCollection>();
 
@@ -57,7 +63,7 @@ namespace Infrastructure.Repositories
             {
                 await base.UpdateOneAsync(
                     filter,
-                    x => x.Set(c => c.CurrentCount, counter.CurrentCount - 1),
+                    x => x.Set(c => c.CurrentCount, counter.CurrentCount - value),
                     false,
                     cancellationToken);
             }
@@ -67,7 +73,8 @@ namespace Infrastructure.Repositories
             }
         }
 
-        private async Task ResolveNotFoundCounter<TCollection>(CancellationToken cancellationToken = default) where TCollection : class
+        private async Task ResolveNotFoundCounter<TCollection>(CancellationToken cancellationToken = default)
+            where TCollection : class
         {
             var targetCollection = MongoContext.GetCollection<TCollection>();
             var documentsCount = await targetCollection
@@ -81,7 +88,8 @@ namespace Infrastructure.Repositories
             await base.InsertAsync(newCounter, cancellationToken);
         }
 
-        private async Task<CounterCollection> ResolveEmptyCollectionCounter(Expression<Func<CounterCollection, bool>> filter, CancellationToken cancellationToken)
+        private async Task<CounterCollection> ResolveEmptyCollectionCounter(
+            Expression<Func<CounterCollection, bool>> filter, CancellationToken cancellationToken)
         {
             var op = filter.Body as BinaryExpression;
             var exprValue = ((ConstantExpression) op!.Right).Value!.ToString();

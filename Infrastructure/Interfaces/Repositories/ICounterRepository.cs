@@ -6,10 +6,10 @@ namespace Infrastructure.Interfaces.Repositories
 {
     public interface ICounterRepository : IRefactorRepository<CounterCollection>
     {
-        Task IncreaseCounter<TCollection>(CancellationToken cancellationToken = default) 
+        Task IncreaseAsync<TCollection>(int value = 1, CancellationToken cancellationToken = default) 
             where TCollection : class;
         
-        Task DecreaseCounter<TCollection>(CancellationToken cancellationToken = default) 
+        Task DecreaseAsync<TCollection>(int value = -1, CancellationToken cancellationToken = default) 
             where TCollection : class;
     }
 }

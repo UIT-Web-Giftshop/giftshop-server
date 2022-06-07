@@ -226,6 +226,7 @@ namespace Infrastructure.Interfaces.Repositories
 
         Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default);
         Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default);
+        Task<DeleteResult> DeleteOneAsync(FilterDefinition<TEntity> filter, CancellationToken cancellationToken = default);
         Task<DeleteResult> DeleteManyAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default);

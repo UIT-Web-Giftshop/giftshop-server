@@ -19,15 +19,16 @@ namespace Infrastructure.Repositories
         public override async Task<Product> AddAsync(Product entity, CancellationToken cancellationToken = default)
         {
             var addedProduct = await base.AddAsync(entity, cancellationToken);
-            if (addedProduct == null) 
+            if (addedProduct is null) 
                 return null;
             
             // Save total products count
-            await _counterRepository.IncreaseCounter<Product>(cancellationToken);
+            await _counterRepository.IncreaseAsync<Product>(1,cancellationToken);
 
             return addedProduct;
         }
-
+        
+        // !FIXME: fix
         public override async Task<bool> DeleteOneAsync(Expression<Func<Product, bool>> expression, CancellationToken cancellationToken = default)
         {
             var deletedProduct = await base.DeleteOneAsync(expression, cancellationToken);
@@ -35,7 +36,7 @@ namespace Infrastructure.Repositories
                 return false;
             
             // decrement total products count
-            await _counterRepository.DecreaseCounter<Product>(cancellationToken);
+            await _counterRepository.DecreaseAsync<Product>(-1, cancellationToken);
 
             return true;
         }

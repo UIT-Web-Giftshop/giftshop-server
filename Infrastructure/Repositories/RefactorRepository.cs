@@ -53,14 +53,10 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public virtual async Task InsertManyAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
-        {
-            if (entities.Count > 0)
-            {
-                await MongoCollection.InsertManyAsync(entities, cancellationToken: cancellationToken)
-                    .ConfigureAwait(false);
-            }
-        }
+        public virtual Task InsertManyAsync(ICollection<TEntity> entities,
+            CancellationToken cancellationToken = default)
+            => InsertManyAsync<TEntity>(entities, cancellationToken);
+
 
         public virtual async Task InsertManyAsync<TDerived>(ICollection<TDerived> entities,
             CancellationToken cancellationToken = default) where TDerived : class, TEntity
@@ -90,7 +86,8 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public virtual async Task<TDerived> GetOneAsync<TDerived>(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<TDerived> GetOneAsync<TDerived>(string id,
+            CancellationToken cancellationToken = default)
             where TDerived : TEntity
         {
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
@@ -494,12 +491,19 @@ namespace Infrastructure.Repositories
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentNullException(nameof(id));
-
             var filter = new BsonDocumentFilterDefinition<TEntity>(new BsonDocument("_id", ObjectId.Parse(id)));
-            return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
+
+            return await DeleteOneAsync(filter, cancellationToken);
         }
 
-        public virtual async Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        public virtual Task<DeleteResult> DeleteOneAsync(
+            Expression<Func<TEntity, bool>> filter,
+            CancellationToken cancellationToken = default)
+            => DeleteOneAsync(Builders<TEntity>.Filter.Where(filter), cancellationToken);
+
+
+        public virtual async Task<DeleteResult> DeleteOneAsync(FilterDefinition<TEntity> filter,
+            CancellationToken cancellationToken = default)
         {
             return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
         }
