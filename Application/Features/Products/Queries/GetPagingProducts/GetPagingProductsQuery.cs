@@ -13,7 +13,11 @@ namespace Application.Features.Products.Queries.GetPagingProducts
 
         [DefaultValue(20)] public int PageSize { get; set; } = 20;
         
-        // TODO: add more filters
+        public string Search { get; set; }
+        
+        [DefaultValue("price")] public string SortBy { get; set; }
+        
+        [DefaultValue(true)] public bool isDesc { get; set; }
     }
 
     public class GetPagingProductsQueryValidator : AbstractValidator<GetPagingProductsQuery>
