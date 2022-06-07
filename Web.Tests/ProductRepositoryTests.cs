@@ -26,7 +26,7 @@ namespace Web.Tests
     {
         private readonly IMongoCollection<Product> _mockCollection;
         private readonly IMongoContext _mockContext;
-        private readonly ISaveFlagRepository _mockSaveFlagRepository;
+        private readonly ICounterRepository _mockCounterRepository;
         private readonly ProductRepositoryFixture _fixture;
         private readonly IEnumerable<Product> _mockEnumerable;
         private readonly IAsyncCursor<Product> _mockAsyncCursor;
@@ -39,12 +39,12 @@ namespace Web.Tests
             Mock.Get(_mockContext)
                 .Setup(x => x.GetCollection<Product>())
                 .Returns(_mockCollection);
-            _mockSaveFlagRepository = Mock.Of<ISaveFlagRepository>();
-            Mock.Get(_mockSaveFlagRepository)
-                .Setup(x => x.GetOneAsync(
-                    It.IsAny<Expression<Func<CountCollection, bool>>>(),
+            _mockCounterRepository = Mock.Of<ICounterRepository>();
+            Mock.Get(_mockCounterRepository)
+                .Setup(x => x.FindOneAsync(
+                    It.IsAny<Expression<Func<CounterCollection, bool>>>(),
                     It.IsAny<CancellationToken>()))
-                .ReturnsAsync(new CountCollection() { CollectionName = "products", CurrentCount = _fixture.SampleData.Count });
+                .ReturnsAsync(new CounterCollection() { CollectionName = "products", CurrentCount = _fixture.SampleData.Count });
             _mockEnumerable = Mock.Of<IEnumerable<Product>>();
             Mock.Get(_mockEnumerable)
                 .Setup(x => x.GetEnumerator())
@@ -78,7 +78,7 @@ namespace Web.Tests
                 .ReturnsAsync(_mockAsyncCursor);
             
             // act
-            var repository = new ProductRepository(_mockContext, _mockSaveFlagRepository);
+            var repository = new ProductRepository(_mockContext, _mockCounterRepository);
             var result = await repository.GetOneAsync(expression);
 
             // assert
@@ -106,7 +106,7 @@ namespace Web.Tests
                 .Returns(_mockCollection);
 
             // act
-            var repo = new ProductRepository(_mockContext, _mockSaveFlagRepository);
+            var repo = new ProductRepository(_mockContext, _mockCounterRepository);
             var result = await repo.GetPagingAsync(
                 new PagingRequest() { PageSize = 20, PageIndex = 1 },
                 null,

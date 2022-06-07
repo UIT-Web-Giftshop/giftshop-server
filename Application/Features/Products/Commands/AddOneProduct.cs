@@ -18,14 +18,14 @@ namespace Application.Features.Products.Commands
     public class AddOneProductCommandHandler : IRequestHandler<AddOneProductCommand, ResponseApi<string>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly ISaveFlagRepository _saveFlagRepository;
+        private readonly ICounterRepository _counterRepository;
         private readonly IMapper _mapper;
 
-        public AddOneProductCommandHandler(IProductRepository productRepository, IMapper mapper, ISaveFlagRepository saveFlagRepository)
+        public AddOneProductCommandHandler(IProductRepository productRepository, IMapper mapper, ICounterRepository counterRepository)
         {
             _productRepository = productRepository;
             _mapper = mapper;
-            _saveFlagRepository = saveFlagRepository;
+            _counterRepository = counterRepository;
         }
 
         public async Task<ResponseApi<string>> Handle(AddOneProductCommand request, CancellationToken cancellationToken)

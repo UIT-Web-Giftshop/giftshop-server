@@ -60,7 +60,7 @@ namespace API
             services.AddSingleton<IMongoContext, MongoContext>();
             
             services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<ISaveFlagRepository, SaveFlagRepository>();
+            services.AddTransient<ICounterRepository, CounterRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
             services.AddTransient<ICartRepository, CartRepository>();

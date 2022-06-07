@@ -46,16 +46,16 @@ namespace Application.Features.Products.Queries
     public class GetPagingProductsHandler : IRequestHandler<GetPagingProductsQuery, ResponseApi<PagingModel<ProductVm>>>
     {
         private readonly IProductRepository _productRepository;
-        private readonly ISaveFlagRepository _saveFlagRepository;
+        private readonly ICounterRepository _counterRepository;
         private readonly IMapper _mapper;
 
         public GetPagingProductsHandler(
             IProductRepository productRepository, 
-            ISaveFlagRepository saveFlagRepository,
+            ICounterRepository counterRepository,
             IMapper mapper)
         {
             _productRepository = productRepository;
-            _saveFlagRepository = saveFlagRepository;
+            _counterRepository = counterRepository;
             _mapper = mapper;
         }
 
@@ -87,23 +87,23 @@ namespace Application.Features.Products.Queries
             }
 
             // Attempt to get total count of products
-            CountCollection countCollection;
+            CounterCollection counterCollection;
             try
             {
-                countCollection = await _saveFlagRepository
-                    .GetOneAsync(
+                counterCollection = await _counterRepository
+                    .FindOneAsync(
                         x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), 
                         cancellationToken);
             }
             catch (Exception)
             {
-                await _saveFlagRepository.AddAsync(new CountCollection()
+                await _counterRepository.InsertAsync(new CounterCollection()
                 {
                     CollectionName = BsonCollection.GetCollectionName<Product>(),
                     CurrentCount = dataList.Count()
                 }, cancellationToken);
-                countCollection = await _saveFlagRepository
-                    .GetOneAsync(
+                counterCollection = await _counterRepository
+                    .FindOneAsync(
                         x => x.CollectionName == BsonCollection.GetCollectionName<Product>(), 
                         cancellationToken);
             }
@@ -112,7 +112,7 @@ namespace Application.Features.Products.Queries
 
             return ResponseApi<PagingModel<ProductVm>>.ResponseOk(new PagingModel<ProductVm>
             {
-                AllTotalCount = countCollection.CurrentCount, 
+                AllTotalCount = counterCollection.CurrentCount, 
                 ItemsCount = dataList.Count(), 
                 Items = data
             });

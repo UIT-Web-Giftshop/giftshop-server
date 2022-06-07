@@ -17,8 +17,8 @@ namespace Application.Features.Products.Queries.GetPagingProducts
         IRequestHandler<GetPagingProductsQuery, ResponseApi<PagingModel<ProductVm>>>
     {
         public GetPagingProductsHandler(IProductRepository _productRepository, IMapper _mapper,
-            ISaveFlagRepository _saveFlagRepository) : base(_productRepository, _mapper, 
-            _saveFlagRepository)
+            ICounterRepository counterRepository) : base(_productRepository, _mapper, 
+            counterRepository)
         {
 
         }

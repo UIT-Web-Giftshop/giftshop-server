@@ -15,12 +15,12 @@ namespace Application.Features.Objects.Queries.GetPagingObjects
 {
     public abstract class GetPagingObjectsHandler<T, V> : Handler<T> where T : class where V : class
     {
-        private readonly ISaveFlagRepository _saveFlagRepository;
+        private readonly ICounterRepository _counterRepository;
 
         public GetPagingObjectsHandler(IBaseRepository<T> _baseRepository, IMapper _mapper, 
-            ISaveFlagRepository _saveFlagRepository) : base(_baseRepository, _mapper)
+            ICounterRepository counterRepository) : base(_baseRepository, _mapper)
         {
-            this._saveFlagRepository = _saveFlagRepository;
+            this._counterRepository = counterRepository;
         }
 
         public virtual Expression<Func<T, bool>> GetExpression(GetPagingObjectsQuery request)
@@ -50,27 +50,27 @@ namespace Application.Features.Objects.Queries.GetPagingObjects
             }
 
             // Attempt to get total count of products
-            CountCollection countCollection;
+            CounterCollection counterCollection;
 
             try
             {
-                countCollection = await this._saveFlagRepository.GetOneAsync( 
+                counterCollection = await this._counterRepository.FindOneAsync( 
                     x => x.CollectionName == BsonCollection.GetCollectionName<T>(), cancellationToken);
             }
             catch (Exception)
             {
-                await this._saveFlagRepository.AddAsync(new CountCollection() {
+                await this._counterRepository.InsertAsync(new CounterCollection() {
                     CollectionName = BsonCollection.GetCollectionName<T>(), 
                     CurrentCount = dataList.Count() }, cancellationToken);
 
-                countCollection = await this._saveFlagRepository.GetOneAsync(
+                counterCollection = await this._counterRepository.FindOneAsync(
                     x => x.CollectionName == BsonCollection.GetCollectionName<T>(), cancellationToken);
             }
 
             var data = this._mapper.Map<List<V>>(dataList);
 
             return ResponseApi<PagingModel<V>>.ResponseOk(new PagingModel<V> { AllTotalCount = 
-                countCollection.CurrentCount, ItemsCount = dataList.Count(), Items = data });
+                counterCollection.CurrentCount, ItemsCount = dataList.Count(), Items = data });
         }
     }
 }

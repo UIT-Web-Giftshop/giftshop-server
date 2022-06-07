@@ -2,8 +2,8 @@
 
 namespace Domain.Entities
 {
-    [BsonCollection("countCollection")]
-    public class CountCollection
+    [BsonCollection("counters")]
+    public class CounterCollection
     {
         public string CollectionName { get; set; }
 

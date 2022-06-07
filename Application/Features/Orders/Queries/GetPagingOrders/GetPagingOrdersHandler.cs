@@ -17,8 +17,8 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
         IRequestHandler<GetPagingOrdersQuery, ResponseApi<PagingModel<OrderVm>>>
     {
         public GetPagingOrdersHandler(IOrderRepository _orderRepository, IMapper _mapper, 
-            ISaveFlagRepository _saveFlagRepository) : base(_orderRepository, _mapper, 
-            _saveFlagRepository)
+            ICounterRepository counterRepository) : base(_orderRepository, _mapper, 
+            counterRepository)
         {
 
         }

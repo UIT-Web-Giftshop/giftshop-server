@@ -10,10 +10,10 @@ namespace Infrastructure.Repositories
 {
     public class ProductRepository : BaseRepository<Product>, IProductRepository
     {
-        private readonly ISaveFlagRepository _saveFlagRepository;
-        public ProductRepository(IMongoContext context, ISaveFlagRepository saveFlagRepository) : base(context)
+        private readonly ICounterRepository _counterRepository;
+        public ProductRepository(IMongoContext context, ICounterRepository counterRepository) : base(context)
         {
-            _saveFlagRepository = saveFlagRepository;
+            _counterRepository = counterRepository;
         }
 
         public override async Task<Product> AddAsync(Product entity, CancellationToken cancellationToken = default)
@@ -23,7 +23,7 @@ namespace Infrastructure.Repositories
                 return null;
             
             // Save total products count
-            await _saveFlagRepository.AutoIncrementFlag<Product>(cancellationToken);
+            await _counterRepository.IncreaseCounter<Product>(cancellationToken);
 
             return addedProduct;
         }
@@ -35,7 +35,7 @@ namespace Infrastructure.Repositories
                 return false;
             
             // decrement total products count
-            await _saveFlagRepository.AutoDecrementFlag<Product>(cancellationToken);
+            await _counterRepository.DecreaseCounter<Product>(cancellationToken);
 
             return true;
         }

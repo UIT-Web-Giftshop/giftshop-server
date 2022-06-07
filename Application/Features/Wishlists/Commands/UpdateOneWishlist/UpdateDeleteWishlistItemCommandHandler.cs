@@ -30,7 +30,7 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
             var updated = await _wishlistRepository.UpdateOneAsync(
                 wishlist.Id,
                 x => x.Set(y => y.Items, wishlist.Items),
-                true,
+                false,
                 cancellationToken);
             
             if (!updated.AnyDocumentModified())

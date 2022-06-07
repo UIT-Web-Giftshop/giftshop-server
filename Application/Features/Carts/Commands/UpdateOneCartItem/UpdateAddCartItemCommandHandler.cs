@@ -53,7 +53,7 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
             var updated = await _cartRepository.UpdateOneAsync(
                 cart.Id,
                 x => x.Set(y => y.Items, cart.Items),
-                true,
+                false,
                 cancellationToken);
 
 

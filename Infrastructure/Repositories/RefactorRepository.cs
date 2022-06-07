@@ -32,12 +32,12 @@ namespace Infrastructure.Repositories
 
         #region Query
 
-        public IMongoQueryable<TEntity> Query(AggregateOptions options = null)
+        public virtual IMongoQueryable<TEntity> Query(AggregateOptions options = null)
         {
             return MongoCollection.AsQueryable(options);
         }
 
-        public IMongoQueryable<TDerived> Query<TDerived>(AggregateOptions options = null)
+        public virtual IMongoQueryable<TDerived> Query<TDerived>(AggregateOptions options = null)
             where TDerived : class, TEntity
         {
             return MongoCollection.OfType<TDerived>().AsQueryable(options);
@@ -47,13 +47,13 @@ namespace Infrastructure.Repositories
 
         #region Insert
 
-        public async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
+        public virtual async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
             await MongoCollection.InsertOneAsync(entity, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
 
-        public async Task InsertManyAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
+        public virtual async Task InsertManyAsync(ICollection<TEntity> entities, CancellationToken cancellationToken = default)
         {
             if (entities.Count > 0)
             {
@@ -62,7 +62,7 @@ namespace Infrastructure.Repositories
             }
         }
 
-        public async Task InsertManyAsync<TDerived>(ICollection<TDerived> entities,
+        public virtual async Task InsertManyAsync<TDerived>(ICollection<TDerived> entities,
             CancellationToken cancellationToken = default) where TDerived : class, TEntity
         {
             if (entities.Count > 0)
@@ -78,7 +78,7 @@ namespace Infrastructure.Repositories
 
         #region Get
 
-        public async Task<TEntity> GetOneAsync(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<TEntity> GetOneAsync(string id, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
@@ -90,7 +90,7 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public async Task<TDerived> GetOneAsync<TDerived>(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<TDerived> GetOneAsync<TDerived>(string id, CancellationToken cancellationToken = default)
             where TDerived : TEntity
         {
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
@@ -103,7 +103,7 @@ namespace Infrastructure.Repositories
             return await cursor.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<TReturnProjection> GetOneAsync<TReturnProjection>(string id,
+        public virtual async Task<TReturnProjection> GetOneAsync<TReturnProjection>(string id,
             Expression<Func<TEntity, TReturnProjection>> returnProjection,
             CancellationToken cancellationToken = default)
         {
@@ -122,7 +122,7 @@ namespace Infrastructure.Repositories
             return await cursor.FirstOrDefaultAsync(cancellationToken).ConfigureAwait(false);
         }
 
-        public IFindFluent<TEntity, TEntity> GetAll(FindOptions options = null)
+        public virtual IFindFluent<TEntity, TEntity> GetAll(FindOptions options = null)
         {
             return MongoCollection.Find(FilterDefinition<TEntity>.Empty, options);
         }
@@ -131,14 +131,14 @@ namespace Infrastructure.Repositories
 
         #region Find
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             Expression<Func<TEntity, bool>> filter,
             FindOptions options = null)
         {
             return MongoCollection.Find(filter, options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             FindOptions options = null) where TDerived : TEntity
         {
@@ -146,7 +146,7 @@ namespace Infrastructure.Repositories
                 .Find(filter, options);
         }
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             Expression<Func<TEntity, object>> property,
             string regexPattern,
             string regexOptions = "i",
@@ -158,7 +158,7 @@ namespace Infrastructure.Repositories
                     options);
         }
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             FieldDefinition<TEntity> property,
             string regexPattern,
             string regexOptions = "i",
@@ -169,7 +169,7 @@ namespace Infrastructure.Repositories
                     options);
         }
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             IEnumerable<Expression<Func<TEntity, object>>> properties,
             string regexPattern,
             string regexOptions = "i",
@@ -181,7 +181,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
         }
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             IEnumerable<FieldDefinition<TEntity>> properties,
             string regexPattern,
             string regexOptions = "i",
@@ -192,7 +192,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             Expression<Func<TDerived, object>> property,
             string regexPattern,
             string regexOptions = "i",
@@ -203,7 +203,7 @@ namespace Infrastructure.Repositories
                     options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             FieldDefinition<TDerived> property,
             string regexPattern,
             string regexOptions = "i",
@@ -214,7 +214,7 @@ namespace Infrastructure.Repositories
                     options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             IEnumerable<Expression<Func<TDerived, object>>> properties,
             string regexPattern,
             string regexOptions = "i",
@@ -226,7 +226,7 @@ namespace Infrastructure.Repositories
                 .Find(Builders<TDerived>.Filter.Or(filters), options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             IEnumerable<FieldDefinition<TDerived>> properties,
             string regexPattern,
             string regexOptions = "i",
@@ -238,7 +238,7 @@ namespace Infrastructure.Repositories
                 .Find(Builders<TDerived>.Filter.Or(filters), options);
         }
 
-        public Task<IAsyncCursor<TEntity>> FindAsync(
+        public virtual Task<IAsyncCursor<TEntity>> FindAsync(
             Expression<Func<TEntity, bool>> filter,
             FindOptions<TEntity, TEntity> options = null,
             CancellationToken cancellationToken = default)
@@ -246,7 +246,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.FindAsync(filter, options, cancellationToken);
         }
 
-        public Task<IAsyncCursor<TDerived>> FindAsync<TDerived>(
+        public virtual Task<IAsyncCursor<TDerived>> FindAsync<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             FindOptions<TDerived, TDerived> options = null,
             CancellationToken cancellationToken = default) where TDerived : TEntity
@@ -254,7 +254,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.OfType<TDerived>().FindAsync(filter, options, cancellationToken);
         }
 
-        public Task<IAsyncCursor<TReturnProjection>> FindAsync<TReturnProjection>(
+        public virtual Task<IAsyncCursor<TReturnProjection>> FindAsync<TReturnProjection>(
             Expression<Func<TEntity, bool>> filter,
             Expression<Func<TEntity, TReturnProjection>> returnProjection,
             FindOptions<TEntity, TReturnProjection> options = null,
@@ -265,7 +265,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.FindAsync(filter, opt, cancellationToken);
         }
 
-        public Task<IAsyncCursor<TReturnProject>> FindAsync<TDerived, TReturnProject>(
+        public virtual Task<IAsyncCursor<TReturnProject>> FindAsync<TDerived, TReturnProject>(
             Expression<Func<TDerived, bool>> filter,
             Expression<Func<TDerived, TReturnProject>> returnProjection,
             FindOptions<TDerived, TReturnProject> options = null,
@@ -276,7 +276,7 @@ namespace Infrastructure.Repositories
             return MongoCollection.OfType<TDerived>().FindAsync(filter, opt, cancellationToken);
         }
 
-        public async Task<TEntity> FindOneAsync(
+        public virtual async Task<TEntity> FindOneAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default)
         {
@@ -284,7 +284,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<TDerived> FindOneAsync<TDerived>(
+        public virtual async Task<TDerived> FindOneAsync<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             CancellationToken cancellationToken = default) where TDerived : TEntity
         {
@@ -293,7 +293,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<TReturnProject> FindOneAsync<TReturnProject>(
+        public virtual async Task<TReturnProject> FindOneAsync<TReturnProject>(
             Expression<Func<TEntity, bool>> filter,
             Expression<Func<TEntity, TReturnProject>> returnProjection,
             CancellationToken cancellationToken = default)
@@ -306,7 +306,7 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public async Task<TReturnProject> FindOneAsync<TDerived, TReturnProject>(
+        public virtual async Task<TReturnProject> FindOneAsync<TDerived, TReturnProject>(
             Expression<Func<TDerived, bool>> filter,
             Expression<Func<TDerived, TReturnProject>> returnProjection,
             CancellationToken cancellationToken = default) where TDerived : TEntity
@@ -320,14 +320,14 @@ namespace Infrastructure.Repositories
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
-        public IFindFluent<TEntity, TEntity> FindFluent(
+        public virtual IFindFluent<TEntity, TEntity> FindFluent(
             FilterDefinition<TEntity> filter,
             FindOptions options = null)
         {
             return MongoCollection.Find(filter, options);
         }
 
-        public IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
+        public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             FilterDefinition<TDerived> filter,
             FindOptions options = null) where TDerived : TEntity
         {
@@ -338,7 +338,7 @@ namespace Infrastructure.Repositories
 
         #region Aggregate
 
-        public IAggregateFluent<TEntity> Aggregate(
+        public virtual IAggregateFluent<TEntity> Aggregate(
             AggregateOptions options = null)
         {
             return MongoCollection.Aggregate(options);
@@ -348,7 +348,7 @@ namespace Infrastructure.Repositories
 
         #region Update
 
-        public Task<UpdateResult> UpdateOneAsync(
+        public virtual Task<UpdateResult> UpdateOneAsync(
             string id,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             bool isUpsert = false,
@@ -357,7 +357,7 @@ namespace Infrastructure.Repositories
             return UpdateOneAsync(id, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
         }
 
-        public async Task<UpdateResult> UpdateOneAsync(
+        public virtual async Task<UpdateResult> UpdateOneAsync(
             string id,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             UpdateOptions options,
@@ -371,26 +371,26 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public Task<UpdateResult> UpdateOneAsync(
+        public virtual Task<UpdateResult> UpdateOneAsync(
             Expression<Func<TEntity, bool>> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             bool isUpsert = false,
             CancellationToken cancellationToken = default)
             => UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
 
-        public Task<UpdateResult> UpdateOneAsync(
+        public virtual Task<UpdateResult> UpdateOneAsync(
             FilterDefinition<TEntity> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             bool isUpsert = false,
             CancellationToken cancellationToken = default)
             => UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
 
-        public Task<UpdateResult> UpdateOneAsync(Expression<Func<TEntity, bool>> filter,
+        public virtual Task<UpdateResult> UpdateOneAsync(Expression<Func<TEntity, bool>> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update, UpdateOptions options,
             CancellationToken cancellationToken = default)
             => UpdateOneAsync((FilterDefinition<TEntity>) (filter), update, options, cancellationToken);
 
-        public async Task<UpdateResult> UpdateOneAsync(FilterDefinition<TEntity> filter,
+        public virtual async Task<UpdateResult> UpdateOneAsync(FilterDefinition<TEntity> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update, UpdateOptions options,
             CancellationToken cancellationToken = default)
         {
@@ -399,14 +399,14 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual Task<UpdateResult> UpdateOneAsync<TDerived>(
             string id,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             bool isUpsert = false,
             CancellationToken cancellationToken = default) where TDerived : TEntity
             => UpdateOneAsync(id, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
 
-        public async Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual async Task<UpdateResult> UpdateOneAsync<TDerived>(
             string id,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             UpdateOptions options,
@@ -420,28 +420,28 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual Task<UpdateResult> UpdateOneAsync<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             bool isUpsert = false,
             CancellationToken cancellationToken = default) where TDerived : TEntity
             => UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
 
-        public Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual Task<UpdateResult> UpdateOneAsync<TDerived>(
             FilterDefinition<TDerived> filter,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             bool isUpsert = false,
             CancellationToken cancellationToken = default) where TDerived : TEntity
             => UpdateOneAsync(filter, update, new UpdateOptions { IsUpsert = isUpsert }, cancellationToken);
 
-        public Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual Task<UpdateResult> UpdateOneAsync<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             UpdateOptions options,
             CancellationToken cancellationToken = default) where TDerived : TEntity
             => UpdateOneAsync((FilterDefinition<TDerived>) filter, update, options, cancellationToken);
 
-        public async Task<UpdateResult> UpdateOneAsync<TDerived>(
+        public virtual async Task<UpdateResult> UpdateOneAsync<TDerived>(
             FilterDefinition<TDerived> filter,
             Func<UpdateDefinitionBuilder<TDerived>, UpdateDefinition<TDerived>> update,
             UpdateOptions options,
@@ -452,7 +452,7 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public Task<TProjection> FindOneAndUpdateAsync<TProjection>(
+        public virtual Task<TProjection> FindOneAndUpdateAsync<TProjection>(
             Expression<Func<TEntity, bool>> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             Expression<Func<TEntity, TProjection>> returnProjection,
@@ -465,7 +465,7 @@ namespace Infrastructure.Repositories
                 Builders<TEntity>.Projection.Expression(returnProjection),
                 returnDocument, isUpsert, cancellationToken);
 
-        public async Task<TProjection> FindOneAndUpdateAsync<TProjection>(
+        public virtual async Task<TProjection> FindOneAndUpdateAsync<TProjection>(
             Expression<Func<TEntity, bool>> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
             ProjectionDefinition<TEntity, TProjection> returnProjection,
@@ -490,7 +490,7 @@ namespace Infrastructure.Repositories
 
         #region Delete
 
-        public async Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default)
+        public virtual async Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentNullException(nameof(id));
@@ -499,19 +499,19 @@ namespace Infrastructure.Repositories
             return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        public virtual async Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
         {
             return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
         }
 
-        public async Task<DeleteResult> DeleteManyAsync(
+        public virtual async Task<DeleteResult> DeleteManyAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default)
         {
             return await MongoCollection.DeleteManyAsync(filter, cancellationToken);
         }
 
-        public Task<TEntity> FindOneAndDeleteAsync(string id, CancellationToken cancellationToken = default)
+        public virtual Task<TEntity> FindOneAndDeleteAsync(string id, CancellationToken cancellationToken = default)
         {
             if (string.IsNullOrEmpty(id))
                 throw new ArgumentNullException(nameof(id));
@@ -520,14 +520,14 @@ namespace Infrastructure.Repositories
             return FindOneAndDeleteAsync(filter, cancellationToken);
         }
 
-        public async Task<TEntity> FindOneAndDeleteAsync(FilterDefinition<TEntity> filter,
+        public virtual async Task<TEntity> FindOneAndDeleteAsync(FilterDefinition<TEntity> filter,
             CancellationToken cancellationToken = default)
         {
             return await MongoCollection.FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
 
-        public Task<TEntity> FindOneAndDeleteAsync(
+        public virtual Task<TEntity> FindOneAndDeleteAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default)
         {
