@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
+using Application.Features.Products.Commands.UpdateOneProductDetail;
 using AutoMapper;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;

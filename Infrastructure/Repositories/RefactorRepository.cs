@@ -449,6 +449,16 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
+        public async Task UpdateManyAsync(
+            Expression<Func<TEntity, bool>> filter,
+            Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default)
+        {
+            await _mongoCollection.UpdateManyAsync(filter, update(Builders<TEntity>.Update), options, cancellationToken)
+                .ConfigureAwait(false);
+        }
+
         public virtual Task<TProjection> FindOneAndUpdateAsync<TProjection>(
             Expression<Func<TEntity, bool>> filter,
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,

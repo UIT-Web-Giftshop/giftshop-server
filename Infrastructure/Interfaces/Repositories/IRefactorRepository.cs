@@ -203,6 +203,11 @@ namespace Infrastructure.Interfaces.Repositories
             UpdateOptions options,
             CancellationToken cancellationToken = default) where TDerived : TEntity;
 
+        Task UpdateManyAsync(
+            Expression<Func<TEntity, bool>> filter,
+            Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update,
+            UpdateOptions options = null,
+            CancellationToken cancellationToken = default);
         
         // find and update
         Task<TProjection> FindOneAndUpdateAsync<TProjection>(

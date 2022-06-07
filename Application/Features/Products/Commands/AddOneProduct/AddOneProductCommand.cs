@@ -3,7 +3,7 @@ using Domain.ViewModels.Product;
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.Products.Commands
+namespace Application.Features.Products.Commands.AddOneProduct
 {
     public class AddOneProductCommand : IRequest<ResponseApi<string>>
     {

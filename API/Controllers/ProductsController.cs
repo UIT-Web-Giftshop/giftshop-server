@@ -1,8 +1,12 @@
 #nullable enable
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Products.Commands;
+using Application.Features.Products.Commands.AddOneProduct;
+using Application.Features.Products.Commands.UpdateListProductState;
+using Application.Features.Products.Commands.UpdateOneProductDetail;
 using Application.Features.Products.Commands.UpdateOneProductPrice;
+using Application.Features.Products.Commands.UpdateOneProductState;
 using Application.Features.Products.Commands.UpdateOneProductStock;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
@@ -77,11 +81,26 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
         
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteOneProduct(string id)
+        [HttpPatch("state/{state}/{sku}")]
+        public async Task<IActionResult> UpdateOneProductState(string sku, ProductState state)
         {
             var result = await _mediator
-                .Send(new DeleteOneProductCommand { Id = id });
+                .Send(new UpdateOneProductStateCommand() { Sku = sku, State = state});
+            return HandleResponseStatus(result);
+        }
+
+        /// <summary>
+        /// Use sku as list
+        /// </summary>
+        /// <param name="skus"></param>
+        /// <param name="state"></param>
+        /// <returns></returns>
+        [HttpPatch("state/{state}/list-sku")]
+        public async Task<IActionResult> UpdateListProductState(
+            [FromBody] HashSet<string> skus,
+            [FromRoute] ProductState state)
+        {
+            var result = await _mediator.Send(new UpdateListProductStateCommand(){Skus = skus, State = state});
             return HandleResponseStatus(result);
         }
     }
