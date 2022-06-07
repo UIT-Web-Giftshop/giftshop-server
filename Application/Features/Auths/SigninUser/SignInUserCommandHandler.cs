@@ -14,6 +14,8 @@ namespace Application.Features.Auths.SigninUser
         private readonly IUserRepository _userRepository;
         private readonly IAuthenticationService _authenticationService;
 
+        private const string USER_NOT_FOUND = "Tài khoảng không chính xác";
+        
         public SignInUserCommandHandler(IUserRepository userRepository, IAuthenticationService authenticationService)
         {
             _userRepository = userRepository;
@@ -22,11 +24,17 @@ namespace Application.Features.Auths.SigninUser
 
         public async Task<ResponseApi<SignInResponseModel>> Handle(SignInUserCommand request, CancellationToken cancellationToken)
         {
-            var existedUser = await _userRepository.GetOneAsync(q => q.Email == request.Email, cancellationToken);
+            var existedUser = await _userRepository.FindOneAsync(q => q.Email == request.Email, cancellationToken);
             // check account is existed
             if (existedUser is null)
             {
-                return ResponseApi<SignInResponseModel>.ResponseFail("Email or password is incorrect");
+                return ResponseApi<SignInResponseModel>.ResponseFail(USER_NOT_FOUND);
+            }
+            
+            // validate active
+            if (!existedUser.IsActive)
+            {
+                return ResponseApi<SignInResponseModel>.ResponseFail("Tài khoản chưa được kích hoạt");
             }
             
             // validate password
@@ -34,7 +42,7 @@ namespace Application.Features.Auths.SigninUser
                 new PasswordHasher<User>().VerifyHashedPassword(existedUser, existedUser.Password, request.Password);
             if (validatePassword == PasswordVerificationResult.Failed)
             {
-                return ResponseApi<SignInResponseModel>.ResponseFail("Email or password is incorrect");
+                return ResponseApi<SignInResponseModel>.ResponseFail(USER_NOT_FOUND);
             }
 
             // generate token

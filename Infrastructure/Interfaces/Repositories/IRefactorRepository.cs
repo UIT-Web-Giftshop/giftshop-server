@@ -17,6 +17,8 @@ namespace Infrastructure.Interfaces.Repositories
 
         #endregion
         
+        IAggregateFluent<TEntity> Aggregate(AggregateOptions options = null);
+
         #region Insert
 
         Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default);
@@ -132,8 +134,6 @@ namespace Infrastructure.Interfaces.Repositories
 
         #endregion
         
-        IAggregateFluent<TEntity> Aggregate(AggregateOptions options = null);
-
         #region Update
 
         Task<UpdateResult> UpdateOneAsync(
@@ -222,5 +222,22 @@ namespace Infrastructure.Interfaces.Repositories
 
         #endregion
 
+        #region Delete
+
+        Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default);
+        Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default);
+        Task<DeleteResult> DeleteManyAsync(
+            Expression<Func<TEntity, bool>> filter,
+            CancellationToken cancellationToken = default);
+
+        Task<TEntity> FindOneAndDeleteAsync(string id, CancellationToken cancellationToken = default);
+        Task<TEntity> FindOneAndDeleteAsync(
+            Expression<Func<TEntity, bool>> filter,
+            CancellationToken cancellationToken = default);
+        Task<TEntity> FindOneAndDeleteAsync(
+            FilterDefinition<TEntity> filter,
+            CancellationToken cancellationToken = default);
+        
+        #endregion
     }
 }

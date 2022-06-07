@@ -1,11 +1,17 @@
 ﻿using System;
 using Domain.Attributes;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Entities
 {
     [BsonCollection("users")]
-    public class User : IdentifiableObject
+    public class User
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        
         public string Email { get; set; }
 
         public string Password { get; set; }
@@ -24,17 +30,17 @@ namespace Domain.Entities
 
         public DateTime LastLogin { get; set; }
 
-        public DateTime CreatedAt { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
-        public DateTime UpdatedAt { get; set; }
-        //
-        // public string CartId { get; set; }
-        //
-        // public string WishlistId { get; set; }
+        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+        
+        public string CartId { get; set; }
+        
+        public string WishlistId { get; set; }
 
         public string GetFullName()
         {
-            return this.FirstName + " " + this.LastName;
+            return FirstName + " " + LastName;
         }
     }
 }

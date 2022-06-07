@@ -2,8 +2,8 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IUserRepository : IRefactorRepository<User>
+    public interface IVerifyTokenRepository : IRefactorRepository<VerifyToken>
     {
-
+        
     }
 }

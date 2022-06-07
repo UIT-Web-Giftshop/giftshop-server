@@ -18,13 +18,13 @@ namespace Infrastructure.Repositories
         protected readonly IMongoContext MongoContext;
 
         internal IMongoCollection<TEntity> Collection => this.MongoCollection;
-        
+
         public RefactorRepository(IMongoContext mongoContext)
         {
             MongoContext = mongoContext;
             MongoCollection = MongoContext.GetCollection<TEntity>();
         }
-        
+
         public void Dispose()
         {
             GC.SuppressFinalize(this);
@@ -484,6 +484,55 @@ namespace Infrastructure.Repositories
                     },
                     cancellationToken)
                 .ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region Delete
+
+        public async Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentNullException(nameof(id));
+
+            var filter = new BsonDocumentFilterDefinition<TEntity>(new BsonDocument("_id", ObjectId.Parse(id)));
+            return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<DeleteResult> DeleteOneAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        {
+            return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
+        }
+
+        public async Task<DeleteResult> DeleteManyAsync(
+            Expression<Func<TEntity, bool>> filter,
+            CancellationToken cancellationToken = default)
+        {
+            return await MongoCollection.DeleteManyAsync(filter, cancellationToken);
+        }
+
+        public Task<TEntity> FindOneAndDeleteAsync(string id, CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentNullException(nameof(id));
+
+            var filter = new BsonDocumentFilterDefinition<TEntity>(new BsonDocument("_id", ObjectId.Parse(id)));
+            return FindOneAndDeleteAsync(filter, cancellationToken);
+        }
+
+        public async Task<TEntity> FindOneAndDeleteAsync(FilterDefinition<TEntity> filter,
+            CancellationToken cancellationToken = default)
+        {
+            return await MongoCollection.FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public Task<TEntity> FindOneAndDeleteAsync(
+            Expression<Func<TEntity, bool>> filter,
+            CancellationToken cancellationToken = default)
+        {
+            var filterExpr = Builders<TEntity>.Filter.Where(filter);
+            return FindOneAndDeleteAsync(filterExpr, cancellationToken);
         }
 
         #endregion

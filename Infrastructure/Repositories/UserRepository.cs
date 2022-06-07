@@ -4,7 +4,7 @@ using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories
 {
-    public class UserRepository : BaseRepository<User>, IUserRepository
+    public class UserRepository : RefactorRepository<User>, IUserRepository
     {
         public UserRepository(IMongoContext context) : base(context)
         {

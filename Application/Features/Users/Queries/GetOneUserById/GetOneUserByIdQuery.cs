@@ -1,12 +1,11 @@
 ﻿using Application.Commons;
-using Application.Features.Objects.Queries.GetOneObject;
-using Application.Features.Users.Vms;
+using Domain.Entities;
 using MediatR;
 
 namespace Application.Features.Users.Queries.GetOneUserById
 {
-    public class GetOneUserByIdQuery : GetOneObjectByIdQuery, IRequest<ResponseApi<UserVm>>
+    public class GetOneUserByIdQuery : IRequest<ResponseApi<User>>
     {
-
+        public string Id { get; set; }
     }
 }
