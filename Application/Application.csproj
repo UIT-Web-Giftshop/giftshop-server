@@ -20,6 +20,7 @@
 
     <ItemGroup>
       <Folder Include="Features\Auths\VerifyToken\ConfirmResetPassword" />
+      <Folder Include="Features\Products\Commands\DeleteOneProduct" />
       <Folder Include="Features\Profile" />
     </ItemGroup>
 

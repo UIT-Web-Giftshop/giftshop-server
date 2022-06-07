@@ -26,7 +26,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             _mapper = mapper;
         }
 
-        public async Task<ResponseApi<PagingModel<ProductDetailViewModel>>> Handle(GetPagingProductsQuery request,
+        public Task<ResponseApi<PagingModel<ProductDetailViewModel>>> Handle(GetPagingProductsQuery request,
             CancellationToken cancellationToken)
         {
             var findOptions = new FindOptions<Product, Product>()
@@ -49,7 +49,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
                 Items = dataList
             };
             
-            return ResponseApi<PagingModel<ProductDetailViewModel>>.ResponseOk(viewModel);
+            return Task.FromResult(ResponseApi<PagingModel<ProductDetailViewModel>>.ResponseOk(viewModel));
         }
     }
 }

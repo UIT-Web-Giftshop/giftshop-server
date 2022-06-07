@@ -19,7 +19,7 @@ namespace Domain.Entities
 
         public string Description { get; set; }
 
-        public uint Stock { get; set; }
+        public int Stock { get; set; }
 
         public double Price { get; set; }
 

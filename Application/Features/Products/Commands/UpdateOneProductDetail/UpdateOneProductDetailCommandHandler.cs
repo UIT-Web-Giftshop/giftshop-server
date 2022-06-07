@@ -3,7 +3,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
-using Domain.Entities;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;

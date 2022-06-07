@@ -2,6 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands;
+using Application.Features.Products.Commands.UpdateOneProductPrice;
+using Application.Features.Products.Commands.UpdateOneProductStock;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
@@ -59,19 +61,19 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
         
-        [HttpPatch("{id}/quantity/{stock:int}")]
-        public async Task<IActionResult> UpdateOneProductStock(string id, uint stock)
+        [HttpPatch("{sku}/quantity/{stock:int}")]
+        public async Task<IActionResult> UpdateOneProductStock(string sku, int stock)
         {
             var result = await _mediator
-                .Send(new UpdateOneProductStockCommand { Id = id, Stock = stock });
+                .Send(new UpdateOneProductStockCommand { Sku = sku, Stock = stock });
             return HandleResponseStatus(result);
         }
         
-        [HttpPatch("{id}/price/{price:double}")]
-        public async Task<IActionResult> UpdateOneProductPrice(string id, double price)
+        [HttpPatch("{sku}/price/{price:double}")]
+        public async Task<IActionResult> UpdateOneProductPrice(string sku, double price)
         {
             var result = await _mediator
-                .Send(new UpdateOneProductPriceCommand() { Id = id, Price = price });
+                .Send(new UpdateOneProductPriceCommand { Sku = sku, Price = price });
             return HandleResponseStatus(result);
         }
         
@@ -79,7 +81,7 @@ namespace API.Controllers
         public async Task<IActionResult> DeleteOneProduct(string id)
         {
             var result = await _mediator
-                .Send(new DeleteOneProductCommand() { Id = id });
+                .Send(new DeleteOneProductCommand { Id = id });
             return HandleResponseStatus(result);
         }
     }
