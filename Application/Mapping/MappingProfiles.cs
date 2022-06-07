@@ -1,15 +1,13 @@
 ﻿using Application.Features.Auths.SignupUser;
 using Application.Features.Orders.Vms;
-using Application.Features.Products.Vms;
 using Application.Features.Users.Commands.AddOneUser;
-using Application.Features.Users.Vms;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Entities.Cart;
 using Domain.Entities.Order;
 using Domain.ViewModels.Cart;
+using Domain.ViewModels.Product;
 using Domain.ViewModels.Wishlist;
-using Microsoft.AspNetCore.Identity;
 
 namespace Application.Mapping
 {
@@ -17,8 +15,12 @@ namespace Application.Mapping
     {
         public MappingProfiles()
         {
-            CreateMap<Product, ProductVm>().ReverseMap();
-            CreateMap<User, UserVm>().ReverseMap();
+            CreateMap<ProductDetailViewModel, Product>()
+                .ForMember(o => o.Id, opt => opt.Ignore())
+                .ForMember(o => o.Sku, cfg => cfg.Ignore());
+                // .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember is not null));
+            CreateMap<Product, ProductDetailViewModel>();
+            
             CreateMap<Order, OrderVm>().ReverseMap();
 
             CreateMap<User, AddOneUserCommand>().ReverseMap();

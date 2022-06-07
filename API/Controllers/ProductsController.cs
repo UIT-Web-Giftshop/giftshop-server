@@ -1,12 +1,11 @@
 #nullable enable
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
-using Application.Features.Products.Vms;
+using Domain.ViewModels.Product;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,12 +13,9 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers
 {
     [AllowAnonymous]
-    public class ProductsController : ObjectsController<ProductVm>
+    public class ProductsController : BaseApiController
     {
-        public ProductsController(IMediator _mediator) : base(_mediator)
-        {
-
-        }
+        public ProductsController(IMediator _mediator) : base(_mediator) { }
 
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetOneProductById(string id)
@@ -40,16 +36,26 @@ namespace API.Controllers
             [FromQuery] GetPagingProductsQuery query,
             CancellationToken cancellationToken = default)
         {
-            var result = await this._mediator.Send(query, cancellationToken);
+            var result = await _mediator.Send(query, cancellationToken);
             return HandleResponseStatus(result);
         }
-        
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateOneProductInfo(string id, [FromBody] ProductVm productVm)
+
+        [HttpPost]
+        public async Task<IActionResult> AddNewOneProduct([FromBody] ProductDetailViewModel command)
         {
-            var result = await _mediator
-                .Send(new UpdateOneProductInfoCommand() { Id = id, Product = productVm });
+            var result = await _mediator.Send(new AddOneProductCommand {Product = command});
+            return HandleResponseStatus(result);
+        }
+
+        [HttpPut("{sku}")]
+        public async Task<IActionResult> UpdateOneProductInfo(
+            string sku, 
+            [FromBody] ProductDetailViewModel productDetailViewModel)
+        {
+            productDetailViewModel.Sku = sku;
             
+            var result = await _mediator
+                .Send(new UpdateOneProductDetailCommand { Product = productDetailViewModel });
             return HandleResponseStatus(result);
         }
         
@@ -57,8 +63,7 @@ namespace API.Controllers
         public async Task<IActionResult> UpdateOneProductStock(string id, uint stock)
         {
             var result = await _mediator
-                .Send(new UpdateOneProductStockCommand() { Id = id, Stock = stock });
-            
+                .Send(new UpdateOneProductStockCommand { Id = id, Stock = stock });
             return HandleResponseStatus(result);
         }
         
@@ -67,7 +72,6 @@ namespace API.Controllers
         {
             var result = await _mediator
                 .Send(new UpdateOneProductPriceCommand() { Id = id, Price = price });
-            
             return HandleResponseStatus(result);
         }
         
@@ -76,14 +80,6 @@ namespace API.Controllers
         {
             var result = await _mediator
                 .Send(new DeleteOneProductCommand() { Id = id });
-            return HandleResponseStatus(result);
-        }
-        
-        [HttpDelete("list")]
-        public async Task<IActionResult> DeleteManyProducts([FromBody] List<string> ids)
-        {
-            var result = await _mediator
-                .Send(new DeleteListProductsCommand(){Ids = ids});
             return HandleResponseStatus(result);
         }
     }

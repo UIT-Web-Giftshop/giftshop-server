@@ -14,15 +14,15 @@ namespace Infrastructure.Repositories
 {
     public class RefactorRepository<TEntity> : IRefactorRepository<TEntity> where TEntity : class
     {
-        protected readonly IMongoCollection<TEntity> MongoCollection;
-        protected readonly IMongoContext MongoContext;
+        protected readonly IMongoCollection<TEntity> _mongoCollection;
+        protected readonly IMongoContext _mongoContext;
 
-        internal IMongoCollection<TEntity> Collection => this.MongoCollection;
+        internal IMongoCollection<TEntity> Collection => _mongoCollection;
 
         public RefactorRepository(IMongoContext mongoContext)
         {
-            MongoContext = mongoContext;
-            MongoCollection = MongoContext.GetCollection<TEntity>();
+            _mongoContext = mongoContext;
+            _mongoCollection = _mongoContext.GetCollection<TEntity>();
         }
 
         public void Dispose()
@@ -34,13 +34,13 @@ namespace Infrastructure.Repositories
 
         public virtual IMongoQueryable<TEntity> Query(AggregateOptions options = null)
         {
-            return MongoCollection.AsQueryable(options);
+            return _mongoCollection.AsQueryable(options);
         }
 
         public virtual IMongoQueryable<TDerived> Query<TDerived>(AggregateOptions options = null)
             where TDerived : class, TEntity
         {
-            return MongoCollection.OfType<TDerived>().AsQueryable(options);
+            return _mongoCollection.OfType<TDerived>().AsQueryable(options);
         }
 
         #endregion
@@ -49,7 +49,7 @@ namespace Infrastructure.Repositories
 
         public virtual async Task InsertAsync(TEntity entity, CancellationToken cancellationToken = default)
         {
-            await MongoCollection.InsertOneAsync(entity, cancellationToken: cancellationToken)
+            await _mongoCollection.InsertOneAsync(entity, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
 
@@ -63,7 +63,7 @@ namespace Infrastructure.Repositories
         {
             if (entities.Count > 0)
             {
-                await MongoCollection
+                await _mongoCollection
                     .OfType<TDerived>()
                     .InsertManyAsync(entities, cancellationToken: cancellationToken)
                     .ConfigureAwait(false);
@@ -79,7 +79,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = new BsonDocument("_id", ObjectId.Parse(id));
-            var cursor = await MongoCollection.FindAsync(filter, cancellationToken: cancellationToken)
+            var cursor = await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
             return await cursor.FirstOrDefaultAsync(cancellationToken)
@@ -93,7 +93,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = new BsonDocument("_id", ObjectId.Parse(id));
-            var cursor = await MongoCollection.OfType<TDerived>()
+            var cursor = await _mongoCollection.OfType<TDerived>()
                 .FindAsync(filter, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
 
@@ -107,7 +107,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = new BsonDocument("_id", ObjectId.Parse(id));
-            var cursor = await MongoCollection.FindAsync(
+            var cursor = await _mongoCollection.FindAsync(
                     filter,
                     new FindOptions<TEntity, TReturnProjection>()
                     {
@@ -121,7 +121,7 @@ namespace Infrastructure.Repositories
 
         public virtual IFindFluent<TEntity, TEntity> GetAll(FindOptions options = null)
         {
-            return MongoCollection.Find(FilterDefinition<TEntity>.Empty, options);
+            return _mongoCollection.Find(FilterDefinition<TEntity>.Empty, options);
         }
 
         #endregion
@@ -132,14 +132,14 @@ namespace Infrastructure.Repositories
             Expression<Func<TEntity, bool>> filter,
             FindOptions options = null)
         {
-            return MongoCollection.Find(filter, options);
+            return _mongoCollection.Find(filter, options);
         }
 
         public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             FindOptions options = null) where TDerived : TEntity
         {
-            return MongoCollection.OfType<TDerived>()
+            return _mongoCollection.OfType<TDerived>()
                 .Find(filter, options);
         }
 
@@ -149,7 +149,7 @@ namespace Infrastructure.Repositories
             string regexOptions = "i",
             FindOptions options = null)
         {
-            return MongoCollection
+            return _mongoCollection
                 .Find(
                     Builders<TEntity>.Filter.Regex(property, new BsonRegularExpression(regexPattern, regexOptions)),
                     options);
@@ -161,7 +161,7 @@ namespace Infrastructure.Repositories
             string regexOptions = "i",
             FindOptions options = null)
         {
-            return MongoCollection
+            return _mongoCollection
                 .Find(Builders<TEntity>.Filter.Regex(property, new BsonRegularExpression(regexPattern, regexOptions)),
                     options);
         }
@@ -175,7 +175,7 @@ namespace Infrastructure.Repositories
             var filters = properties.Select(p =>
                 Builders<TEntity>.Filter.Regex(p, new BsonRegularExpression(regexPattern, regexOptions)));
 
-            return MongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
+            return _mongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
         }
 
         public virtual IFindFluent<TEntity, TEntity> FindFluent(
@@ -186,7 +186,7 @@ namespace Infrastructure.Repositories
         {
             var filters = properties.Select(p =>
                 Builders<TEntity>.Filter.Regex(p, new BsonRegularExpression(regexPattern, regexOptions)));
-            return MongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
+            return _mongoCollection.Find(Builders<TEntity>.Filter.Or(filters), options);
         }
 
         public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
@@ -195,7 +195,7 @@ namespace Infrastructure.Repositories
             string regexOptions = "i",
             FindOptions options = null) where TDerived : TEntity
         {
-            return MongoCollection.OfType<TDerived>()
+            return _mongoCollection.OfType<TDerived>()
                 .Find(Builders<TDerived>.Filter.Regex(property, new BsonRegularExpression(regexPattern, regexOptions)),
                     options);
         }
@@ -206,7 +206,7 @@ namespace Infrastructure.Repositories
             string regexOptions = "i",
             FindOptions options = null) where TDerived : TEntity
         {
-            return MongoCollection.OfType<TDerived>()
+            return _mongoCollection.OfType<TDerived>()
                 .Find(Builders<TDerived>.Filter.Regex(property, new BsonRegularExpression(regexPattern, regexOptions)),
                     options);
         }
@@ -219,7 +219,7 @@ namespace Infrastructure.Repositories
         {
             var filters = properties.Select(p =>
                 Builders<TDerived>.Filter.Regex(p, new BsonRegularExpression(regexPattern, regexOptions)));
-            return MongoCollection.OfType<TDerived>()
+            return _mongoCollection.OfType<TDerived>()
                 .Find(Builders<TDerived>.Filter.Or(filters), options);
         }
 
@@ -231,7 +231,7 @@ namespace Infrastructure.Repositories
         {
             var filters = properties.Select(p =>
                 Builders<TDerived>.Filter.Regex(p, new BsonRegularExpression(regexPattern, regexOptions)));
-            return MongoCollection.OfType<TDerived>()
+            return _mongoCollection.OfType<TDerived>()
                 .Find(Builders<TDerived>.Filter.Or(filters), options);
         }
 
@@ -240,7 +240,7 @@ namespace Infrastructure.Repositories
             FindOptions<TEntity, TEntity> options = null,
             CancellationToken cancellationToken = default)
         {
-            return MongoCollection.FindAsync(filter, options, cancellationToken);
+            return _mongoCollection.FindAsync(filter, options, cancellationToken);
         }
 
         public virtual Task<IAsyncCursor<TDerived>> FindAsync<TDerived>(
@@ -248,7 +248,7 @@ namespace Infrastructure.Repositories
             FindOptions<TDerived, TDerived> options = null,
             CancellationToken cancellationToken = default) where TDerived : TEntity
         {
-            return MongoCollection.OfType<TDerived>().FindAsync(filter, options, cancellationToken);
+            return _mongoCollection.OfType<TDerived>().FindAsync(filter, options, cancellationToken);
         }
 
         public virtual Task<IAsyncCursor<TReturnProjection>> FindAsync<TReturnProjection>(
@@ -259,7 +259,7 @@ namespace Infrastructure.Repositories
         {
             var opt = options ?? new FindOptions<TEntity, TReturnProjection>();
             opt.Projection = Builders<TEntity>.Projection.Expression(returnProjection);
-            return MongoCollection.FindAsync(filter, opt, cancellationToken);
+            return _mongoCollection.FindAsync(filter, opt, cancellationToken);
         }
 
         public virtual Task<IAsyncCursor<TReturnProject>> FindAsync<TDerived, TReturnProject>(
@@ -270,14 +270,14 @@ namespace Infrastructure.Repositories
         {
             var opt = options ?? new FindOptions<TDerived, TReturnProject>();
             opt.Projection = Builders<TDerived>.Projection.Expression(returnProjection);
-            return MongoCollection.OfType<TDerived>().FindAsync(filter, opt, cancellationToken);
+            return _mongoCollection.OfType<TDerived>().FindAsync(filter, opt, cancellationToken);
         }
 
         public virtual async Task<TEntity> FindOneAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default)
         {
-            return await (await MongoCollection.FindAsync(filter, cancellationToken: cancellationToken))
+            return await (await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken))
                 .FirstOrDefaultAsync(cancellationToken);
         }
 
@@ -285,7 +285,7 @@ namespace Infrastructure.Repositories
             Expression<Func<TDerived, bool>> filter,
             CancellationToken cancellationToken = default) where TDerived : TEntity
         {
-            return await (await MongoCollection.OfType<TDerived>()
+            return await (await _mongoCollection.OfType<TDerived>()
                     .FindAsync(filter, cancellationToken: cancellationToken))
                 .FirstOrDefaultAsync(cancellationToken);
         }
@@ -295,7 +295,7 @@ namespace Infrastructure.Repositories
             Expression<Func<TEntity, TReturnProject>> returnProjection,
             CancellationToken cancellationToken = default)
         {
-            return await (await MongoCollection.FindAsync(
+            return await (await _mongoCollection.FindAsync(
                     filter,
                     new FindOptions<TEntity, TReturnProject>
                         { Projection = Builders<TEntity>.Projection.Expression(returnProjection) },
@@ -308,7 +308,7 @@ namespace Infrastructure.Repositories
             Expression<Func<TDerived, TReturnProject>> returnProjection,
             CancellationToken cancellationToken = default) where TDerived : TEntity
         {
-            return await (await MongoCollection.OfType<TDerived>()
+            return await (await _mongoCollection.OfType<TDerived>()
                     .FindAsync(
                         filter,
                         new FindOptions<TDerived, TReturnProject>
@@ -321,14 +321,14 @@ namespace Infrastructure.Repositories
             FilterDefinition<TEntity> filter,
             FindOptions options = null)
         {
-            return MongoCollection.Find(filter, options);
+            return _mongoCollection.Find(filter, options);
         }
 
         public virtual IFindFluent<TDerived, TDerived> FindFluent<TDerived>(
             FilterDefinition<TDerived> filter,
             FindOptions options = null) where TDerived : TEntity
         {
-            return MongoCollection.OfType<TDerived>().Find(filter, options);
+            return _mongoCollection.OfType<TDerived>().Find(filter, options);
         }
 
         #endregion
@@ -338,7 +338,7 @@ namespace Infrastructure.Repositories
         public virtual IAggregateFluent<TEntity> Aggregate(
             AggregateOptions options = null)
         {
-            return MongoCollection.Aggregate(options);
+            return _mongoCollection.Aggregate(options);
         }
 
         #endregion
@@ -363,7 +363,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = Builders<TEntity>.Filter.Eq("_id", ObjectId.Parse(id));
-            return await MongoCollection
+            return await _mongoCollection
                 .UpdateOneAsync(filter, update(Builders<TEntity>.Update), options, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -391,7 +391,7 @@ namespace Infrastructure.Repositories
             Func<UpdateDefinitionBuilder<TEntity>, UpdateDefinition<TEntity>> update, UpdateOptions options,
             CancellationToken cancellationToken = default)
         {
-            return await MongoCollection
+            return await _mongoCollection
                 .UpdateOneAsync(filter, update(Builders<TEntity>.Update), options, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -412,7 +412,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = Builders<TDerived>.Filter.Eq("_id", ObjectId.Parse(id));
-            return await MongoCollection.OfType<TDerived>()
+            return await _mongoCollection.OfType<TDerived>()
                 .UpdateOneAsync(filter, update(Builders<TDerived>.Update), options, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -444,7 +444,7 @@ namespace Infrastructure.Repositories
             UpdateOptions options,
             CancellationToken cancellationToken = default) where TDerived : TEntity
         {
-            return await MongoCollection.OfType<TDerived>()
+            return await _mongoCollection.OfType<TDerived>()
                 .UpdateOneAsync(filter, update(Builders<TDerived>.Update), options, cancellationToken)
                 .ConfigureAwait(false);
         }
@@ -470,10 +470,74 @@ namespace Infrastructure.Repositories
             bool isUpsert = false,
             CancellationToken cancellationToken = default)
         {
-            return await MongoCollection.FindOneAndUpdateAsync(
+            return await _mongoCollection.FindOneAndUpdateAsync(
                     filter,
                     update(Builders<TEntity>.Update),
                     new FindOneAndUpdateOptions<TEntity, TProjection>
+                    {
+                        Projection = returnProjection,
+                        ReturnDocument = returnDocument,
+                        IsUpsert = isUpsert
+                    },
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        #endregion
+
+        #region Replace
+
+        public async Task<ReplaceOneResult> ReplaceOneAsync(
+            string id,
+            TEntity entity,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default)
+        {
+            if (string.IsNullOrEmpty(id))
+                throw new ArgumentNullException(nameof(id));
+
+            var filter = Builders<TEntity>.Filter.Eq("_id", ObjectId.Parse(id));
+            return await _mongoCollection.ReplaceOneAsync(filter, entity, new ReplaceOptions { IsUpsert = isUpsert },
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public async Task<ReplaceOneResult> ReplaceOneAsync(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity entity,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await _mongoCollection.ReplaceOneAsync(filter, entity, new ReplaceOptions { IsUpsert = isUpsert },
+                    cancellationToken)
+                .ConfigureAwait(false);
+        }
+
+        public Task<TProject> FindOneAndReplaceAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity replacement,
+            Expression<Func<TEntity, TProject>> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default)
+            => FindOneAndReplaceAsync(
+                filter,
+                replacement,
+                Builders<TEntity>.Projection.Expression(returnProjection),
+                returnDocument, isUpsert, cancellationToken);
+
+        public async Task<TProject> FindOneAndReplaceAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity replacement,
+            ProjectionDefinition<TEntity, TProject> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default)
+        {
+            return await _mongoCollection.FindOneAndReplaceAsync(
+                    filter,
+                    replacement,
+                    new FindOneAndReplaceOptions<TEntity, TProject>
                     {
                         Projection = returnProjection,
                         ReturnDocument = returnDocument,
@@ -505,14 +569,14 @@ namespace Infrastructure.Repositories
         public virtual async Task<DeleteResult> DeleteOneAsync(FilterDefinition<TEntity> filter,
             CancellationToken cancellationToken = default)
         {
-            return await MongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
+            return await _mongoCollection.DeleteOneAsync(filter, cancellationToken).ConfigureAwait(false);
         }
 
         public virtual async Task<DeleteResult> DeleteManyAsync(
             Expression<Func<TEntity, bool>> filter,
             CancellationToken cancellationToken = default)
         {
-            return await MongoCollection.DeleteManyAsync(filter, cancellationToken);
+            return await _mongoCollection.DeleteManyAsync(filter, cancellationToken);
         }
 
         public virtual Task<TEntity> FindOneAndDeleteAsync(string id, CancellationToken cancellationToken = default)
@@ -527,7 +591,7 @@ namespace Infrastructure.Repositories
         public virtual async Task<TEntity> FindOneAndDeleteAsync(FilterDefinition<TEntity> filter,
             CancellationToken cancellationToken = default)
         {
-            return await MongoCollection.FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken)
+            return await _mongoCollection.FindOneAndDeleteAsync(filter, cancellationToken: cancellationToken)
                 .ConfigureAwait(false);
         }
 

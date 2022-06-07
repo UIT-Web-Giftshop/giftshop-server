@@ -10,12 +10,12 @@ using MongoDB.Driver;
 
 namespace Application.Features.Users.Queries.GetPagingUsers
 {
-    public class GetPagingUsersHandler : IRequestHandler<GetPagingUsersQuery, ResponseApi<PagingModel<User>>>
+    public class GetPagingUsersQueryHandler : IRequestHandler<GetPagingUsersQuery, ResponseApi<PagingModel<User>>>
     {
         private readonly IUserRepository _userRepository;
         private readonly ICounterRepository _counterRepository;
 
-        public GetPagingUsersHandler(IUserRepository userRepository, ICounterRepository counterRepository)
+        public GetPagingUsersQueryHandler(IUserRepository userRepository, ICounterRepository counterRepository)
         {
             _userRepository = userRepository;
             _counterRepository = counterRepository;

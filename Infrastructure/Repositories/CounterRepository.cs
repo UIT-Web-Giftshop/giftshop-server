@@ -78,7 +78,7 @@ namespace Infrastructure.Repositories
         private async Task ResolveNotFoundCounter<TCollection>(CancellationToken cancellationToken = default)
             where TCollection : class
         {
-            var targetCollection = MongoContext.GetCollection<TCollection>();
+            var targetCollection = _mongoContext.GetCollection<TCollection>();
             var documentsCount = await targetCollection
                 .CountDocumentsAsync(Builders<TCollection>.Filter.Empty, cancellationToken: cancellationToken);
 
@@ -96,7 +96,7 @@ namespace Infrastructure.Repositories
             var exprValue = VisitRightValueOfExpr(filter);
             var exprStr = exprValue.ToString();
             
-            var database = MongoContext.GetContextDatabase();
+            var database = _mongoContext.GetContextDatabase();
             var collection = database.GetCollection<object>(exprStr);
             var documentsCount =
                 await collection.CountDocumentsAsync(Builders<object>.Filter.Empty,

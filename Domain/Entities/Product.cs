@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
 using Domain.Attributes;
+using MongoDB.Bson;
+using MongoDB.Bson.Serialization.Attributes;
 
 namespace Domain.Entities
 {
     [BsonCollection("products")]
-    public class Product : IdentifiableObject
+    public class Product
     {
+        [BsonId]
+        [BsonRepresentation(BsonType.ObjectId)]
+        public string Id { get; set; }
+        
         public string Sku { get; set; }
 
         public string Name { get; set; }
@@ -28,5 +34,11 @@ namespace Domain.Entities
         public DateTime CreatedAt { get; set; }
 
         public DateTime UpdateAt { get; set; }
+
+        public void OnInit()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdateAt = DateTime.UtcNow;
+        }
     }
 }

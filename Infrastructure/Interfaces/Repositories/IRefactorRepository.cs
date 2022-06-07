@@ -222,6 +222,36 @@ namespace Infrastructure.Interfaces.Repositories
 
         #endregion
 
+        #region Replace
+
+        Task<ReplaceOneResult> ReplaceOneAsync(
+            string id, 
+            TEntity entity, 
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default);
+        Task<ReplaceOneResult> ReplaceOneAsync(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity entity,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default);
+        
+        Task<TProject> FindOneAndReplaceAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity replacement,
+            Expression<Func<TEntity, TProject>> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default);
+        Task<TProject> FindOneAndReplaceAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity replacement,
+            ProjectionDefinition<TEntity, TProject> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After,
+            bool isUpsert = false,
+            CancellationToken cancellationToken = default);
+
+        #endregion
+        
         #region Delete
 
         Task<DeleteResult> DeleteOneAsync(string id, CancellationToken cancellationToken = default);

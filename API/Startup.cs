@@ -3,6 +3,7 @@ using System.Text.Json;
 using API.Commons;
 using API.ServicesExtension;
 using Application.Features.Products.Queries;
+using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Mapping;
 using Application.Middlewares;
 using Application.PipelineBehaviors;
@@ -50,9 +51,9 @@ namespace API
             services.AddAuthenticationService(Configuration);
             services.AddCorsService();
 
-            services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
+            services.AddMediatR(typeof(GetPagingProductsQueryHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
+            services.AddValidatorsFromAssembly(typeof(GetPagingProductsQueryValidator).Assembly);
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();

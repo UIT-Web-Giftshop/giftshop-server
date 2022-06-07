@@ -56,16 +56,9 @@ namespace Infrastructure.Repositories
         
         public override async Task<DeleteResult> DeleteOneAsync(Expression<Func<User, bool>> filter, CancellationToken cancellationToken = default)
         {
-            try
-            {
-                var deleted = await base.DeleteOneAsync(filter, cancellationToken);
-                await _counterRepository.DecreaseAsync<User>((int)deleted.DeletedCount, cancellationToken);
-                return deleted;
-            }
-            catch (Exception e)
-            {
-                throw new Exception(e.Message);
-            }
+            var deleted = await base.DeleteOneAsync(filter, cancellationToken);
+            await _counterRepository.DecreaseAsync<User>((int)deleted.DeletedCount, cancellationToken);
+            return deleted;
         }
     }
 }

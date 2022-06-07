@@ -11,9 +11,9 @@ namespace API.Controllers
     {
         protected readonly IMediator _mediator;
 
-        public BaseApiController(IMediator _mediator)
+        public BaseApiController(IMediator mediator)
         {
-            this._mediator = _mediator;
+            _mediator = mediator;
         }
 
         protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi)
@@ -28,7 +28,7 @@ namespace API.Controllers
             {
                 StatusCodes.Status404NotFound => NotFound(responseApi),
                 StatusCodes.Status400BadRequest => BadRequest(responseApi),
-                _ => BadRequest(responseApi)
+                _ => StatusCode(StatusCodes.Status500InternalServerError, responseApi)
             };
         }
     }

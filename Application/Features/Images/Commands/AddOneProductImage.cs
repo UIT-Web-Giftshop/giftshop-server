@@ -35,10 +35,11 @@ namespace Application.Features.Images.Commands
             _cloudinaryService = cloudinaryService;
         }
 
-        public async Task<ResponseApi<string>> Handle(AddOneProductImageQuery request, CancellationToken cancellationToken)
+        public async Task<ResponseApi<string>> Handle(AddOneProductImageQuery request,
+            CancellationToken cancellationToken)
         {
             // check product is existed
-            var product = await _productRepository.GetOneAsync(x => x.Id == request.ProductId, cancellationToken);
+            var product = await _productRepository.GetOneAsync(request.ProductId, cancellationToken);
             if (product == null)
             {
                 return ResponseApi<string>.ResponseFail(ResponseConstants.ERROR_NOT_FOUND_ITEM);
@@ -51,7 +52,7 @@ namespace Application.Features.Images.Commands
                 var publicId = split[^1].Split('.')[0];
                 await _cloudinaryService.DeleteImage(publicId);
             }
-            
+
             // put image to cloudinary
             // don't need to check result, because if it's fail, it will throw exception
             var putResult = await _cloudinaryService.PutImage(request.File);
@@ -60,10 +61,14 @@ namespace Application.Features.Images.Commands
             {
                 return ResponseApi<string>.ResponseFail(StatusCodes.Status500InternalServerError, "Error in read file");
             }
-            
+
             var affectedProductImage = _productRepository
-                .PatchOneFieldAsync(x => x.Id == product.Id, x => x.ImageUrl, putResult.ImageUrl, cancellationToken);
-            
+                .UpdateOneAsync(
+                    product.Id,
+                    x => x.Set(p => p.ImageUrl, putResult.ImageUrl),
+                    false,
+                    cancellationToken);
+
             return ResponseApi<string>.ResponseOk(putResult.ImageUrl, "Add image success");
         }
     }

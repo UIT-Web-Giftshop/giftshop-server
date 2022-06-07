@@ -27,7 +27,7 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
                 return ResponseApi<Unit>.ResponseFail("Không tìm thấy wishlist");
 
             // get product by sku
-            var product = await _productRepository.GetOneAsync(x => x.Sku == request.Sku, cancellationToken);
+            var product = await _productRepository.FindOneAsync(x => x.Sku == request.Sku, cancellationToken);
             if (product is null)
                 return ResponseApi<Unit>.ResponseFail("Không tìm thấy sản phẩm");
 

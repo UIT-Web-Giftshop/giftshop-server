@@ -67,7 +67,6 @@ namespace Web.Tests
         {
             // arrange
             var expectedProduct = _fixture.SampleData[0];
-            Expression<Func<Product, bool>> expression = x => x.Id == expectedProduct.Id;
             
             // mock collection find
             Mock.Get(_mockCollection)
@@ -79,7 +78,7 @@ namespace Web.Tests
             
             // act
             var repository = new ProductRepository(_mockContext, _mockCounterRepository);
-            var result = await repository.GetOneAsync(expression);
+            var result = await repository.GetOneAsync(expectedProduct.Id);
 
             // assert
             Assert.NotNull(result);
@@ -107,15 +106,18 @@ namespace Web.Tests
 
             // act
             var repo = new ProductRepository(_mockContext, _mockCounterRepository);
-            var result = await repo.GetPagingAsync(
-                new PagingRequest() { PageSize = 20, PageIndex = 1 },
-                null,
-                q => q.Price,
-                default);
+            var findOptions = new FindOptions<Product, Product>()
+            {
+                Limit = 20,
+                Skip = 0
+            };
+            var result = await repo.FindAsync(
+                x => true,
+                findOptions);
 
             // assert
             Assert.NotNull(result);
-            Assert.Equal(3, result.Count());
+            Assert.Equal(3, result.ToList().Count());
             Mock.Get(_mockCollection)
                 .Verify(x => x.FindAsync(
                     It.IsAny<FilterDefinition<Product>>(),

@@ -29,7 +29,7 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.BadRequest, ResponseConstants.BAD_REQUEST);
 
             // get product by id
-            var addProduct = await _productRepository.GetOneAsync(x => x.Sku == request.Sku, cancellationToken);
+            var addProduct = await _productRepository.FindOneAsync(x => x.Sku == request.Sku, cancellationToken);
             if (addProduct is null)
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.BadRequest, ResponseConstants.BAD_REQUEST);
             // check stock

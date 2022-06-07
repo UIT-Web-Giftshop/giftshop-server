@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.ComponentModel;
-using Application.Features.Objects.Vms;
 
-namespace Application.Features.Products.Vms
+namespace Domain.ViewModels.Product
 {
-    public class ProductVm : ObjectVm
+    public class ProductDetailViewModel
     {
         public string Sku { get; set; }
 
@@ -20,9 +19,8 @@ namespace Application.Features.Products.Vms
 
         public List<string> Traits { get; set; }
 
-        public string ImageUrl { get; set; } 
+        public string ImageUrl { get; set; }
 
-        [DefaultValue(true)]
-        public bool IsActive { get; set; }
+        [DefaultValue(true)] public bool IsActive { get; set; }
     }
 }
