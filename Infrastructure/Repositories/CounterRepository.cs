@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Attributes;
@@ -16,7 +17,8 @@ namespace Infrastructure.Repositories
         {
         }
 
-        public override async Task<CounterCollection> FindOneAsync(Expression<Func<CounterCollection, bool>> filter,
+        public override async Task<CounterCollection> FindOneAsync(
+            Expression<Func<CounterCollection, bool>> filter,
             CancellationToken cancellationToken = default)
         {
             var counter = await base.FindOneAsync(filter, cancellationToken);
@@ -91,21 +93,29 @@ namespace Infrastructure.Repositories
         private async Task<CounterCollection> ResolveEmptyCollectionCounter(
             Expression<Func<CounterCollection, bool>> filter, CancellationToken cancellationToken)
         {
-            var op = filter.Body as BinaryExpression;
-            var exprValue = ((ConstantExpression) op!.Right).Value!.ToString();
-
+            var exprValue = VisitRightValueOfExpr(filter);
+            var exprStr = exprValue.ToString();
+            
             var database = MongoContext.GetContextDatabase();
-            var collection = database.GetCollection<object>(exprValue);
+            var collection = database.GetCollection<object>(exprStr);
             var documentsCount =
                 await collection.CountDocumentsAsync(Builders<object>.Filter.Empty,
                     cancellationToken: cancellationToken);
             var newCounter = new CounterCollection()
             {
-                CollectionName = exprValue,
+                CollectionName = exprStr,
                 CurrentCount = documentsCount
             };
             await base.InsertAsync(newCounter, cancellationToken);
             return newCounter;
+        }
+
+        private static object VisitRightValueOfExpr(Expression<Func<CounterCollection, bool>> filter)
+        {
+            var member = (MemberExpression) (((BinaryExpression) filter.Body).Right);
+            var container = ((ConstantExpression) member.Expression).Value;
+            var value = ((FieldInfo) member.Member).GetValue(container);
+            return value;
         }
     }
 }

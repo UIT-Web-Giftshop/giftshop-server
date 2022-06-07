@@ -1,43 +1,49 @@
-﻿// using System;
-// using System.Linq.Expressions;
-// using System.Threading;
-// using System.Threading.Tasks;
-// using Application.Commons;
-// using Application.Features.Objects.Queries.GetPagingObjects;
-// using Application.Features.Users.Vms;
-// using AutoMapper;
-// using Domain.Entities;
-// using Domain.Paging;
-// using Infrastructure.Interfaces.Repositories;
-// using MediatR;
-//
-// namespace Application.Features.Users.Queries.GetPagingUsers
-// {
-//     public class GetPagingUsersHandler : GetPagingObjectsHandler<User, UserVm>,
-//         IRequestHandler<GetPagingUsersQuery, ResponseApi<PagingModel<UserVm>>>
-//     {
-//         public GetPagingUsersHandler(IUserRepository _userRepository, IMapper _mapper,
-//             ISaveFlagRepository _saveFlagRepository) : base(_userRepository, _mapper, _saveFlagRepository)
-//         {
-//
-//         }
-//
-//         public override Expression<Func<User, bool>> GetExpression(GetPagingObjectsQuery request)
-//         {
-//             return string.IsNullOrWhiteSpace(request.Search) ? null : p =>
-//                 p.GetFullName().Contains(request.Search);
-//         }
-//
-//         public override Expression<Func<User, object>> GetSortExpression(GetPagingObjectsQuery
-//             request)
-//         {
-//             return q => q.DateOfBirth;
-//         }
-//
-//         public async Task<ResponseApi<PagingModel<UserVm>>> Handle(GetPagingUsersQuery request,
-//            CancellationToken cancellationToken)
-//         {
-//             return await base.Handle(request, cancellationToken);
-//         }
-//     }
-// }
+﻿using System.Threading;
+using System.Threading.Tasks;
+using Application.Commons;
+using Domain.Attributes;
+using Domain.Entities;
+using Domain.Paging;
+using Infrastructure.Interfaces.Repositories;
+using MediatR;
+using MongoDB.Driver;
+
+namespace Application.Features.Users.Queries.GetPagingUsers
+{
+    public class GetPagingUsersHandler : IRequestHandler<GetPagingUsersQuery, ResponseApi<PagingModel<User>>>
+    {
+        private readonly IUserRepository _userRepository;
+        private readonly ICounterRepository _counterRepository;
+
+        public GetPagingUsersHandler(IUserRepository userRepository, ICounterRepository counterRepository)
+        {
+            _userRepository = userRepository;
+            _counterRepository = counterRepository;
+        }
+
+        public Task<ResponseApi<PagingModel<User>>> Handle(GetPagingUsersQuery request, CancellationToken cancellationToken)
+        {
+            var findOptions = new FindOptions<User, User>()
+            {
+                Limit = request.PageSize,
+                Skip = (request.PageIndex - 1) * request.PageSize
+            };
+
+            var collectionTarget = BsonCollection.GetCollectionName<User>();
+            var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
+            var dataTask = _userRepository.FindAsync(x => true, findOptions, cancellationToken);
+
+            Task.WaitAll(new Task[] {totalTask, dataTask}, cancellationToken);
+
+            var dataList = dataTask.Result.ToList(cancellationToken);
+            var viewModel = new PagingModel<User>()
+            {
+                AllTotalCount = totalTask.Result.CurrentCount,
+                ItemsCount = dataList.Count,
+                Items = dataList
+            };
+
+            return Task.FromResult(ResponseApi<PagingModel<User>>.ResponseOk(viewModel));
+        }
+    }
+}
