@@ -243,6 +243,14 @@ namespace Infrastructure.Repositories
             return _mongoCollection.FindAsync(filter, options, cancellationToken);
         }
 
+        public virtual Task<IAsyncCursor<TEntity>> FindAsync(
+            FilterDefinition<TEntity> filter,
+            FindOptions<TEntity, TEntity> options = null,
+            CancellationToken cancellationToken = default)
+        {
+            return _mongoCollection.FindAsync(filter, options, cancellationToken);
+        }
+
         public virtual Task<IAsyncCursor<TDerived>> FindAsync<TDerived>(
             Expression<Func<TDerived, bool>> filter,
             FindOptions<TDerived, TDerived> options = null,

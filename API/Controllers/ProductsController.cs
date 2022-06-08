@@ -1,5 +1,6 @@
 #nullable enable
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Features.Products.Commands.AddOneProduct;
@@ -11,6 +12,7 @@ using Application.Features.Products.Commands.UpdateOneProductStock;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
+using Domain.Paging;
 using Domain.ViewModels.Product;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -21,7 +23,9 @@ namespace API.Controllers
     [AllowAnonymous]
     public class ProductsController : BaseApiController
     {
-        public ProductsController(IMediator _mediator) : base(_mediator) { }
+        public ProductsController(IMediator _mediator) : base(_mediator)
+        {
+        }
 
         [HttpGet("id/{id}")]
         public async Task<IActionResult> GetOneProductById(string id)
@@ -29,7 +33,7 @@ namespace API.Controllers
             var result = await this._mediator.Send(new GetOneProductByIdQuery() { Id = id });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpGet("sku/{sku}")]
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
@@ -46,25 +50,38 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [HttpGet("trait/{trait}")]
+        public async Task<IActionResult> GetPagingProductByTrait(
+            [FromQuery] PagingRequest pagingRequest,
+            [FromRoute] string trait,
+            [FromQuery] [DefaultValue("price")] string sortBy,
+            [FromQuery] [DefaultValue(true)] bool isDesc)
+        {
+            var query = new GetPagingProductByTraitQuery()
+                { PagingRequest = pagingRequest, Trait = trait, SortBy = sortBy, IsDesc = isDesc };
+            var data = await _mediator.Send(query);
+            return HandleResponseStatus(data);
+        }
+
         [HttpPost]
         public async Task<IActionResult> AddNewOneProduct([FromBody] ProductDetailViewModel command)
         {
-            var result = await _mediator.Send(new AddOneProductCommand {Product = command});
+            var result = await _mediator.Send(new AddOneProductCommand { Product = command });
             return HandleResponseStatus(result);
         }
 
         [HttpPut("{sku}")]
         public async Task<IActionResult> UpdateOneProductInfo(
-            string sku, 
+            string sku,
             [FromBody] ProductDetailViewModel productDetailViewModel)
         {
             productDetailViewModel.Sku = sku;
-            
+
             var result = await _mediator
                 .Send(new UpdateOneProductDetailCommand { Product = productDetailViewModel });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpPatch("{sku}/quantity/{stock:int}")]
         public async Task<IActionResult> UpdateOneProductStock(string sku, int stock)
         {
@@ -72,7 +89,7 @@ namespace API.Controllers
                 .Send(new UpdateOneProductStockCommand { Sku = sku, Stock = stock });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpPatch("{sku}/price/{price:double}")]
         public async Task<IActionResult> UpdateOneProductPrice(string sku, double price)
         {
@@ -80,12 +97,12 @@ namespace API.Controllers
                 .Send(new UpdateOneProductPriceCommand { Sku = sku, Price = price });
             return HandleResponseStatus(result);
         }
-        
+
         [HttpPatch("state/{state}/{sku}")]
         public async Task<IActionResult> UpdateOneProductState(string sku, ProductState state)
         {
             var result = await _mediator
-                .Send(new UpdateOneProductStateCommand() { Sku = sku, State = state});
+                .Send(new UpdateOneProductStateCommand() { Sku = sku, State = state });
             return HandleResponseStatus(result);
         }
 
@@ -100,7 +117,7 @@ namespace API.Controllers
             [FromBody] HashSet<string> skus,
             [FromRoute] ProductState state)
         {
-            var result = await _mediator.Send(new UpdateListProductStateCommand(){Skus = skus, State = state});
+            var result = await _mediator.Send(new UpdateListProductStateCommand() { Skus = skus, State = state });
             return HandleResponseStatus(result);
         }
     }

@@ -32,7 +32,7 @@ namespace Application.Features.Orders.Commands.CreateOrder
             CancellationToken cancellationToken)
         {
             var productsQuantityCursor = await _productRepository.FindAsync(
-                x => request.OrderItems.Keys.Contains(x.Sku),
+                x => request.OrderItems.Keys.Contains(x.Sku), // TODO: maybe need refactor
                 x => new MinimalProductForOrder { Sku = x.Sku, Price = x.Price, Stock = x.Stock, Name = x.Name },
                 cancellationToken: cancellationToken);
 

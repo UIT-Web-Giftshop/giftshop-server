@@ -17,7 +17,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
         
         [DefaultValue("price")] public string SortBy { get; set; }
         
-        [DefaultValue(true)] public bool isDesc { get; set; }
+        [DefaultValue(true)] public bool IsDesc { get; set; }
     }
 
     public class GetPagingProductsQueryValidator : AbstractValidator<GetPagingProductsQuery>
