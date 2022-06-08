@@ -33,7 +33,8 @@ namespace Application.Features.Orders.Commands.CreateOrder
         {
             var productsQuantityCursor = await _productRepository.FindAsync(
                 x => request.OrderItems.Keys.Contains(x.Sku), // TODO: maybe need refactor
-                x => new MinimalProductForOrder { Sku = x.Sku, Price = x.Price, Stock = x.Stock, Name = x.Name },
+                x => new MinimalProductForOrder
+                    { Sku = x.Sku, Price = x.Price, Stock = x.Stock, Name = x.Name, ImageUrl = x.ImageUrl },
                 cancellationToken: cancellationToken);
 
             var productList = await productsQuantityCursor.ToListAsync(cancellationToken);
@@ -49,38 +50,39 @@ namespace Application.Features.Orders.Commands.CreateOrder
             }
 
             // update stock
-            var tasks = new List<Task>();
+            var tasks = new Task[productList.Count + 1];
+            var index = 0;
             foreach (var item in productList)
             {
                 if (item is null) continue;
-                tasks.Add(_productRepository.UpdateOneAsync(
+                tasks[index++] = (_productRepository.UpdateOneAsync(
                     x => x.Sku == item.Sku,
                     x => x.Set(p => p.Stock, item.Stock - request.OrderItems[item.Sku]),
                     cancellationToken: cancellationToken));
             }
-
-            tasks.ForEach(x => x.Start());
 
             // create order
             var order = new Order
             {
                 UserEmail = _accessorService.Email(),
                 IsPaid = false,
-                Status = OrderStatus.Pending,
+                Status = nameof(OrderStatus.Pending),
                 CreatedAt = DateTime.UtcNow
             };
             foreach (var item in productList)
             {
                 order.AddItem(new OrderItem
-                    { Price = item.Price, Quantity = request.OrderItems[item.Sku], ProductSku = item.Sku });
+                {
+                    Price = item.Price, Quantity = request.OrderItems[item.Sku], ProductSku = item.Sku,
+                    Name = item.Name, ImageUrl = item.ImageUrl
+                });
             }
 
             // push to task
-            var addOrderTask = _orderRepository.InsertAsync(order, cancellationToken);
-            tasks.Add(addOrderTask);
+            tasks[index] = _orderRepository.InsertAsync(order, cancellationToken);
 
             // wait
-            await Task.WhenAll(tasks);
+            Task.WaitAll(tasks);
 
             return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đặt hàng thành công");
         }
