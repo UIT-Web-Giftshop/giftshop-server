@@ -1,5 +1,6 @@
 ﻿using Application.Features.Auths.SignupUser;
 using Application.Features.Orders.Vms;
+using Application.Features.Profile.Commands.UpdateProfileInfo;
 using Application.Features.Users.Commands.AddOneUser;
 using AutoMapper;
 using Domain.Entities;
@@ -21,6 +22,13 @@ namespace Application.Mapping
                 .ForMember(o => o.Sku, cfg => cfg.Ignore());
                 // .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember is not null));
             CreateMap<Product, ProductDetailViewModel>();
+
+            CreateMap<UpdateProfileInfoCommand, User>()
+                .ForMember(o => o.Id, opt => opt.Ignore())
+                .ForMember(o => o.Email, cfg => cfg.Ignore())
+                .ForMember(o => o.IsActive, cfg => cfg.Ignore())
+                .ForMember(o => o.CartId, cfg => cfg.Ignore())
+                .ForMember(o => o.WishlistId, cfg => cfg.Ignore());
             
             CreateMap<Order, OrderVm>().ReverseMap();
 
