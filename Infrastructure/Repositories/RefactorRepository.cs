@@ -333,6 +333,29 @@ namespace Infrastructure.Repositories
 
         #endregion
 
+        #region Find & insert
+
+        public async Task<TProject> FindOneOrInsertAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity entity,
+            Expression<Func<TEntity, TProject>> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After, CancellationToken cancellationToken = default)
+        {
+            return await _mongoCollection.FindOneAndUpdateAsync<TEntity, TProject>(
+                filter,
+                new BsonDocumentUpdateDefinition<TEntity>(new BsonDocument("$setOnInsert",
+                    entity.ToBsonDocument(_mongoCollection.DocumentSerializer))),
+                new FindOneAndUpdateOptions<TEntity, TProject>
+                {
+                    IsUpsert = true,
+                    ReturnDocument = returnDocument,
+                    Projection = Builders<TEntity>.Projection.Expression(returnProjection)
+                },
+                cancellationToken);
+        }
+
+        #endregion
+
         #region Aggregate
 
         public virtual IAggregateFluent<TEntity> Aggregate(

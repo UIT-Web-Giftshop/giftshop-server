@@ -133,6 +133,17 @@ namespace Infrastructure.Interfaces.Repositories
             FindOptions options = null) where TDerived : TEntity;
 
         #endregion
+
+        #region Find & insert
+
+        Task<TProject> FindOneOrInsertAsync<TProject>(
+            Expression<Func<TEntity, bool>> filter,
+            TEntity entity,
+            Expression<Func<TEntity, TProject>> returnProjection,
+            ReturnDocument returnDocument = ReturnDocument.After,
+            CancellationToken cancellationToken = default);
+
+        #endregion
         
         #region Update
 
