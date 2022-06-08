@@ -17,6 +17,13 @@ namespace Application.Commons
             Data = data
         };
 
+        public static ResponseApi<TData> ResponseOk(int status) => new()
+        {
+            Success = true,
+            Status = status,
+            Data = default
+        };
+
         public static ResponseApi<TData> ResponseOk(TData data, string message) => new()
         {
             Success = true,

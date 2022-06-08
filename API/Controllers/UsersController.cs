@@ -1,16 +1,18 @@
 #nullable enable
 using System.Threading;
 using System.Threading.Tasks;
+using Application.Features.Users.Commands.AddOneUser;
+using Application.Features.Users.Commands.DeleteOneUser;
+using Application.Features.Users.Commands.UpdateOnePasswordUser;
 using Application.Features.Users.Queries.GetOneUserByEmail;
 using Application.Features.Users.Queries.GetOneUserById;
 using Application.Features.Users.Queries.GetPagingUsers;
-using Application.Features.Users.Vms;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class UsersController : ObjectsController<UserVm>
+    public class UsersController : BaseApiController
     {
         public UsersController(IMediator _mediator) : base(_mediator)
         {
@@ -36,6 +38,30 @@ namespace API.Controllers
             CancellationToken cancellationToken = default)
         {
             var result = await this._mediator.Send(query, cancellationToken);
+            return HandleResponseStatus(result);
+        }
+        
+        [HttpPost("new")]
+        public async Task<IActionResult> AddOneUser(
+            [FromBody] AddOneUserCommand command, 
+            CancellationToken cancellationToken = default)
+        {
+            var result = await this._mediator.Send(command, cancellationToken);
+            return HandleResponseStatus(result);
+        }
+
+        [HttpPatch]
+        public async Task<IActionResult> UpdateOneUserPassword(
+            UpdateOneUserPasswordCommand command)
+        {
+            var result = await _mediator.Send(command);
+            return HandleResponseStatus(result);
+        }
+
+        [HttpDelete]
+        public async Task<IActionResult> DeleteOneUser(DeleteOneUserCommand command)
+        {
+            var result = await _mediator.Send(command);
             return HandleResponseStatus(result);
         }
     }

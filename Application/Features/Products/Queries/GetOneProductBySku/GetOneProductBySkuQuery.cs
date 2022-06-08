@@ -1,11 +1,10 @@
 ﻿using Application.Commons;
-using Application.Features.Objects.Queries.GetOneObject;
-using Application.Features.Products.Vms;
+using Domain.ViewModels.Product;
 using MediatR;
 
 namespace Application.Features.Products.Queries.GetOneProductBySku
 {
-    public class GetOneProductBySkuQuery : GetOneObjectQuery, IRequest<ResponseApi<ProductVm>>
+    public class GetOneProductBySkuQuery : IRequest<ResponseApi<ProductDetailViewModel>>
     {
         public string Sku { get; init; }
     }

@@ -30,7 +30,7 @@ namespace Infrastructure.Services
         public string GenerateAccessToken(User user)
         {
             var claims = new List<Claim> {
-                new Claim(ClaimTypes.NameIdentifier, user.Id) 
+                new (ClaimTypes.Email, user.Email)
             };
             //todo add roles
 

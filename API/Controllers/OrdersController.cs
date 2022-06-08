@@ -1,34 +1,49 @@
 #nullable enable
-using System.Threading;
+using System.ComponentModel;
 using System.Threading.Tasks;
+using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Queries.GetOneOrderById;
 using Application.Features.Orders.Queries.GetPagingOrders;
-using Application.Features.Orders.Vms;
+using Domain.Paging;
+using Infrastructure.Interfaces.Repositories;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    public class OrdersController : ObjectsController<OrderVm>
+    [Authorize]
+    public class OrdersController : BaseApiController
     {
-        public OrdersController(IMediator _mediator) : base(_mediator)
+        public OrdersController(IMediator mediator) : base(mediator)
         {
-
         }
 
-        [HttpGet("id/{id}")]
-        public async Task<IActionResult> GetOneOrderById(string id)
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetOneProfileOrder(string id)
         {
-            var result = await _mediator.Send(new GetOneOrderByIdQuery() { Id = id });
-            return HandleResponseStatus(result);
+            var data = await _mediator.Send(new GetOneProfileOrderQuery() { Id = id });
+            return HandleResponseStatus(data);
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetPagingOrders([FromQuery] GetPagingOrdersQuery query,
-            CancellationToken cancellationToken = default)
+        public async Task<IActionResult> GetPagingProfileOrder(
+            [FromQuery] PagingRequest pagingRequest,
+            [FromQuery] [DefaultValue("createdAt")] string sortBy,
+            [FromQuery] [DefaultValue(true)] bool isDesc)
         {
-            var result = await this._mediator.Send(query, cancellationToken);
-            return HandleResponseStatus(result);
+            var query = new GetPagingProfileOrdersQuery()
+                { PagingRequest = pagingRequest, IsDesc = isDesc, SortBy = sortBy };
+            var data = await _mediator.Send(query);
+            return HandleResponseStatus(data);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateOrder([FromBody] CreateProfileOrderCommand command)
+        {
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
         }
     }
 }

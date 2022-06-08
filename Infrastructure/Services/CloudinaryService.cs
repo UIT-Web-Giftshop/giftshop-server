@@ -28,7 +28,7 @@ namespace Infrastructure.Services
         {
             // read & check file
             var check = file.IsImage();
-            if (!check)
+            if (!check.IsValid)
                 return null;
 
             var uploadParam = new ImageUploadParams()

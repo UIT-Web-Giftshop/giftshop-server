@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IOrderRepository : IBaseRepository<Order>
+    public interface IOrderRepository : IRepository<Order>
     {
 
     }
