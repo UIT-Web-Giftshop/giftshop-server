@@ -35,9 +35,14 @@ namespace Infrastructure.Services
                 .ToList();
         }
 
-        public bool IsInRole(string role)
+        public void AppendSession(string key, string value)
         {
-            return _contextAccessor.HttpContext?.User.IsInRole(role) ?? false;
+            _contextAccessor.HttpContext?.Session.SetString(key, value);
+        }
+
+        public string GetHeader(string key)
+        {
+            return _contextAccessor.HttpContext?.Request.Headers[key].ToString();
         }
     }
 }

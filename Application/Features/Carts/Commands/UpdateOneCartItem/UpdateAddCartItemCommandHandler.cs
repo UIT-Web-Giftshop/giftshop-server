@@ -5,6 +5,7 @@ using Application.Commons;
 using Domain.Entities.Cart;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
+using Infrastructure.Interfaces.Services;
 using MediatR;
 
 namespace Application.Features.Carts.Commands.UpdateOneCartItem
@@ -13,18 +14,24 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IAccessor _accessor;
 
-        public UpdateAddCartItemCommandHandler(ICartRepository cartRepository, IProductRepository productRepository)
+        public UpdateAddCartItemCommandHandler(ICartRepository cartRepository, IProductRepository productRepository, IAccessor accessor)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi<Unit>> Handle(UpdateAddCartItemCommand request,
             CancellationToken cancellationToken)
         {
+            var cartId = _accessor.GetHeader("cartId");
+            if (string.IsNullOrEmpty(cartId))
+                return ResponseApi<Unit>.ResponseFail("cartId không tồn tại");
+            
             // get cart
-            var cart = await _cartRepository.GetOneAsync(request.Id, cancellationToken);
+            var cart = await _cartRepository.GetOneAsync(cartId, cancellationToken);
             if (cart is null)
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.BadRequest, ResponseConstants.BAD_REQUEST);
 

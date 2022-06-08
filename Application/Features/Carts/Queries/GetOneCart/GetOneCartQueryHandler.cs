@@ -8,6 +8,7 @@ using Domain.Entities;
 using Domain.Entities.Cart;
 using Domain.ViewModels.Cart;
 using Infrastructure.Interfaces.Repositories;
+using Infrastructure.Interfaces.Services;
 using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -18,11 +19,13 @@ namespace Application.Features.Carts.Queries.GetOneCart
     {
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
+        private readonly IAccessor _accessor;
 
-        public GetOneCartByIdQueryHandler(ICartRepository cartRepository, IMapper mapper)
+        public GetOneCartByIdQueryHandler(ICartRepository cartRepository, IMapper mapper, IAccessor accessor)
         {
             _cartRepository = cartRepository;
             _mapper = mapper;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi<CartViewModel>> Handle(GetOneCartQuery request, CancellationToken cancellationToken)
@@ -34,8 +37,13 @@ namespace Application.Features.Carts.Queries.GetOneCart
                 .Add("foreignField", "sku")
                 .Add("as", "products"));
 
+            var cartId = _accessor.GetHeader("cartId");
+            
+            if (string.IsNullOrEmpty(cartId))
+                return ResponseApi<CartViewModel>.ResponseFail("cartId không tồn tại");
+            
             var cart = await _cartRepository.Aggregate()
-                .Match(x => x.Id == request.Id)
+                .Match(x => x.Id == cartId)
                 .AppendStage<Cart>(lookup)
                 .FirstOrDefaultAsync(cancellationToken);
             

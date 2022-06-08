@@ -2,10 +2,9 @@
 using Domain.ViewModels.Wishlist;
 using MediatR;
 
-namespace Application.Features.Wishlist.Queries.GetOneWishList
+namespace Application.Features.Wishlists.Queries.GetOneWishList
 {
     public class GetOneWishlistQuery : IRequest<ResponseApi<WishlistViewModel>>
     {
-        public string Id { get; set; } // TODO: remove this
     }
 }

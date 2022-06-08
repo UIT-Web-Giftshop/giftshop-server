@@ -6,7 +6,6 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
 {
     public class UpdateAddCartItemCommand : IRequest<ResponseApi<Unit>>
     {
-        public string Id { get; init; } // TODO: remove this field later, get by context
         public string Sku { get; init; }
         public int Quantity { get; init; }
     }

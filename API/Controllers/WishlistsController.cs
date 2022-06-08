@@ -1,6 +1,6 @@
 ﻿using System.Threading.Tasks;
-using Application.Features.Wishlist.Queries.GetOneWishList;
 using Application.Features.Wishlists.Commands.UpdateOneWishlist;
+using Application.Features.Wishlists.Queries.GetOneWishList;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
@@ -12,10 +12,10 @@ namespace API.Controllers
         {
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOneWishlist(string id)
+        [HttpGet("")]
+        public async Task<IActionResult> GetOneWishlist()
         {
-            var data = await  _mediator.Send(new GetOneWishlistQuery(){Id = id});
+            var data = await  _mediator.Send(new GetOneWishlistQuery());
             return HandleResponseStatus(data);
         }
 

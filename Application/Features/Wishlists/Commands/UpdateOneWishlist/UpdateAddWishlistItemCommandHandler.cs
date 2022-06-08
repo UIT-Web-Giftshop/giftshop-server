@@ -2,8 +2,10 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
+using Domain.ViewModels.Wishlist;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
+using Infrastructure.Interfaces.Services;
 using MediatR;
 
 namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
@@ -12,17 +14,24 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IProductRepository _productRepository;
+        private readonly IAccessor _accessor;
 
-        public UpdateAddWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IProductRepository productRepository)
+        public UpdateAddWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IProductRepository productRepository, IAccessor accessor)
         {
             _wishlistRepository = wishlistRepository;
             _productRepository = productRepository;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi<Unit>> Handle(UpdateAddWishlistItemCommand request, CancellationToken cancellationToken)
         {
+            var wishlistId = _accessor.GetHeader("wishlistId");
+            
+            if (string.IsNullOrEmpty(wishlistId))
+                return ResponseApi<Unit>.ResponseFail("wishlistId không tồn tại");
+            
             // get wishlist
-            var wishlist = await _wishlistRepository.GetOneAsync(request.Id, cancellationToken);
+            var wishlist = await _wishlistRepository.GetOneAsync(wishlistId, cancellationToken);
             if (wishlist is null)
                 return ResponseApi<Unit>.ResponseFail("Không tìm thấy wishlist");
 

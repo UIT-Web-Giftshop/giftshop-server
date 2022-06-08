@@ -3,25 +3,27 @@ using System.Threading.Tasks;
 using Application.Features.Carts.Commands.UpdateOneCartItem;
 using Application.Features.Carts.Queries.GetOneCart;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     public class CartsController : BaseApiController
     {
         public CartsController(IMediator _mediator) : base(_mediator)
         {
         }
 
-        [HttpGet("{id}")]
-        public async Task<IActionResult> GetOneCartById(string id)
+        [HttpGet("")]
+        public async Task<IActionResult> GetOneCartById()
         {
             var data = await _mediator.Send(
-                new GetOneCartQuery { Id = id });
+                new GetOneCartQuery());
             return HandleResponseStatus(data);
         }
 
-        [HttpPut("/add")]
+        [HttpPut("add")]
         public async Task<IActionResult> UpdateAddCartItem(
             [FromBody] UpdateAddCartItemCommand command,
             CancellationToken cancellationToken)
@@ -30,7 +32,7 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
-        [HttpPut("/remove")]
+        [HttpPut("remove")]
         public async Task<IActionResult> UpdateDeleteCartItem(
             [FromBody] UpdateDeleteCartItemCommand command,
             CancellationToken cancellationToken)

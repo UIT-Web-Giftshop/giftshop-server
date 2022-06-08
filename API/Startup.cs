@@ -45,7 +45,7 @@ namespace API
             services.AddDistributedMemoryCache();
             services.AddSession(opts =>
             {
-                opts.IdleTimeout = TimeSpan.FromMinutes(30);
+                opts.IdleTimeout = TimeSpan.FromMinutes(double.Parse(Configuration["ServicesSettings:AuthenticationSettings:ExpirationMinutes"]));
             });
             
             services.AddSwaggerService();

@@ -7,6 +7,7 @@ namespace Infrastructure.Interfaces.Services
         string Email();
         string Id();
         List<string> Roles();
-        bool IsInRole(string role);
+        void AppendSession(string key, string value);
+        string GetHeader(string key);
     }
 }

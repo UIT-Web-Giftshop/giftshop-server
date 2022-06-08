@@ -20,7 +20,7 @@
 
     <ItemGroup>
       <Folder Include="Features\Auths\VerifyToken\ConfirmResetPassword" />
-      <Folder Include="Features\Profile" />
+      <Folder Include="Features\Profile\Commands" />
     </ItemGroup>
 
 </Project>

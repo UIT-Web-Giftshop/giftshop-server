@@ -6,7 +6,6 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
 {
     public class UpdateAddWishlistItemCommand : IRequest<ResponseApi<Unit>>
     {
-        public string Id { get; set; } // wishlist id TODO: remove this
         public string Sku { get; set; }
     }
 

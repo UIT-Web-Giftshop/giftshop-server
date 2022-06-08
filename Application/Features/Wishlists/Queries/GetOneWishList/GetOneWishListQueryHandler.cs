@@ -1,12 +1,12 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Application.Features.Wishlist.Queries.GetOneWishList;
 using AutoMapper;
 using Domain.Attributes;
 using Domain.Entities;
 using Domain.ViewModels.Wishlist;
 using Infrastructure.Interfaces.Repositories;
+using Infrastructure.Interfaces.Services;
 using MediatR;
 using MongoDB.Bson;
 using MongoDB.Driver;
@@ -17,15 +17,22 @@ namespace Application.Features.Wishlists.Queries.GetOneWishList
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IMapper _mapper;
-
-        public GetOneWishListQueryHandler(IWishlistRepository wishlistRepository, IMapper mapper)
+        private readonly IAccessor _accessor;
+        
+        public GetOneWishListQueryHandler(IWishlistRepository wishlistRepository, IMapper mapper, IAccessor accessor)
         {
             _wishlistRepository = wishlistRepository;
             _mapper = mapper;
+            _accessor = accessor;
         }
 
         public async Task<ResponseApi<WishlistViewModel>> Handle(GetOneWishlistQuery request, CancellationToken cancellationToken)
         {
+            var wishlistId = _accessor.GetHeader("wishlistId");
+            
+            if (string.IsNullOrEmpty(wishlistId))
+                return ResponseApi<WishlistViewModel>.ResponseFail("wishlistId không tồn tại");
+            
             var lookup = new BsonDocument(
                 "$lookup", 
                 new BsonDocument("from", BsonCollection.GetCollectionName<Product>())
@@ -34,7 +41,7 @@ namespace Application.Features.Wishlists.Queries.GetOneWishList
                     .Add("as", "products"));
             
             var wishlist = await _wishlistRepository.Aggregate()
-                .Match(x => x.Id == request.Id)
+                .Match(x => x.Id == wishlistId)
                 .AppendStage<Domain.Entities.Wishlist>(lookup)
                 .FirstOrDefaultAsync(cancellationToken);
             
