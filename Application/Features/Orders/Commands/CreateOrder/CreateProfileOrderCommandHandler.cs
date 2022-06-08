@@ -33,7 +33,8 @@ namespace Application.Features.Orders.Commands.CreateOrder
         {
             var productsQuantityCursor = await _productRepository.FindAsync(
                 x => request.OrderItems.Keys.Contains(x.Sku), // TODO: maybe need refactor
-                x => new MinimalProductForOrder { Sku = x.Sku, Price = x.Price, Stock = x.Stock, Name = x.Name },
+                x => new MinimalProductForOrder
+                    { Sku = x.Sku, Price = x.Price, Stock = x.Stock, Name = x.Name, ImageUrl = x.ImageUrl },
                 cancellationToken: cancellationToken);
 
             var productList = await productsQuantityCursor.ToListAsync(cancellationToken);
@@ -59,6 +60,7 @@ namespace Application.Features.Orders.Commands.CreateOrder
                     x => x.Set(p => p.Stock, item.Stock - request.OrderItems[item.Sku]),
                     cancellationToken: cancellationToken));
             }
+
             // create order
             var order = new Order
             {
@@ -70,7 +72,10 @@ namespace Application.Features.Orders.Commands.CreateOrder
             foreach (var item in productList)
             {
                 order.AddItem(new OrderItem
-                    { Price = item.Price, Quantity = request.OrderItems[item.Sku], ProductSku = item.Sku });
+                {
+                    Price = item.Price, Quantity = request.OrderItems[item.Sku], ProductSku = item.Sku,
+                    Name = item.Name, ImageUrl = item.ImageUrl
+                });
             }
 
             // push to task
