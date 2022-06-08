@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
-    public class ProductRepository : RefactorRepository<Product>, IProductRepository
+    public class ProductRepository : Repository<Product>, IProductRepository
     {
         private readonly ICounterRepository _counterRepository;
         public ProductRepository(IMongoContext context, ICounterRepository counterRepository) : base(context)

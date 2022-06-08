@@ -8,7 +8,7 @@ using MongoDB.Driver.Linq;
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IRefactorRepository<TEntity> : IDisposable where TEntity : class
+    public interface IRepository<TEntity> : IDisposable where TEntity : class
     {
         #region Queryable
 

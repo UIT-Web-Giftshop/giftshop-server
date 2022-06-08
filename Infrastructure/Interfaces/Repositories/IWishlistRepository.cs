@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IWishlistRepository : IRefactorRepository<Wishlist>
+    public interface IWishlistRepository : IRepository<Wishlist>
     {
         
     }

@@ -11,7 +11,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
-    public class CounterRepository : RefactorRepository<CounterCollection>, ICounterRepository
+    public class CounterRepository : Repository<CounterCollection>, ICounterRepository
     {
         public CounterRepository(IMongoContext context) : base(context)
         {

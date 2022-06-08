@@ -6,7 +6,7 @@ using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories
 {
-    public class VerifyTokenRepository : RefactorRepository<VerifyToken>, IVerifyTokenRepository
+    public class VerifyTokenRepository : Repository<VerifyToken>, IVerifyTokenRepository
     {
         public VerifyTokenRepository(IMongoContext mongoContext) : base(mongoContext)
         {

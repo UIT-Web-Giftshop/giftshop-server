@@ -12,14 +12,14 @@ using MongoDB.Driver.Linq;
 
 namespace Infrastructure.Repositories
 {
-    public class RefactorRepository<TEntity> : IRefactorRepository<TEntity> where TEntity : class
+    public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     {
         protected readonly IMongoCollection<TEntity> _mongoCollection;
         protected readonly IMongoContext _mongoContext;
 
         internal IMongoCollection<TEntity> Collection => _mongoCollection;
 
-        public RefactorRepository(IMongoContext mongoContext)
+        public Repository(IMongoContext mongoContext)
         {
             _mongoContext = mongoContext;
             _mongoCollection = _mongoContext.GetCollection<TEntity>();

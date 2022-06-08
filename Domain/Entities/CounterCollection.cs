@@ -2,7 +2,7 @@
 
 namespace Domain.Entities
 {
-    [BsonCollection("counters")]
+    [BsonCollection("_counters")]
     public class CounterCollection
     {
         public string CollectionName { get; set; }

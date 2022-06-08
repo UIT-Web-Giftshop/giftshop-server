@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface ICartRepository : IRefactorRepository<Cart>
+    public interface ICartRepository : IRepository<Cart>
     {
         
     }

@@ -4,7 +4,7 @@ using Domain.Entities;
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface ICounterRepository : IRefactorRepository<CounterCollection>
+    public interface ICounterRepository : IRepository<CounterCollection>
     {
         Task IncreaseAsync<TCollection>(int value = 1, CancellationToken cancellationToken = default) 
             where TCollection : class;

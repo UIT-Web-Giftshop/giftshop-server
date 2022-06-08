@@ -1,11 +1,10 @@
 ﻿using Application.Features.Auths.SignupUser;
-using Application.Features.Orders.Vms;
+using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Profile.Commands.UpdateProfileInfo;
 using Application.Features.Users.Commands.AddOneUser;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Entities.Cart;
-using Domain.Entities.Order;
 using Domain.ViewModels.Cart;
 using Domain.ViewModels.Product;
 using Domain.ViewModels.Profile;
@@ -30,7 +29,6 @@ namespace Application.Mapping
                 .ForMember(o => o.CartId, cfg => cfg.Ignore())
                 .ForMember(o => o.WishlistId, cfg => cfg.Ignore());
             
-            CreateMap<Order, OrderVm>().ReverseMap();
 
             CreateMap<User, AddOneUserCommand>().ReverseMap();
             
@@ -39,6 +37,8 @@ namespace Application.Mapping
             CreateMap<Wishlist, WishlistViewModel>().ReverseMap();
 
             CreateMap<User, MyProfileViewModel>();
+
+            CreateMap<Product, MinimalProductForOrder>().ReverseMap();
         }
     }
 }

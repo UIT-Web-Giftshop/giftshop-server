@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IProductRepository : IRefactorRepository<Product>
+    public interface IProductRepository : IRepository<Product>
     {
         
     }

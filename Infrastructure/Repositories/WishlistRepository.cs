@@ -4,7 +4,7 @@ using Infrastructure.Interfaces.Repositories;
 
 namespace Infrastructure.Repositories
 {
-    public class WishlistRepository : RefactorRepository<Wishlist>, IWishlistRepository
+    public class WishlistRepository : Repository<Wishlist>, IWishlistRepository
     {
         public WishlistRepository(IMongoContext mongoContext) : base(mongoContext)
         {

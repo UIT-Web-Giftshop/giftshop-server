@@ -10,7 +10,7 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
-    public class UserRepository : RefactorRepository<User>, IUserRepository
+    public class UserRepository : Repository<User>, IUserRepository
     {
         private readonly ICounterRepository _counterRepository;
 

@@ -12,12 +12,13 @@ using MongoDB.Driver;
 
 namespace Infrastructure.Repositories
 {
-    public abstract class BaseRepository<T> : IBaseRepository<T> where T : class
+    [Obsolete("Will be removed in future versions")]
+    public abstract class BaseRepositoryLegacy<T> : IBaseRepositoryLegacy<T> where T : class
     {
         protected readonly IMongoContext _context;
         private readonly IMongoCollection<T> _collection;
 
-        protected BaseRepository(IMongoContext context)
+        protected BaseRepositoryLegacy(IMongoContext context)
         {
             _context = context;
             _collection = context.GetCollection<T>();

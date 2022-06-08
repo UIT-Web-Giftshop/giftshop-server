@@ -10,10 +10,10 @@ namespace Infrastructure.Extensions.Mongo
     {
         public static IAggregateFluent<TAggr> UnionWithOther<TAggr, TOther>(
             this IAggregateFluent<TAggr> aggregation,
-            IRefactorRepository<TOther> other,
+            IRepository<TOther> other,
             Expression<Func<TOther, TAggr>> projection) where TOther : class
         {
-            var otherImpl = other as RefactorRepository<TOther>;
+            var otherImpl = other as Repository<TOther>;
             var pipelineDefinition = PipelineDefinitionBuilder.For<TOther>().Project(projection);
 
             return aggregation.UnionWith(otherImpl.Collection, pipelineDefinition);

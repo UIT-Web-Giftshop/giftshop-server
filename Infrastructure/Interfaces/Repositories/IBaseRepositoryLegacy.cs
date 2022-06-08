@@ -8,7 +8,8 @@ using Domain.Paging;
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IBaseRepository<T> where T : class
+    [Obsolete("Use IRepository<TEntity> instead")]
+    public interface IBaseRepositoryLegacy<T> where T : class
     {
         Task<T> AddAsync(T entity, CancellationToken cancellationToken = default);
         

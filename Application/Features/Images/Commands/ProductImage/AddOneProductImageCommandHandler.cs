@@ -55,6 +55,7 @@ namespace Application.Features.Images.Commands.ProductImage
             }
             
             var returnUrl = $"https://{_awss3Settings.BucketName}.s3.amazonaws.com/{imageKey}";
+            
             await _productRepository.UpdateOneAsync(
                 product.Id,
                 x => x.Set(p => p.ImageUrl, returnUrl),

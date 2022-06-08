@@ -2,7 +2,7 @@
 
 namespace Infrastructure.Interfaces.Repositories
 {
-    public interface IVerifyTokenRepository : IRefactorRepository<VerifyToken>
+    public interface IVerifyTokenRepository : IRepository<VerifyToken>
     {
         
     }
