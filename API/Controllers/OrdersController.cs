@@ -1,11 +1,11 @@
 #nullable enable
 using System.ComponentModel;
 using System.Threading.Tasks;
+using Application.Features.Orders.Commands.ChangeOrderState;
 using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Queries.GetOneOrderById;
 using Application.Features.Orders.Queries.GetPagingOrders;
 using Domain.Paging;
-using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -42,6 +42,14 @@ namespace API.Controllers
         [HttpPost]
         public async Task<IActionResult> CreateOrder([FromBody] CreateProfileOrderCommand command)
         {
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
+        }
+        
+        [HttpPut("{id}/status/{status}")]
+        public async Task<IActionResult> UpdateOrderStatus(string id, string status)
+        {
+            var command = new ChangeOrderStatusCommand() { Id = id, Status = status };
             var data = await _mediator.Send(command);
             return HandleResponseStatus(data);
         }

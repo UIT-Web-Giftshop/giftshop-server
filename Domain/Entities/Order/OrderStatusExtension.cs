@@ -10,7 +10,7 @@ namespace Domain.Entities.Order
         /// <param name="status">OrderStatus type</param>
         /// <returns></returns>
         /// <exception cref="ArgumentOutOfRangeException"></exception>
-        public static string GetOrderStatus(this OrderStatus status)
+        public static string GetString(this OrderStatus status)
         {
             return status switch
             {

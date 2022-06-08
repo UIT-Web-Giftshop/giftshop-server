@@ -49,7 +49,7 @@ namespace Application.Features.Auths.VerifyToken.ConfirmEmail
             var addCartTask = _cartRepository.InsertAsync(cart, cancellationToken);
             var addWishlistTask = _wishlistRepository.InsertAsync(wishlist, cancellationToken);
             
-            await Task.WhenAll(addCartTask, addWishlistTask);
+            Task.WaitAll(addCartTask, addWishlistTask);
             
             // update user
             var updated = await _userRepository.UpdateOneAsync(

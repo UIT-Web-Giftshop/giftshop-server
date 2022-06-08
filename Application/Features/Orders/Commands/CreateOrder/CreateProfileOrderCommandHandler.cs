@@ -49,24 +49,22 @@ namespace Application.Features.Orders.Commands.CreateOrder
             }
 
             // update stock
-            var tasks = new List<Task>();
+            var tasks = new Task[productList.Count + 1];
+            var index = 0;
             foreach (var item in productList)
             {
                 if (item is null) continue;
-                tasks.Add(_productRepository.UpdateOneAsync(
+                tasks[index++] = (_productRepository.UpdateOneAsync(
                     x => x.Sku == item.Sku,
                     x => x.Set(p => p.Stock, item.Stock - request.OrderItems[item.Sku]),
                     cancellationToken: cancellationToken));
             }
-
-            tasks.ForEach(x => x.Start());
-
             // create order
             var order = new Order
             {
                 UserEmail = _accessorService.Email(),
                 IsPaid = false,
-                Status = OrderStatus.Pending,
+                Status = nameof(OrderStatus.Pending),
                 CreatedAt = DateTime.UtcNow
             };
             foreach (var item in productList)
@@ -76,11 +74,10 @@ namespace Application.Features.Orders.Commands.CreateOrder
             }
 
             // push to task
-            var addOrderTask = _orderRepository.InsertAsync(order, cancellationToken);
-            tasks.Add(addOrderTask);
+            tasks[index] = _orderRepository.InsertAsync(order, cancellationToken);
 
             // wait
-            await Task.WhenAll(tasks);
+            Task.WaitAll(tasks);
 
             return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đặt hàng thành công");
         }
