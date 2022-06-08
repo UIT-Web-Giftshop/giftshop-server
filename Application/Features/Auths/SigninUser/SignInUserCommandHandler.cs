@@ -18,16 +18,16 @@ namespace Application.Features.Auths.SigninUser
         private readonly IUserRepository _userRepository;
         private readonly IAuthenticationService _authenticationService;
         private readonly IMapper _mapper;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
         private const string USER_NOT_FOUND = "Tài khoảng không chính xác";
         
-        public SignInUserCommandHandler(IUserRepository userRepository, IAuthenticationService authenticationService, IMapper mapper, IAccessor accessor)
+        public SignInUserCommandHandler(IUserRepository userRepository, IAuthenticationService authenticationService, IMapper mapper, IAccessorService accessorService)
         {
             _userRepository = userRepository;
             _authenticationService = authenticationService;
             _mapper = mapper;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<SignInResponseViewModel>> Handle(SignInUserCommand request, CancellationToken cancellationToken)
@@ -61,8 +61,8 @@ namespace Application.Features.Auths.SigninUser
             
             // generate token
             var accessToken = _authenticationService.GenerateAccessToken(existedUser);
-            _accessor.AppendSession("CartId", existedUser.CartId);
-            _accessor.AppendSession("WishlistId", existedUser.WishlistId);
+            _accessorService.AppendSession("CartId", existedUser.CartId);
+            _accessorService.AppendSession("WishlistId", existedUser.WishlistId);
             
             var returnModel = new SignInResponseViewModel
             {

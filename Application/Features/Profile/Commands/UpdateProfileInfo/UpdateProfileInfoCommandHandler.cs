@@ -12,13 +12,13 @@ namespace Application.Features.Profile.Commands.UpdateProfileInfo
 {
     public class UpdateProfileInfoCommandHandler : IRequestHandler<UpdateProfileInfoCommand, ResponseApi<Unit>>
     {
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public UpdateProfileInfoCommandHandler(IAccessor accessor, IUserRepository userRepository, IMapper mapper)
+        public UpdateProfileInfoCommandHandler(IAccessorService accessorService, IUserRepository userRepository, IMapper mapper)
         {
-            _accessor = accessor;
+            _accessorService = accessorService;
             _userRepository = userRepository;
             _mapper = mapper;
         }
@@ -26,7 +26,7 @@ namespace Application.Features.Profile.Commands.UpdateProfileInfo
 
         public async Task<ResponseApi<Unit>> Handle(UpdateProfileInfoCommand request, CancellationToken cancellationToken)
         {
-            var email = _accessor.Email();
+            var email = _accessorService.Email();
             var user = await _userRepository.FindOneAsync(x => x.Email == email, cancellationToken);
 
             var newUser = _mapper.Map(request, user);

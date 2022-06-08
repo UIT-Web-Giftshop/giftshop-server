@@ -14,18 +14,18 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
-        public UpdateAddWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IProductRepository productRepository, IAccessor accessor)
+        public UpdateAddWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IProductRepository productRepository, IAccessorService accessorService)
         {
             _wishlistRepository = wishlistRepository;
             _productRepository = productRepository;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<Unit>> Handle(UpdateAddWishlistItemCommand request, CancellationToken cancellationToken)
         {
-            var wishlistId = _accessor.GetHeader("wishlistId");
+            var wishlistId = _accessorService.GetHeader("wishlistId");
             
             if (string.IsNullOrEmpty(wishlistId))
                 return ResponseApi<Unit>.ResponseFail("wishlistId không tồn tại");

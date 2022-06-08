@@ -16,17 +16,17 @@ namespace Application.Features.Profile.Commands.ChangePassword
     public class ChangePasswordCommandHandler : IRequestHandler<ChangePasswordCommand, ResponseApi<Unit>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
-        public ChangePasswordCommandHandler(IAccessor accessor, IUserRepository userRepository)
+        public ChangePasswordCommandHandler(IAccessorService accessorService, IUserRepository userRepository)
         {
-            _accessor = accessor;
+            _accessorService = accessorService;
             _userRepository = userRepository;
         }
 
         public async Task<ResponseApi<Unit>> Handle(ChangePasswordCommand request, CancellationToken cancellationToken)
         {
-            var email = _accessor.Email();
+            var email = _accessorService.Email();
             var user = await _userRepository.FindOneAsync(x => x.Email == email, cancellationToken);
 
             var passwordHasher = new PasswordHasher<User>();

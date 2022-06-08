@@ -12,19 +12,19 @@ namespace Application.Features.Profile.Queries.GetMyProfile
     public class GetMyProfileQueryHandler : IRequestHandler<GetMyProfileQuery, ResponseApi<MyProfileViewModel>>
     {
         private readonly IUserRepository _userRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
         private readonly IMapper _mapper;
 
-        public GetMyProfileQueryHandler(IUserRepository userRepository, IAccessor accessor, IMapper mapper)
+        public GetMyProfileQueryHandler(IUserRepository userRepository, IAccessorService accessorService, IMapper mapper)
         {
             _userRepository = userRepository;
-            _accessor = accessor;
+            _accessorService = accessorService;
             _mapper = mapper;
         }
         
         public async Task<ResponseApi<MyProfileViewModel>> Handle(GetMyProfileQuery request, CancellationToken cancellationToken)
         {
-            var email = _accessor.Email();
+            var email = _accessorService.Email();
             var profile = await _userRepository.FindOneAsync(x => x.Email == email, cancellationToken);
             return ResponseApi<MyProfileViewModel>.ResponseOk(_mapper.Map<MyProfileViewModel>(profile));
         }

@@ -13,17 +13,17 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
     public class UpdateDeleteCartItemCommandHandler : IRequestHandler<UpdateDeleteCartItemCommand, ResponseApi<Unit>>
     {
         private readonly ICartRepository _cartRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
         
-        public UpdateDeleteCartItemCommandHandler(ICartRepository cartRepository, IAccessor accessor)
+        public UpdateDeleteCartItemCommandHandler(ICartRepository cartRepository, IAccessorService accessorService)
         {
             _cartRepository = cartRepository;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
         
         public async Task<ResponseApi<Unit>> Handle(UpdateDeleteCartItemCommand request, CancellationToken cancellationToken)
         {
-            var cartId = _accessor.GetHeader("cartId");
+            var cartId = _accessorService.GetHeader("cartId");
             
             if (string.IsNullOrEmpty(cartId))
                 return ResponseApi<Unit>.ResponseFail("cartId không tồn tại");

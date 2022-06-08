@@ -14,19 +14,19 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
     {
         private readonly ICartRepository _cartRepository;
         private readonly IProductRepository _productRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
-        public UpdateAddCartItemCommandHandler(ICartRepository cartRepository, IProductRepository productRepository, IAccessor accessor)
+        public UpdateAddCartItemCommandHandler(ICartRepository cartRepository, IProductRepository productRepository, IAccessorService accessorService)
         {
             _cartRepository = cartRepository;
             _productRepository = productRepository;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<Unit>> Handle(UpdateAddCartItemCommand request,
             CancellationToken cancellationToken)
         {
-            var cartId = _accessor.GetHeader("cartId");
+            var cartId = _accessorService.GetHeader("cartId");
             if (string.IsNullOrEmpty(cartId))
                 return ResponseApi<Unit>.ResponseFail("cartId không tồn tại");
             

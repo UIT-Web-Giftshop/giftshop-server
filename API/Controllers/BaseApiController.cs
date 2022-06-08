@@ -16,11 +16,15 @@ namespace API.Controllers
             _mediator = mediator;
         }
 
-        protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi)
+        protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi, string redirect = null)
         {
             if (responseApi.Success)
             {
-                return StatusCode(responseApi.Status, responseApi);
+                return responseApi.Status switch
+                {
+                    StatusCodes.Status302Found => Redirect(redirect),
+                    _ => StatusCode(responseApi.Status, responseApi)
+                };
             }
             
             //TODO: more handling, refactor status code response

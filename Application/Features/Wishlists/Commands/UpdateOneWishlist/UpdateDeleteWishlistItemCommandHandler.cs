@@ -12,17 +12,17 @@ namespace Application.Features.Wishlists.Commands.UpdateOneWishlist
     public class UpdateDeleteWishlistItemCommandHandler : IRequestHandler<UpdateDeleteWishlistItemCommand, ResponseApi<Unit>>
     {
         private readonly IWishlistRepository _wishlistRepository;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
-        public UpdateDeleteWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IAccessor accessor)
+        public UpdateDeleteWishlistItemCommandHandler(IWishlistRepository wishlistRepository, IAccessorService accessorService)
         {
             _wishlistRepository = wishlistRepository;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<Unit>> Handle(UpdateDeleteWishlistItemCommand request, CancellationToken cancellationToken)
         {
-            var wishlistId = _accessor.GetHeader("wishlistId");
+            var wishlistId = _accessorService.GetHeader("wishlistId");
             
             if (string.IsNullOrEmpty(wishlistId))
                 return ResponseApi<Unit>.ResponseFail("wishlistId không tồn tại");

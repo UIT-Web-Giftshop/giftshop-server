@@ -19,13 +19,13 @@ namespace Application.Features.Carts.Queries.GetOneCart
     {
         private readonly ICartRepository _cartRepository;
         private readonly IMapper _mapper;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
 
-        public GetOneCartByIdQueryHandler(ICartRepository cartRepository, IMapper mapper, IAccessor accessor)
+        public GetOneCartByIdQueryHandler(ICartRepository cartRepository, IMapper mapper, IAccessorService accessorService)
         {
             _cartRepository = cartRepository;
             _mapper = mapper;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<CartViewModel>> Handle(GetOneCartQuery request, CancellationToken cancellationToken)
@@ -37,7 +37,7 @@ namespace Application.Features.Carts.Queries.GetOneCart
                 .Add("foreignField", "sku")
                 .Add("as", "products"));
 
-            var cartId = _accessor.GetHeader("cartId");
+            var cartId = _accessorService.GetHeader("cartId");
             
             if (string.IsNullOrEmpty(cartId))
                 return ResponseApi<CartViewModel>.ResponseFail("cartId không tồn tại");

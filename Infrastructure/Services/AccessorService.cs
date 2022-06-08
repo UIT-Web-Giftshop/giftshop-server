@@ -6,11 +6,11 @@ using Microsoft.AspNetCore.Http;
 
 namespace Infrastructure.Services
 {
-    public class Accessor : IAccessor
+    public class AccessorService : IAccessorService
     {
         private readonly IHttpContextAccessor _contextAccessor;
 
-        public Accessor(IHttpContextAccessor contextAccessor)
+        public AccessorService(IHttpContextAccessor contextAccessor)
         {
             _contextAccessor = contextAccessor;
         }
@@ -43,6 +43,11 @@ namespace Infrastructure.Services
         public string GetHeader(string key)
         {
             return _contextAccessor.HttpContext?.Request.Headers[key].ToString();
+        }
+
+        public HttpContext GetHttpContext()
+        {
+            return _contextAccessor.HttpContext;
         }
     }
 }

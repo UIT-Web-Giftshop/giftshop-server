@@ -17,18 +17,18 @@ namespace Application.Features.Wishlists.Queries.GetOneWishList
     {
         private readonly IWishlistRepository _wishlistRepository;
         private readonly IMapper _mapper;
-        private readonly IAccessor _accessor;
+        private readonly IAccessorService _accessorService;
         
-        public GetOneWishListQueryHandler(IWishlistRepository wishlistRepository, IMapper mapper, IAccessor accessor)
+        public GetOneWishListQueryHandler(IWishlistRepository wishlistRepository, IMapper mapper, IAccessorService accessorService)
         {
             _wishlistRepository = wishlistRepository;
             _mapper = mapper;
-            _accessor = accessor;
+            _accessorService = accessorService;
         }
 
         public async Task<ResponseApi<WishlistViewModel>> Handle(GetOneWishlistQuery request, CancellationToken cancellationToken)
         {
-            var wishlistId = _accessor.GetHeader("wishlistId");
+            var wishlistId = _accessorService.GetHeader("wishlistId");
             
             if (string.IsNullOrEmpty(wishlistId))
                 return ResponseApi<WishlistViewModel>.ResponseFail("wishlistId không tồn tại");
