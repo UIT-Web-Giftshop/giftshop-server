@@ -1,8 +1,10 @@
 ﻿using System.Threading.Tasks;
+using Application.Features.Auths.ForgetPassword;
+using Application.Features.Auths.ResendConfirmEmail;
 using Application.Features.Auths.SigninUser;
 using Application.Features.Auths.SignupUser;
 using Application.Features.Auths.VerifyToken.ConfirmEmail;
-using Application.Features.Profile.Commands.ForgetPassword;
+using Application.Features.Auths.VerifyToken.ConfirmResetPassword;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -22,6 +24,20 @@ namespace API.Controllers
             var data     = await _mediator.Send(new ConfirmEmailQuery { Token = token });
             return HandleResponseStatus(data);
         }
+        
+        [HttpGet("me/resend-confirm-email")]
+        public async Task<IActionResult> ResendConfirmEmail([FromQuery] string email)
+        {
+            var data = await _mediator.Send(new ResendConfirmEmailCommand { Email = email });
+            return HandleResponseStatus(data);
+        }
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> RestPassword([FromBody] ConfirmResetPasswordCommand command)
+        {
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
+        }
 
         [HttpPost("signup")]
         public async Task<IActionResult> SignUpAccount(
@@ -36,7 +52,7 @@ namespace API.Controllers
             [FromBody] SignInUserCommand command)
         {
             var data     = await _mediator.Send(command);
-            return HandleResponseStatus(data    );
+            return HandleResponseStatus(data);
         }
         
         [HttpPost("forget-password")]

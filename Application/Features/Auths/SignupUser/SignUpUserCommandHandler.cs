@@ -56,15 +56,16 @@ namespace Application.Features.Auths.SignupUser
 
                 await _verifyTokenRepository.InsertAsync(verifyToken, cancellationToken);
 
+                var url = $"http://localhost:5001/verify/reset-password?token={tokenUuid}";
                 var mailRequest = new MailRequestModel()
                 {
                     To = user.Email,
                     Subject = "Verify your account",
-                    Body = $"<a href='http://localhost:5001/verify/reset-password?token={tokenUuid}'>Verify your account by click this link</a>"
+                    Body = $"Verify your account by click this link: <a href='{url}'>{url}</a><br>This link will be expired in 10 minutes"
                 };
 
                 await _mailService.SendAsync(mailRequest);
-                return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đăng ký thành công");
+                return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đăng ký thành công, vui lòng kiểm tra email để xác thực tài khoản");
             }
             catch (Exception)
             {

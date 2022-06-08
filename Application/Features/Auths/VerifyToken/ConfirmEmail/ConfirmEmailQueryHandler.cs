@@ -36,7 +36,7 @@ namespace Application.Features.Auths.VerifyToken.ConfirmEmail
             var verifyToken =
                 await _verifyTokenRepository.FindOneAsync(x => x.Token == request.Token, cancellationToken);
 
-            if (verifyToken is null)
+            if (verifyToken is null || !verifyToken.IsValid())
             {
                 return ResponseApi<Unit>.ResponseFail("Yêu cầu không hợp lệ");
             }
@@ -59,6 +59,9 @@ namespace Application.Features.Auths.VerifyToken.ConfirmEmail
 
             if (updated.AnyDocumentModified())
             {
+                // remove verify token
+                await _verifyTokenRepository.DeleteOneAsync(x => x.Token == request.Token, cancellationToken);
+                
                 return ResponseApi<Unit>.ResponseOk(Unit.Value);
             }
 

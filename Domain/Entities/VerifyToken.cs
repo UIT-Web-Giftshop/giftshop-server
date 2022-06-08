@@ -13,15 +13,10 @@ namespace Domain.Entities
         public DateTime Expired { get; set; }
         
         public DateTime CreatedAt { get; set; }
-        
-        public bool IsNotExpired()
-        {
-            return DateTime.Now < Expired;
-        }
-        
+
         public bool IsValid()
         {
-            return !string.IsNullOrEmpty(Token);
+            return !string.IsNullOrEmpty(Token) && DateTime.UtcNow < Expired;
         }
     }
 }

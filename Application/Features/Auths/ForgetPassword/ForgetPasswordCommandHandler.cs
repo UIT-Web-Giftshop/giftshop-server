@@ -2,14 +2,13 @@
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
-using Domain.Entities;
 using Domain.Models;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 
-namespace Application.Features.Profile.Commands.ForgetPassword
+namespace Application.Features.Auths.ForgetPassword
 {
     public class ForgetPasswordCommandHandler : IRequestHandler<ForgetPasswordCommand, ResponseApi<Unit>>
     {
@@ -39,7 +38,7 @@ namespace Application.Features.Profile.Commands.ForgetPassword
             }
             
             var nonce = Guid.NewGuid();
-            var verifyToken = new VerifyToken()
+            var verifyToken = new Domain.Entities.VerifyToken()
             {
                 Email = request.Email,
                 Token = nonce.ToString(),
@@ -49,19 +48,10 @@ namespace Application.Features.Profile.Commands.ForgetPassword
 
             try
             {
-                var token = await _verifyTokenRepository.FindOneAndReplaceAsync(
-                    x => x.Email == verifyToken.Email,
-                    verifyToken,
-                    x => x.Token,
-                    cancellationToken: cancellationToken);
-
-                if (token is null)
-                {
-                    await _verifyTokenRepository.InsertAsync(verifyToken, cancellationToken);
-                }
+                await _verifyTokenRepository.InsertAsync(verifyToken, cancellationToken);
 
                 var url = $"http://localhost:5001/verify/reset-password?token={verifyToken.Token}";
-                var body = $"Click this link to reset password: <a href='${url}'>${url}</a>";
+                var body = $"Click this link to reset password: <a href='{url}'>{url}</a>";
                 
                 
                 var mailRequest = new MailRequestModel()
