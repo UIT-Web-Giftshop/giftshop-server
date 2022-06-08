@@ -35,7 +35,7 @@ namespace Web.Tests
         {
             var mockOptions = new MockIConfigurationAuth().Setup();
             var mockLogger = Mock.Of<ILogger<AuthenticationService>>();
-            _user = new User(){Id = _id};
+            _user = new User(){Id = _id, Email = "test02@mail.com"};
             _authService = new AuthenticationService(mockOptions.Object, mockLogger);
         }
 
@@ -62,12 +62,12 @@ namespace Web.Tests
             
             // act
             var claim = _authService.ValidateToken(token);
-            var id = claim.Find(q => q.Type == ClaimTypes.NameIdentifier)?.Value;
+            var email = claim.Find(q => q.Type == ClaimTypes.Email)?.Value;
             var exp = claim.Find(q => q.Type == "exp")?.Value;
             var nowStamp = new DateTimeOffset(DateTime.UtcNow).ToUnixTimeSeconds();
             
             // assert
-            Assert.Equal(_id, id);
+            Assert.Equal("test02@mail.com", email);
             Assert.True(long.Parse(exp) > nowStamp);
         }
         

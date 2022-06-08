@@ -79,7 +79,7 @@ namespace Infrastructure.Repositories
             if (string.IsNullOrEmpty(id)) throw new ArgumentNullException(nameof(id));
 
             var filter = new BsonDocument("_id", ObjectId.Parse(id));
-            var cursor = await _mongoCollection.FindAsync(filter, cancellationToken: cancellationToken)
+            var cursor = await _mongoCollection.FindAsync(filter, null, cancellationToken)
                 .ConfigureAwait(false);
 
             return await cursor.FirstOrDefaultAsync(cancellationToken)
