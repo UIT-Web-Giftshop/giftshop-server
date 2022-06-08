@@ -40,6 +40,13 @@ namespace Application.Commons
             Message = message
         };
         
+        public static ResponseApi<TData> ResponseFail(int status) => new()
+        {
+            Success = false,
+            Status = status,
+            Message = null
+        };
+        
         public static ResponseApi<TData> ResponseFail(string message) => new()
         {
             Success = false,

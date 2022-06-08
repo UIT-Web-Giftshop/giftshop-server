@@ -53,5 +53,21 @@ namespace API.Controllers
             var data = await _mediator.Send(command);
             return HandleResponseStatus(data);
         }
+        
+        [HttpPut("{id}/status/cancel")]
+        public async Task<IActionResult> CancelOrder(string id)
+        {
+            var command = new CancelOrderCommand() { Id = id };
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
+        }
+
+        [HttpPut("{id}/status/retrieve")]
+        public async Task<IActionResult> RetrieveOrder(string id)
+        {
+            var command = new RetrieveOrderCommand() { Id = id };
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
+        }
     }
 }
