@@ -23,7 +23,7 @@ namespace Domain.Entities
 
         public double Price { get; set; }
 
-        public object Detail { get; set; }
+        public Dictionary<string, string> Detail { get; set; }
 
         public List<string> Traits { get; set; }
 

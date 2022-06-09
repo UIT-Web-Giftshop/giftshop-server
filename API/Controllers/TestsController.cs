@@ -80,11 +80,7 @@ namespace API.Controllers
                     Description = "a initial gift demo product",
                     Stock = 10,
                     Price = 12.30,
-                    Detail = new
-                    {
-                        Color = "red",
-                        Size = "M"
-                    },
+                    Detail = new Dictionary<string, string>() { { "color", "red" }, { "size", "M" } },
                     Traits = new List<string>() { "gift", "demo", "friend" },
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
@@ -97,11 +93,7 @@ namespace API.Controllers
                     Description = "the perfect gift for family",
                     Stock = 34,
                     Price = 25.50,
-                    Detail = new
-                    {
-                        Meterial = "fabric",
-                        Color = "blue",
-                    },
+                    Detail = new Dictionary<string, string>() { { "color", "blue" }, { "size", "L" } },
                     Traits = new List<string>() { "gift", "demo", "family" },
                     IsActive = true,
                     CreatedAt = DateTime.UtcNow
