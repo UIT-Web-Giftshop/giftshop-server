@@ -16,6 +16,8 @@ namespace Domain.ViewModels.Profile
 
         public string Address { get; set; }
         
+        public string ImageUrl { get; set; }
+        
         public string CartId { get; set; }
         
         public string WishlistId { get; set; }

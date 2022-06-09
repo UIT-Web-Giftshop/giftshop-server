@@ -1,8 +1,7 @@
-﻿using System.IO;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Images.Commands;
 using Application.Features.Images.Commands.ProductImage;
+using Application.Features.Images.Commands.UploadProfileAvatar;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -15,13 +14,24 @@ namespace API.Controllers
     {
         public ImagesController(IMediator mediator) : base(mediator) { }
 
-        [HttpPost("product/{sku}")]
+        [HttpPost("upload/product/{sku}")]
         public async Task<IActionResult> AddOneProductImage(
             [FromRoute] string sku,
             [FromForm] IFormFile file,
             CancellationToken cancellationToken)
         {
             var request = new AddOneProductImageCommand { Sku = sku, File = file };
+            var data = await _mediator.Send(request, cancellationToken);
+            return HandleResponseStatus(data);
+        }
+        
+        [Authorize]
+        [HttpPost("upload/avatar")]
+        public async Task<IActionResult> AddOneAvatarImage(
+            [FromForm] IFormFile file,
+            CancellationToken cancellationToken)
+        {
+            var request = new UploadProfileAvatarCommand(){File = file};
             var data = await _mediator.Send(request, cancellationToken);
             return HandleResponseStatus(data);
         }
