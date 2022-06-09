@@ -1,26 +1,26 @@
 version: '3.4'
 
 services:
-  # contextdb mongodb
-  contextdb:
-    image: mongo
-    
-  # mongoclient
-  mongoclient:
-    image: mongoclient/mongoclient
-    depends_on:
-      - contextdb
+  # mongodb
+  mongodb:
+    image: mvertes/alpine-mongo
+    container_name: mongodb
+    restart: always
     ports:
-      - "3000:3000"
-    
-  
+      - "27017:27017"
+    volumes:
+      - mongodb:/data/db
+
   # server api
   giftshop-api:
-    image: giftshop-api:dev
+    image: giftshop-api
     build:
       context: .
       dockerfile: API/Dockerfile
-      
+    container_name: giftshop-api
+    depends_on:
+      - mongodb
+
 volumes:
-  contextdb:
-  aspnet-cert:
+  mongodb:
+  applogs:

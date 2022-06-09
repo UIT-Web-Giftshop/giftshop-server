@@ -10,13 +10,17 @@ namespace Infrastructure.Extensions
     public static class ImageExtension
     {
         private const int IMAGE_MINIMUM_BYTES = 512;
-        public static ImageExtensionModel IsImage(this IFormFile file)
+        
+        /// <summary>
+        /// Check contentType and extension of image
+        /// </summary>
+        /// <param name="file"></param>
+        /// <returns></returns>
+        public static ImageCheckingModel IsImage(this IFormFile file)
         {
-            var failure = new ImageExtensionModel(false, Stream.Null);
-            if (!CheckFileContentType(file)) 
-                return failure;
+            var failure = new ImageCheckingModel(false, Stream.Null);
 
-            if (!CheckFileExtension(file))
+            if (!CheckFileContentType(file) || !CheckFileExtension(file))
                 return failure;
             
             // try to read the file and check the first byte
@@ -46,7 +50,7 @@ namespace Infrastructure.Extensions
                     return failure;
                 }
 
-                return new ImageExtensionModel(true, stream);
+                return new ImageCheckingModel(true, stream);
             }
             catch (Exception)
             {

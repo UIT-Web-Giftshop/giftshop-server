@@ -17,6 +17,13 @@ namespace Application.Commons
             Data = data
         };
 
+        public static ResponseApi<TData> ResponseOk(int status) => new()
+        {
+            Success = true,
+            Status = status,
+            Data = default
+        };
+
         public static ResponseApi<TData> ResponseOk(TData data, string message) => new()
         {
             Success = true,
@@ -31,6 +38,13 @@ namespace Application.Commons
             Status = status,
             Data = data,
             Message = message
+        };
+        
+        public static ResponseApi<TData> ResponseFail(int status) => new()
+        {
+            Success = false,
+            Status = status,
+            Message = null
         };
         
         public static ResponseApi<TData> ResponseFail(string message) => new()

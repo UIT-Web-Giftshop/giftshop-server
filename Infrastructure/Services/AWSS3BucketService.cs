@@ -18,21 +18,18 @@ namespace Infrastructure.Services
         private readonly AWSS3Settings _awsS3Settings;
         private readonly ILogger<AWSS3BucketService> _logger;
 
-        public AWSS3BucketService(
-            IAmazonS3 amazonS3, 
-            IOptions<AWSS3Settings> awsS3Settings, 
-            ILogger<AWSS3BucketService> logger)
+        public AWSS3BucketService(IAmazonS3 amazonS3, IOptions<AWSS3Settings> awsS3Settings, ILogger<AWSS3BucketService> logger)
         {
             _amazonS3 = amazonS3;
-            _logger = logger;
             _awsS3Settings = awsS3Settings.Value;
+            _logger = logger;
         }
 
         public async Task<bool> UploadFileAsync(Stream stream, string key, string contentType)
         {
             try
             {
-                var putRequest = new PutObjectRequest()
+                var putRequest = new PutObjectRequest
                 {
                     InputStream = stream,
                     BucketName = _awsS3Settings.BucketName,
@@ -44,7 +41,7 @@ namespace Infrastructure.Services
             }
             catch (Exception e)
             {
-                _logger.LogError(e, e.Message);
+                _logger.LogError(e.Message);
                 throw new Exception(e.Message);
             }
         }

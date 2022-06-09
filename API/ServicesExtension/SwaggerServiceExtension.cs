@@ -14,7 +14,7 @@ namespace API.ServicesExtension
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
                 var jwtSchema = new OpenApiSecurityScheme()
                 {
-                    Scheme = "bearer",
+                    Scheme = "Bearer",
                     BearerFormat = "JWT",
                     Name = "Authorization",
                     In = ParameterLocation.Header,

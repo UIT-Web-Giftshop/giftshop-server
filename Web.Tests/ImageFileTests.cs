@@ -52,7 +52,7 @@ namespace Web.Tests
         {
             // arrange
             var source = File.OpenRead(@"../../../Resources/Files/giftempty.jpg");
-            var mockFile = new MockIFormFile().MockSetup(source, "image/jpg");
+            var mockFile = new MockIFormFile().MockSetup(source, "image/jpggg");
             
             // act
             var result = mockFile.Object.IsImage();
@@ -66,7 +66,7 @@ namespace Web.Tests
         public void CheckFile_GivenNotImageFile_ReturnFalse()
         {
             // arrange
-            var source = File.OpenRead(@"../../../Resources/Files/wrong-content.jpg");
+            var source = File.OpenRead(@"../../../Resources/Files/wrong-content.txt");
             var mockFile = new MockIFormFile().MockSetup(source, "image/png");
 
             // act

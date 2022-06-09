@@ -12,16 +12,33 @@ namespace Domain.Entities
         [BsonId]
         [BsonRepresentation(BsonType.ObjectId)]
         public string Id { get; set; }
+        
         public string Sku { get; set; }
+
         public string Name { get; set; }
+
         public string Description { get; set; }
-        public uint Stock { get; set; }
+
+        public int Stock { get; set; }
+
         public double Price { get; set; }
+
         public object Detail { get; set; }
+
         public List<string> Traits { get; set; }
+
         public string ImageUrl { get; set; }
+
         public bool IsActive { get; set; }
+
         public DateTime CreatedAt { get; set; }
+
         public DateTime UpdateAt { get; set; }
+
+        public void OnInit()
+        {
+            CreatedAt = DateTime.UtcNow;
+            UpdateAt = DateTime.UtcNow;
+        }
     }
 }

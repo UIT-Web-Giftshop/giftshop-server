@@ -30,7 +30,7 @@ namespace API.ServicesExtension
                     };
                 });
             services.AddScoped<IAuthenticationService, AuthenticationService>();
-            services.AddScoped<IAccessor, Accessor>();
+            services.AddScoped<IAccessorService, AccessorService>();
 
             return services;
         }

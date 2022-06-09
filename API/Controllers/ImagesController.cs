@@ -1,7 +1,7 @@
 ﻿using System.Threading;
 using System.Threading.Tasks;
-using Application.Features.Images.Commands;
-using Application.Features.Images.Queries;
+using Application.Features.Images.Commands.ProductImage;
+using Application.Features.Images.Commands.UploadProfileAvatar;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -12,32 +12,28 @@ namespace API.Controllers
     [AllowAnonymous]
     public class ImagesController : BaseApiController
     {
-        private readonly IMediator _mediator;
+        public ImagesController(IMediator mediator) : base(mediator) { }
 
-        public ImagesController(IMediator mediator)
-        {
-            _mediator = mediator;
-        }
-
-        [HttpPost("product/{productId}")]
+        [HttpPost("upload/product/{sku}")]
         public async Task<IActionResult> AddOneProductImage(
-            string productId,
+            [FromRoute] string sku,
             [FromForm] IFormFile file,
             CancellationToken cancellationToken)
         {
-            var request = new AddOneProductImageQuery() { ProductId = productId, File = file };
-            var result = await _mediator.Send(request, cancellationToken);
-            return HandleResponseStatus(result);
+            var request = new AddOneProductImageCommand { Sku = sku, File = file };
+            var data = await _mediator.Send(request, cancellationToken);
+            return HandleResponseStatus(data);
         }
-
-        [HttpGet("product/{key}")]
-        public async Task<IActionResult> GetOneProductImage(
-            string key,
+        
+        [Authorize]
+        [HttpPost("upload/avatar")]
+        public async Task<IActionResult> AddOneAvatarImage(
+            [FromForm] IFormFile file,
             CancellationToken cancellationToken)
         {
-            var result = await _mediator
-                .Send(new GetOneProductImageQuery(){Key = key}, cancellationToken);
-            return File(result.Data, "image/jpeg");
+            var request = new UploadProfileAvatarCommand(){File = file};
+            var data = await _mediator.Send(request, cancellationToken);
+            return HandleResponseStatus(data);
         }
     }
 }

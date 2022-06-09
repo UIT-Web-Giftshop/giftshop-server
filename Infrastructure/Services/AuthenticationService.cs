@@ -3,13 +3,17 @@ using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using Domain.Entities;
+using Domain.Entities.Account;
+using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Interfaces.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using MongoDB.Bson;
 
 namespace Infrastructure.Services
 {
@@ -24,11 +28,11 @@ namespace Infrastructure.Services
             _authSettings = authSettings.Value;
         }
 
-        public string Authenticate(User user)
+        public string GenerateAccessToken(User user)
         {
-            var claims = new List<Claim>();
-            // add claim to subject list
-            claims.Add(new Claim(ClaimTypes.Email, user.Email));
+            var claims = new List<Claim> {
+                new (ClaimTypes.Email, user.Email)
+            };
             //todo add roles
 
             // credentials
@@ -48,6 +52,22 @@ namespace Infrastructure.Services
             var token = tokenHandler.CreateJwtSecurityToken(tokenDescriptor);
 
             return tokenHandler.WriteToken(token);
+        }
+
+        public RefreshTokenModel GenerateRefreshToken(string ipAddress)
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[64];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+
+            var refreshToken = new RefreshTokenModel()
+            {
+                IpAddress = ipAddress,
+                Token = Convert.ToBase64String(randomBytes),
+                ExpiredAt = DateTime.UtcNow.AddDays(7)
+            };
+            
+            return refreshToken;
         }
 
         public List<Claim> ValidateToken(string token)
