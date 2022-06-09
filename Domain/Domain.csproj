@@ -10,7 +10,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RazorEmailLibs\RazorEmailLibs.csproj" />
       <Folder Include="ViewModels\Order" />
     </ItemGroup>
 

@@ -26,6 +26,8 @@ namespace Domain.Entities.Order
         public bool IsPaid { get; set; }
 
         public string Status { get; set; }
+        
+        public string Address { get; set; }
 
         public DateTime CreatedAt { get; set; }
         
