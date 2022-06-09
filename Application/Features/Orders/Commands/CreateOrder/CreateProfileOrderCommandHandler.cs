@@ -40,10 +40,13 @@ namespace Application.Features.Orders.Commands.CreateOrder
             
             if (string.IsNullOrEmpty(cartId))
                 return ResponseApi<Unit>.ResponseFail(StatusCodes.Status403Forbidden);
-            
+             
             // lay product tu cart
             var userCart = await _cartRepository.GetOneAsync(cartId);
             var userCartItems = userCart.Items;
+            
+            if (userCartItems.Count <= 0)
+                return ResponseApi<Unit>.ResponseFail("Giỏ hàng trống");
 
             var orderItems = new Dictionary<string, int>();
             foreach (var item in userCartItems)
@@ -99,6 +102,7 @@ namespace Application.Features.Orders.Commands.CreateOrder
                 });
             }
 
+            order.TotalPaid = order.TotalPrice;
             _discountService.ApplyDiscount(order, request.CouponCode);
 
             // push insert order to task

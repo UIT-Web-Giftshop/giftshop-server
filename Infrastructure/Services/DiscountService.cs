@@ -58,7 +58,8 @@ namespace Infrastructure.Services
 
         public void ApplyDiscount(Order order, string couponCode)
         {
-            order.TotalPaid = order.TotalPrice;
+            if (string.IsNullOrEmpty(couponCode))
+                return;
             
             var couponTask = _couponRepository.GetOneAsync(couponCode);
             couponTask.Wait();

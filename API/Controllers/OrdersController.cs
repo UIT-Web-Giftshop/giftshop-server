@@ -40,7 +40,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> CreateOrder([FromBody] CreateProfileOrderCommand command)
+        public async Task<IActionResult> CreateOrder([FromBody] CreateProfileOrderCommand? command)
         {
             var data = await _mediator.Send(command);
             return HandleResponseStatus(data);
