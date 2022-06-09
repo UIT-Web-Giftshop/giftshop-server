@@ -10,6 +10,8 @@ namespace Application.Features.Users.Commands.AddOneUser
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
+        
+        public string Role { get; set; }
     }
 
     public class AddOneUserCommandValidator : AbstractValidator<AddOneUserCommand>
