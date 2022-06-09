@@ -16,3 +16,4 @@ services:
       - "5001:443"
     volumes:
       - ${USERPROFILE}\.aspnet\https:/root/.aspnet/https
+      - applogs:/app/logs

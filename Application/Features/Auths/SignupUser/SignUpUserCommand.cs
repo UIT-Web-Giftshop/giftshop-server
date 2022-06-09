@@ -16,13 +16,13 @@ namespace Application.Features.Auths.SignupUser
         public SignUpUserCommandValidator()
         {
             RuleFor(x => x.Email)
-                .NotEmpty().WithMessage("Email is required")
-                .EmailAddress();
+                .NotEmpty().WithMessage("Email không được để trống")
+                .EmailAddress().WithMessage("Email không hợp lệ");
             
             RuleFor(x => x.Password)
                 .NotEmpty()
-                .Equal(x => x.ConfirmPassword).WithMessage("Password not matches")
-                .MinimumLength(6).WithMessage("Password must be at least 6 characters");
+                .Equal(x => x.ConfirmPassword).WithMessage("Mật khẩu không được trống")
+                .MinimumLength(6).WithMessage("Mật khẩu phải ít nhất 6 ký tự");
         }
     }
 }

@@ -43,7 +43,7 @@ namespace Web.Tests
             var result = mockFile.Object.IsImage();
             
             // assert
-            Assert.True(result);
+            Assert.True(result.IsValid);
         }
 
         [Fact]
@@ -58,7 +58,7 @@ namespace Web.Tests
             var result = mockFile.Object.IsImage();
 
             // assert
-            Assert.False(result);
+            Assert.False(result.IsValid);
         }
         
         [Fact]
@@ -73,7 +73,7 @@ namespace Web.Tests
             var result = mockFile.Object.IsImage();
 
             // assert
-            Assert.False(result);
+            Assert.False(result.IsValid);
         }
     }
 }

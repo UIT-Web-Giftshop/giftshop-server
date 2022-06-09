@@ -12,6 +12,7 @@
     <ItemGroup>
       <ProjectReference Include="..\RazorEmailLibs\RazorEmailLibs.csproj" />
       <ProjectReference Include="..\SharedResource\SharedResource.csproj" />
+      <Folder Include="ViewModels\Order" />
     </ItemGroup>
 
 </Project>

@@ -1,10 +1,11 @@
 ﻿using Application.Commons;
+using Domain.ViewModels.Auth;
 using FluentValidation;
 using MediatR;
 
 namespace Application.Features.Auths.SigninUser
 {
-    public class SignInUserCommand : IRequest<ResponseApi<SignInResponseModel>>
+    public class SignInUserCommand : IRequest<ResponseApi<SignInResponseViewModel>>
     {
         public string Email { get; set; }
         public string Password { get; set; }

@@ -6,6 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Domain.Entities;
+using Domain.Entities.Account;
 using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Interfaces.Services;
@@ -30,7 +31,7 @@ namespace Infrastructure.Services
         public string GenerateAccessToken(User user)
         {
             var claims = new List<Claim> {
-                new Claim(ClaimTypes.NameIdentifier, user.Id) 
+                new (ClaimTypes.Email, user.Email)
             };
             //todo add roles
 

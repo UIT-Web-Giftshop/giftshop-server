@@ -1,14 +1,31 @@
-﻿using Application.Commons;
-using Application.Features.Objects.Queries.GetPagingObjects;
-using Application.Features.Products.Vms;
+﻿using System.ComponentModel;
+using Application.Commons;
 using Domain.Paging;
+using Domain.ViewModels.Product;
+using FluentValidation;
 using MediatR;
 
 namespace Application.Features.Products.Queries.GetPagingProducts
 {
-    public class GetPagingProductsQuery : GetPagingObjectsQuery, 
-        IRequest<ResponseApi<PagingModel<ProductVm>>>
+    public class GetPagingProductsQuery : IRequest<ResponseApi<PagingModel<ProductDetailViewModel>>>
     {
+        [DefaultValue(1)] public int PageIndex { get; set; } = 1;
 
+        [DefaultValue(20)] public int PageSize { get; set; } = 20;
+        
+        public string Search { get; set; }
+        
+        [DefaultValue("price")] public string SortBy { get; set; }
+        
+        [DefaultValue(true)] public bool IsDesc { get; set; }
+    }
+
+    public class GetPagingProductsQueryValidator : AbstractValidator<GetPagingProductsQuery>
+    {
+        public GetPagingProductsQueryValidator()
+        {
+            RuleFor(x => x.PageIndex).GreaterThan(0).LessThan(10000);
+            RuleFor(x => x.PageSize).GreaterThan(0).LessThan(100);
+        }
     }
 }

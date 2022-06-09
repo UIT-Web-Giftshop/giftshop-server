@@ -37,7 +37,7 @@ namespace API.Controllers
                     var products = InstantiateProducts();
                     foreach (var item in products)
                     {
-                        await _productRepository.AddAsync(item);
+                        await _productRepository.InsertAsync(item);
                     }
                 }
                 catch (Exception e)

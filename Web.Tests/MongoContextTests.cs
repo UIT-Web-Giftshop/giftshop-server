@@ -1,6 +1,7 @@
 ﻿using Domain.Entities;
 using Infrastructure.Context;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using MongoDB.Driver;
 using Moq;
 using Xunit;
@@ -37,13 +38,13 @@ namespace Web.Tests
         {
             // arrange
             var mockConfigure = new MockIConfigurationMongo().MockSettings();
-
+            var mockLogger = Mock.Of<ILogger<MongoContext>>();
             _mockClient
                 .Setup(x => x.GetDatabase(mockConfigure.Object["MongoSettings:Database"], null))
                 .Returns(_mockDb.Object);
             
             // act
-            var context = new MongoContext(mockConfigure.Object);
+            var context = new MongoContext(mockConfigure.Object, mockLogger);
             var collection = context.GetCollection<Product>();
 
             // assert

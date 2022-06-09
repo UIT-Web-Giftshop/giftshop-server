@@ -11,24 +11,30 @@ namespace API.Controllers
     {
         protected readonly IMediator _mediator;
 
-        public BaseApiController(IMediator _mediator)
+        public BaseApiController(IMediator mediator)
         {
-            this._mediator = _mediator;
+            _mediator = mediator;
         }
 
-        protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi)
+        protected ActionResult HandleResponseStatus<T>(ResponseApi<T> responseApi, string redirect = null)
         {
             if (responseApi.Success)
             {
-                return Ok(responseApi);
+                return responseApi.Status switch
+                {
+                    StatusCodes.Status302Found => Redirect(redirect),
+                    _ => StatusCode(responseApi.Status, responseApi)
+                };
             }
             
-            //TODO: more handling
+            //TODO: more handling, refactor status code response
             return responseApi.Status switch
             {
                 StatusCodes.Status404NotFound => NotFound(responseApi),
                 StatusCodes.Status400BadRequest => BadRequest(responseApi),
-                _ => BadRequest(responseApi)
+                StatusCodes.Status403Forbidden => Forbid(),
+                StatusCodes.Status503ServiceUnavailable => StatusCode(StatusCodes.Status503ServiceUnavailable),
+                _ => StatusCode(StatusCodes.Status500InternalServerError, responseApi)
             };
         }
     }

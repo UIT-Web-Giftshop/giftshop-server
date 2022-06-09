@@ -11,7 +11,7 @@ namespace Web.Tests
         public void GetOrderStatusName_GivenOrderStatus()
         {
             const OrderStatus orderStatus = OrderStatus.Delivered;
-            Assert.Equal(nameof(OrderStatus.Delivered), orderStatus.GetOrderStatus());
+            Assert.Equal(nameof(OrderStatus.Delivered), orderStatus.GetString());
         }
 
         [Fact]
@@ -19,7 +19,7 @@ namespace Web.Tests
         public void CompareOrderStatus_GivenOrderStatus_ReturnTrue()
         {
             const OrderStatus orderStatus = OrderStatus.Success;
-            var result = orderStatus.GetOrderStatus() == nameof(OrderStatus.Success);
+            var result = orderStatus.GetString() == nameof(OrderStatus.Success);
             Assert.True(result);
         }
     }

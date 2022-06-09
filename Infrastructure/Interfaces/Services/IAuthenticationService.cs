@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Security.Claims;
 using Domain.Entities;
+using Domain.Entities.Account;
 using Domain.Models;
 
 namespace Infrastructure.Interfaces.Services

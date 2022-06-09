@@ -1,8 +1,9 @@
 using System;
 using System.Text.Json;
+using Amazon.S3;
 using API.Commons;
 using API.ServicesExtension;
-using Application.Features.Products.Queries;
+using Application.Features.Products.Queries.GetPagingProducts;
 using Application.Mapping;
 using Application.Middlewares;
 using Application.PipelineBehaviors;
@@ -21,6 +22,9 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using RazorEmailLibs.Services;
+using Serilog;
+using Swashbuckle.AspNetCore.SwaggerUI;
+
 
 namespace API
 {
@@ -41,35 +45,49 @@ namespace API
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddDistributedMemoryCache();
-            services.AddSession(opts => { opts.IdleTimeout = TimeSpan.FromMinutes(30); });
+            services.AddSession(opts =>
+            {
+                opts.IdleTimeout = TimeSpan.FromMinutes(double.Parse(Configuration["ServicesSettings:AuthenticationSettings:ExpirationMinutes"]));
+            });
 
             services.AddSwaggerService();
             services.AddAuthenticationService(Configuration);
             services.AddCorsService();
+            services.AddAWSService<IAmazonS3>();
 
-            services.AddMediatR(typeof(GetPagingProductsHandler).Assembly);
+            services.AddMediatR(typeof(GetPagingProductsQueryHandler).Assembly);
             services.AddAutoMapper(typeof(MappingProfiles).Assembly);
-            services.AddValidatorsFromAssembly(typeof(GetPagingProductQueryValidator).Assembly);
+            services.AddValidatorsFromAssembly(typeof(GetPagingProductsQueryValidator).Assembly);
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
+            services.AddSingleton<IMongoContext, MongoContext>();
+            
 
-            services.AddScoped<IMongoContext, MongoContext>();
             services.AddTransient<IProductRepository, ProductRepository>();
-            services.AddTransient<ISaveFlagRepository, SaveFlagRepository>();
+            services.AddTransient<ICounterRepository, CounterRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
             services.AddTransient<IOrderRepository, OrderRepository>();
+            services.AddTransient<ICartRepository, CartRepository>();
+            services.AddTransient<IWishlistRepository, WishlistRepository>();
+            services.AddTransient<IVerifyTokenRepository, VerifyTokenRepository>();
+            services.AddTransient<ICouponRepository, CouponRepository>();
+            
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();
-
-            services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
+            services.AddTransient<IAWSS3BucketService, AWSS3BucketService>();
+            services.AddTransient<IDiscountService, DiscountService>();
+            
 
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
             services.Configure<MailSettings>(appSettingsSection.GetSection("MailSettings"));
-
-            // service for mail
+            services.Configure<AWSS3Settings>(appSettingsSection.GetSection("S3Bucket"));
+            services.Configure<DomainSettings>(appSettingsSection.GetSection("AppDomain"));
+            
+          // service for mail
             services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
             services.AddRazorPages();
         }
@@ -81,7 +99,11 @@ namespace API
             {
                 app.UseDeveloperExceptionPage();
                 app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1");
+                    c.DocExpansion(DocExpansion.None);
+                });
             }
 
             app.UseSession();
@@ -91,6 +113,15 @@ namespace API
 
             app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
             app.UseMiddleware<ExceptionHandlingMiddleware>();
+            app.UseSerilogRequestLogging(opts =>
+            {
+                opts.MessageTemplate =
+                    "{IpAddress} {RequestMethod} {RequestPath} responded {StatusCode} in {Elapsed:0.0000} ms";
+                opts.EnrichDiagnosticContext = (context, httpContext) =>
+                {
+                    context.Set("IpAddress", httpContext.Connection.RemoteIpAddress);
+                };
+            });
 
             app.UseAuthentication();
             app.UseAuthorization();
