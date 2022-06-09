@@ -2,7 +2,7 @@
 using Application.Commons;
 using MediatR;
 
-namespace Application.Features.Coupons.Commands
+namespace Application.Features.Coupons.Commands.Delete
 {
     public class DeleteCouponsCommand : IRequest<ResponseApi<Unit>>
     {

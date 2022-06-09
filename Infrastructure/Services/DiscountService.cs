@@ -25,6 +25,7 @@ namespace Infrastructure.Services
                 EventCode = eventCode,
                 ValidFrom = from,
                 ValidTo = to,
+                IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -45,6 +46,7 @@ namespace Infrastructure.Services
                     EventCode = eventCode,
                     ValidFrom = from,
                     ValidTo = to,
+                    IsActive = true,
                     CreatedAt = DateTime.UtcNow
                 });
             }

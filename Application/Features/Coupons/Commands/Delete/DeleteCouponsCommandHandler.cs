@@ -7,7 +7,7 @@ using Domain.Entities;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 
-namespace Application.Features.Coupons.Commands
+namespace Application.Features.Coupons.Commands.Delete
 {
     public class DeleteCouponsCommandHandler : IRequestHandler<DeleteCouponsCommand, ResponseApi<Unit>>
     {

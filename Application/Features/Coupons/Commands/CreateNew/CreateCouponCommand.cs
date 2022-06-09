@@ -1,10 +1,9 @@
 ﻿using System;
-using System.ComponentModel;
 using Application.Commons;
 using FluentValidation;
 using MediatR;
 
-namespace Application.Features.Coupons.Commands
+namespace Application.Features.Coupons.Commands.CreateNew
 {
     public class CreateCouponCommand : IRequest<ResponseApi<Unit>>
     {
