@@ -4,7 +4,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Infrastructure.Context;
 using Infrastructure.Interfaces.Repositories;
 using MongoDB.Driver;

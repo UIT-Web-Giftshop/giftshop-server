@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Domain.ViewModels.Auth;
 using Domain.ViewModels.Profile;
 using Infrastructure.Interfaces.Repositories;
@@ -62,9 +62,13 @@ namespace Application.Features.Auths.SigninUser
             
             // generate token
             var accessToken = _authenticationService.GenerateAccessToken(existedUser);
-            _accessorService.AppendSession("CartId", existedUser.CartId);
-            _accessorService.AppendSession("WishlistId", existedUser.WishlistId);
-            
+
+            if (existedUser.Role == nameof(UserRoles.Client))
+            {
+                _accessorService.AppendSession("CartId", existedUser.CartId);
+                _accessorService.AppendSession("WishlistId", existedUser.WishlistId);
+            }
+
             var returnModel = new SignInResponseViewModel
             {
                 AccessToken = accessToken,

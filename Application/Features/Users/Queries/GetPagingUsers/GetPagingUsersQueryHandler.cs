@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Attributes;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Domain.Paging;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;

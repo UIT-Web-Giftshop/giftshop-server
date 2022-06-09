@@ -6,7 +6,7 @@ using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Interfaces.Services;

@@ -3,7 +3,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;

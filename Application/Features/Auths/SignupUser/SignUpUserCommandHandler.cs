@@ -1,10 +1,11 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Domain.Models;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
@@ -41,6 +42,7 @@ namespace Application.Features.Auths.SignupUser
             user.Password = new PasswordHasher<User>().HashPassword(user, request.Password);
             user.IsActive = false;
             user.CreatedAt = DateTime.UtcNow;
+            user.Role = nameof(UserRoles.Client);
             
             try
             {

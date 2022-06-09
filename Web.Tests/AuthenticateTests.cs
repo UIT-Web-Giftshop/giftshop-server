@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Security.Claims;
 using Domain.Entities;
-using Domain.Entities.User;
+using Domain.Entities.Account;
 using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Services;
