@@ -1,15 +1,15 @@
-﻿using System.IO;
+﻿using System.Collections.Generic;
+using System.IO;
 using System.Threading.Tasks;
 using Domain.Models;
 using Domain.Settings;
 using Infrastructure.Interfaces.Services;
 using MailKit.Net.Smtp;
 using MailKit.Security;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Options;
 using MimeKit;
-using RazorEmailLibs.Constants;
 using RazorEmailLibs.Services;
-using RazorEmailLibs.Views.Emails.ConfirmAccount;
 
 namespace Infrastructure.Services
 {
@@ -58,20 +58,17 @@ namespace Infrastructure.Services
             smtp.Disconnect(true);
         }
 
-        public async Task SendWithTemplate(string templateName, string to, object[] args)
+        public async Task SendWithTemplate(string to, string subject, List<IFormFile> attachments, string templateName,
+            object model)
         {
-            // TODO: use template from database
-            var confirmEmailViewModel = new ConfirmAccountEmailViewModel("http://localhost/confirm");
-
-            var html = await _razorViewToStringRenderer.RenderViewToStringAsync(
-                MailTemplatesName.CONFIRM_ACCOUNT_EMAIL,
-                confirmEmailViewModel);
+            var html = await _razorViewToStringRenderer.RenderViewToStringAsync(templateName, model);
 
             var request = new MailRequestModel
             {
                 Body = html,
-                Subject = templateName,
-                To = to
+                Subject = subject,
+                To = to,
+                Attachments = attachments
             };
 
             await SendAsync(request);

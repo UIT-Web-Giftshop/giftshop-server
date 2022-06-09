@@ -63,7 +63,7 @@ namespace Application.Features.Auths.SigninUser
             // generate token
             var accessToken = _authenticationService.GenerateAccessToken(existedUser);
 
-            if (existedUser.Role == nameof(UserRoles.Client))
+            if (existedUser.Role == nameof(UserRoles.CLIENT))
             {
                 _accessorService.AppendSession("CartId", existedUser.CartId);
                 _accessorService.AppendSession("WishlistId", existedUser.WishlistId);

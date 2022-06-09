@@ -19,8 +19,8 @@ namespace Domain.Entities.Account
 
     public enum UserRoles
     {
-        Client,
-        Manager,
-        Admin
+        CLIENT,
+        MANAGER,
+        ADMIN
     }
 }
