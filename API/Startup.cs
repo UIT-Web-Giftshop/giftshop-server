@@ -1,6 +1,4 @@
 using System;
-using System.IO;
-using System.Reflection;
 using System.Text.Json;
 using Amazon.S3;
 using API.Commons;
@@ -71,11 +69,13 @@ namespace API
             services.AddTransient<ICartRepository, CartRepository>();
             services.AddTransient<IWishlistRepository, WishlistRepository>();
             services.AddTransient<IVerifyTokenRepository, VerifyTokenRepository>();
+            services.AddTransient<ICouponRepository, CouponRepository>();
             
             services.AddTransient<ICloudinaryService, CloudinaryService>();
             services.AddTransient<IMailService, MailService>();
             services.AddTransient<IHttpContextAccessor, HttpContextAccessor>();
             services.AddTransient<IAWSS3BucketService, AWSS3BucketService>();
+            services.AddTransient<IDiscountService, DiscountService>();
             
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));

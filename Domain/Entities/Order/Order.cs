@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
 using Domain.Attributes;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
@@ -18,9 +17,11 @@ namespace Domain.Entities.Order
 
         public HashSet<OrderItem> Items { get; set; }
 
-        public OrderPromotion Promotion { get; set; }
+        public double PromotionPercent { get; set; }
 
         public double TotalPrice { get; set; }
+        
+        public double TotalPaid { get; set; }
 
         public bool IsPaid { get; set; }
 
