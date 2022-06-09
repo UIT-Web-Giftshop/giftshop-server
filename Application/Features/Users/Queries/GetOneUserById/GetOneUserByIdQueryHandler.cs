@@ -2,6 +2,7 @@
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Entities;
+using Domain.Entities.User;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 

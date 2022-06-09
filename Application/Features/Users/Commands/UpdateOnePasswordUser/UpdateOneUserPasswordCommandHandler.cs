@@ -3,6 +3,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using Application.Features.Users.Commands.UpdateOnePasswordUser;
 using Domain.Entities;
+using Domain.Entities.User;
 using Infrastructure.Extensions.Mongo;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;

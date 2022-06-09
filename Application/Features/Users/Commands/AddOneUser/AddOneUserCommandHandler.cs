@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Entities.User;
 using Infrastructure.Interfaces.Repositories;
 using MediatR;
 using Microsoft.AspNetCore.Http;

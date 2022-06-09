@@ -5,6 +5,7 @@ using Application.Features.Users.Commands.AddOneUser;
 using AutoMapper;
 using Domain.Entities;
 using Domain.Entities.Cart;
+using Domain.Entities.User;
 using Domain.ViewModels.Cart;
 using Domain.ViewModels.Product;
 using Domain.ViewModels.Profile;

@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using Application.Commons;
 using AutoMapper;
 using Domain.Entities;
+using Domain.Entities.User;
 using Domain.ViewModels.Auth;
 using Domain.ViewModels.Profile;
 using Infrastructure.Interfaces.Repositories;

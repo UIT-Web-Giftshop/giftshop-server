@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel;
 using Application.Commons;
 using Domain.Entities;
+using Domain.Entities.User;
 using Domain.Paging;
 using MediatR;
 
