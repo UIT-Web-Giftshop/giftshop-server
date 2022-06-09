@@ -9,4 +9,9 @@
       <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
     </ItemGroup>
 
+    <ItemGroup>
+      <ProjectReference Include="..\RazorEmailLibs\RazorEmailLibs.csproj" />
+      <ProjectReference Include="..\SharedResource\SharedResource.csproj" />
+    </ItemGroup>
+
 </Project>

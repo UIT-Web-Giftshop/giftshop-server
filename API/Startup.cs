@@ -20,6 +20,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RazorEmailLibs.Services;
 
 namespace API
 {
@@ -40,11 +41,8 @@ namespace API
                     options.JsonSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
 
             services.AddDistributedMemoryCache();
-            services.AddSession(opts =>
-            {
-                opts.IdleTimeout = TimeSpan.FromMinutes(30);
-            });
-            
+            services.AddSession(opts => { opts.IdleTimeout = TimeSpan.FromMinutes(30); });
+
             services.AddSwaggerService();
             services.AddAuthenticationService(Configuration);
             services.AddCorsService();
@@ -55,7 +53,7 @@ namespace API
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
-            
+
             services.AddScoped<IMongoContext, MongoContext>();
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ISaveFlagRepository, SaveFlagRepository>();
@@ -65,11 +63,15 @@ namespace API
             services.AddTransient<IMailService, MailService>();
 
             services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
-            
+
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
             services.Configure<MailSettings>(appSettingsSection.GetSection("MailSettings"));
+
+            // service for mail
+            services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -84,15 +86,20 @@ namespace API
 
             app.UseSession();
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
-            
+
             app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
             app.UseMiddleware<ExceptionHandlingMiddleware>();
 
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapRazorPages();
+            });
         }
     }
 }
