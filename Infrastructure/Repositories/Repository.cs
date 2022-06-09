@@ -53,9 +53,19 @@ namespace Infrastructure.Repositories
                 .ConfigureAwait(false);
         }
 
-        public virtual Task InsertManyAsync(ICollection<TEntity> entities,
+        public virtual async Task InsertManyAsync(ICollection<TEntity> entities,
             CancellationToken cancellationToken = default)
-            => InsertManyAsync<TEntity>(entities, cancellationToken);
+        {
+            var models = new List<WriteModel<TEntity>>(entities.Count);
+            foreach (var item in entities)
+            {
+                var upsert = new InsertOneModel<TEntity>(item);
+                models.Add(upsert);
+            }
+
+
+            await _mongoCollection.InsertManyAsync(entities, new InsertManyOptions(){IsOrdered = false});
+        }
 
 
         public virtual async Task InsertManyAsync<TDerived>(ICollection<TDerived> entities,
