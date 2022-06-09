@@ -63,7 +63,24 @@ namespace API.Controllers
                 return BadRequest(e.Message);
             }
         }
-        
+
+        [HttpPost("send-email-template")]
+        public async Task<IActionResult> SendEmailWithTemplate(
+            [FromForm] string templateName,
+            [FromForm] string to,
+            [FromForm] List<string> args)
+        {
+            try
+            {
+                await _mailService.SendWithTemplate(templateName, to, args.ToArray());
+                return Ok();
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         /// <summary>
         /// Init a list of products for seeding
         /// </summary>

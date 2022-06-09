@@ -7,15 +7,20 @@ using MailKit.Net.Smtp;
 using MailKit.Security;
 using Microsoft.Extensions.Options;
 using MimeKit;
+using RazorEmailLibs.Constants;
+using RazorEmailLibs.Services;
+using RazorEmailLibs.Views.Emails.ConfirmAccount;
 
 namespace Infrastructure.Services
 {
     public class MailService : IMailService
     {
         private readonly MailSettings _mailSettings;
+        private readonly IRazorViewToStringRenderer _razorViewToStringRenderer;
 
-        public MailService(IOptions<MailSettings> mailSettings)
+        public MailService(IOptions<MailSettings> mailSettings, IRazorViewToStringRenderer razorViewToStringRenderer)
         {
+            _razorViewToStringRenderer = razorViewToStringRenderer;
             _mailSettings = mailSettings.Value;
         }
 
@@ -45,12 +50,31 @@ namespace Infrastructure.Services
 
             builder.HtmlBody = request.Body;
             email.Body = builder.ToMessageBody();
-            
+
             using var smtp = new SmtpClient();
             smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
             smtp.Authenticate(_mailSettings.Username, _mailSettings.Password);
             await smtp.SendAsync(email);
             smtp.Disconnect(true);
+        }
+
+        public async Task SendWithTemplate(string templateName, string to, object[] args)
+        {
+            // TODO: use template from database
+            var confirmEmailViewModel = new ConfirmAccountEmailViewModel("http://localhost/confirm");
+
+            var html = await _razorViewToStringRenderer.RenderViewToStringAsync(
+                MailTemplatesName.CONFIRM_ACCOUNT_EMAIL,
+                confirmEmailViewModel);
+
+            var request = new MailRequestModel
+            {
+                Body = html,
+                Subject = templateName,
+                To = to
+            };
+
+            await SendAsync(request);
         }
     }
 }

@@ -21,8 +21,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using RazorEmailLibs.Services;
 using Serilog;
 using Swashbuckle.AspNetCore.SwaggerUI;
+
 
 namespace API
 {
@@ -47,7 +49,7 @@ namespace API
             {
                 opts.IdleTimeout = TimeSpan.FromMinutes(double.Parse(Configuration["ServicesSettings:AuthenticationSettings:ExpirationMinutes"]));
             });
-            
+
             services.AddSwaggerService();
             services.AddAuthenticationService(Configuration);
             services.AddCorsService();
@@ -59,9 +61,9 @@ namespace API
 
             services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehavior<,>));
             services.AddTransient<ExceptionHandlingMiddleware>();
-            
             services.AddSingleton<IMongoContext, MongoContext>();
             
+
             services.AddTransient<IProductRepository, ProductRepository>();
             services.AddTransient<ICounterRepository, CounterRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
@@ -77,12 +79,17 @@ namespace API
             services.AddTransient<IAWSS3BucketService, AWSS3BucketService>();
             services.AddTransient<IDiscountService, DiscountService>();
             
+
             var appSettingsSection = Configuration.GetSection("ServicesSettings");
             services.Configure<CloudinarySettings>(appSettingsSection.GetSection("CloudinarySettings"));
             services.Configure<AuthenticationSettings>(appSettingsSection.GetSection("AuthenticationSettings"));
             services.Configure<MailSettings>(appSettingsSection.GetSection("MailSettings"));
             services.Configure<AWSS3Settings>(appSettingsSection.GetSection("S3Bucket"));
             services.Configure<DomainSettings>(appSettingsSection.GetSection("AppDomain"));
+            
+          // service for mail
+            services.AddScoped<IRazorViewToStringRenderer, RazorViewToStringRenderer>();
+            services.AddRazorPages();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -101,8 +108,9 @@ namespace API
 
             app.UseSession();
             app.UseHttpsRedirection();
+            app.UseStaticFiles();
             app.UseRouting();
-            
+
             app.UseCors(Constants.CORS_ANY_ORIGIN_POLICY);
             app.UseMiddleware<ExceptionHandlingMiddleware>();
             app.UseSerilogRequestLogging(opts =>
@@ -118,7 +126,11 @@ namespace API
             app.UseAuthentication();
             app.UseAuthorization();
 
-            app.UseEndpoints(endpoints => { endpoints.MapControllers(); });
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+                endpoints.MapRazorPages();
+            });
         }
     }
 }
