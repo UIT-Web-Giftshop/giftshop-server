@@ -32,6 +32,8 @@ namespace API.Controllers
             {
                 StatusCodes.Status404NotFound => NotFound(responseApi),
                 StatusCodes.Status400BadRequest => BadRequest(responseApi),
+                StatusCodes.Status403Forbidden => Forbid(),
+                StatusCodes.Status503ServiceUnavailable => StatusCode(StatusCodes.Status503ServiceUnavailable),
                 _ => StatusCode(StatusCodes.Status500InternalServerError, responseApi)
             };
         }
