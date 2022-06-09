@@ -5,6 +5,7 @@ using Application.Features.Orders.Commands.ChangeOrderState;
 using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Queries.GetOneOrderById;
 using Application.Features.Orders.Queries.GetPagingOrders;
+using Application.Features.Orders.Queries.GetReportOrder;
 using Domain.Paging;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -35,6 +36,14 @@ namespace API.Controllers
         {
             var query = new GetPagingProfileOrdersQuery()
                 { PagingRequest = pagingRequest, IsDesc = isDesc, SortBy = sortBy };
+            var data = await _mediator.Send(query);
+            return HandleResponseStatus(data);
+        }
+
+        [HttpGet("report")]
+        public async Task<IActionResult> GetReportOrder(
+            [FromQuery] GetReportOrderBetweenTimeQuery query)
+        {
             var data = await _mediator.Send(query);
             return HandleResponseStatus(data);
         }
