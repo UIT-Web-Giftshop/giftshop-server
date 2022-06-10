@@ -130,6 +130,7 @@ namespace API
             {
                 endpoints.MapControllers();
                 endpoints.MapRazorPages();
+                endpoints.MapFallbackToController("Index", "Fallback");
             });
         }
     }
