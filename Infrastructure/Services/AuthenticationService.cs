@@ -31,9 +31,9 @@ namespace Infrastructure.Services
         public string GenerateAccessToken(User user)
         {
             var claims = new List<Claim> {
-                new (ClaimTypes.Email, user.Email)
+                new (ClaimTypes.Email, user.Email),
+                new (ClaimTypes.Role, user.Role)
             };
-            //todo add roles
 
             // credentials
             var signingKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_authSettings.SecretKey));

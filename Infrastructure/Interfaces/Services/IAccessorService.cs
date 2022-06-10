@@ -6,7 +6,7 @@ namespace Infrastructure.Interfaces.Services
     public interface IAccessorService
     {
         string Email();
-        string Id();
+        string Role();        string Id();
         List<string> Roles();
         void AppendSession(string key, string value);
         string GetHeader(string key);
