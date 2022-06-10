@@ -1,4 +1,5 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Entities.Order;
@@ -7,6 +8,8 @@ using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using RazorEmailLibs.Constants;
+using RazorEmailLibs.Views.Emails;
 
 namespace Application.Features.Orders.Commands.ChangeOrderState
 {
@@ -14,11 +17,13 @@ namespace Application.Features.Orders.Commands.ChangeOrderState
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IAccessorService _accessorService;
+        private readonly IMailService _mailService;
 
-        public RetrieveOrderCommandHandler(IAccessorService accessorService, IOrderRepository orderRepository)
+        public RetrieveOrderCommandHandler(IAccessorService accessorService, IOrderRepository orderRepository, IMailService mailService)
         {
             _accessorService = accessorService;
             _orderRepository = orderRepository;
+            _mailService = mailService;
         }
 
         public async Task<ResponseApi<Unit>> Handle(RetrieveOrderCommand request, CancellationToken cancellationToken)
@@ -41,6 +46,8 @@ namespace Application.Features.Orders.Commands.ChangeOrderState
 
             if (updated.AnyDocumentModified())
             {
+                var mailModel = new ReceiptEmailViewModel(order);
+                await _mailService.SendWithTemplate(order.UserEmail, "Đặt lại đơn hàng", new List<IFormFile>(), MailTemplatesName.RECEIPT_EMAIL, mailModel);
                 return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đặt lại đơn hàng thành công");
             }
 
