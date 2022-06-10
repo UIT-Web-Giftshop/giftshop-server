@@ -24,8 +24,18 @@ namespace API.Controllers
             var data = await _mediator.Send(request, cancellationToken);
             return HandleResponseStatus(data);
         }
-        
-        [Authorize]
+
+        [HttpPost("upload/product/new/{sku}")]
+        public async Task<IActionResult> AddOneNewProductImage(
+            [FromRoute] string sku,
+            [FromForm] IFormFile file)
+        {
+            var command = new AddOneNewProductImageCommand() { File = file, Sku = sku };
+            var data = await _mediator.Send(command);
+            return HandleResponseStatus(data);
+        }
+
+            [Authorize]
         [HttpPost("upload/avatar")]
         public async Task<IActionResult> AddOneAvatarImage(
             [FromForm] IFormFile file,
