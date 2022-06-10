@@ -31,7 +31,7 @@ namespace API.Controllers
             var data = await _mediator.Send(command, cancellationToken);
             return HandleResponseStatus(data);
         }
-
+        
         [HttpPut("remove")]
         public async Task<IActionResult> UpdateDeleteCartItem(
             [FromBody] UpdateDeleteCartItemCommand command,

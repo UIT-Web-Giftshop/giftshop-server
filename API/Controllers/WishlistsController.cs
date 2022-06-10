@@ -2,10 +2,12 @@
 using Application.Features.Wishlists.Commands.UpdateOneWishlist;
 using Application.Features.Wishlists.Queries.GetOneWishList;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "ADMIN")]
     public class WishlistsController : BaseApiController
     {
         public WishlistsController(IMediator _mediator) : base(_mediator)

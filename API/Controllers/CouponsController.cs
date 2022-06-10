@@ -5,8 +5,10 @@ using Application.Features.Coupons.Commands.CreateNew;
 using Application.Features.Coupons.Commands.Delete;
 using Application.Features.Coupons.Commands.UpdateCouponsPercent;
 using Application.Features.Coupons.Queries;
+using CloudinaryDotNet.Actions;
 using Domain.Paging;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
@@ -17,6 +19,7 @@ namespace API.Controllers
         {
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> GenerateCoupons([FromBody] CreateCouponCommand command)
         {
@@ -30,7 +33,8 @@ namespace API.Controllers
             var data = await _mediator.Send(new GetCouponQuery() { Id = id });
             return HandleResponseStatus(data);
         }
-
+        
+        [Authorize(Roles = "ADMIN")]
         [HttpGet]
         public async Task<IActionResult> GetPagingCoupon(
             [FromQuery] PagingRequest pagingRequest,
@@ -56,6 +60,7 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpDelete]
         public async Task<IActionResult> DeleteCoupons([FromBody] List<string> ids)
         {

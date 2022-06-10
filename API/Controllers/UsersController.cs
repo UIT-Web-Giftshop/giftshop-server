@@ -8,10 +8,13 @@ using Application.Features.Users.Queries.GetOneUserByEmail;
 using Application.Features.Users.Queries.GetOneUserById;
 using Application.Features.Users.Queries.GetPagingUsers;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize(Roles = "ADMIN")]
+
     public class UsersController : BaseApiController
     {
         public UsersController(IMediator _mediator) : base(_mediator)
@@ -26,6 +29,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        
         [HttpGet("email/{email}")]
         public async Task<IActionResult> GetOneUserByEmail(string email)
         {

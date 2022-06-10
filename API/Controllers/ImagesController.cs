@@ -9,11 +9,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
+    [Authorize]
     [AllowAnonymous]
     public class ImagesController : BaseApiController
     {
         public ImagesController(IMediator mediator) : base(mediator) { }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost("upload/product/{sku}")]
         public async Task<IActionResult> AddOneProductImage(
             [FromRoute] string sku,
@@ -34,8 +36,7 @@ namespace API.Controllers
             var data = await _mediator.Send(command);
             return HandleResponseStatus(data);
         }
-
-            [Authorize]
+        
         [HttpPost("upload/avatar")]
         public async Task<IActionResult> AddOneAvatarImage(
             [FromForm] IFormFile file,

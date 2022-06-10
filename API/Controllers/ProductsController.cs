@@ -63,6 +63,7 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPost]
         public async Task<IActionResult> AddNewOneProduct([FromBody] ProductDetailViewModel command)
         {
@@ -70,6 +71,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPut("{sku}")]
         public async Task<IActionResult> UpdateOneProductInfo(
             string sku,
@@ -82,6 +84,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPatch("{sku}/quantity/{stock:int}")]
         public async Task<IActionResult> UpdateOneProductStock(string sku, int stock)
         {
@@ -90,6 +93,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPatch("{sku}/price/{price:double}")]
         public async Task<IActionResult> UpdateOneProductPrice(string sku, double price)
         {
@@ -98,6 +102,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [Authorize(Roles = "ADMIN")]
         [HttpPatch("state/{state}/{sku}")]
         public async Task<IActionResult> UpdateOneProductState(string sku, ProductState state)
         {
@@ -106,6 +111,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [Authorize(Roles = "ADMIN")]
         /// <summary>
         /// Use sku as list
         /// </summary>
