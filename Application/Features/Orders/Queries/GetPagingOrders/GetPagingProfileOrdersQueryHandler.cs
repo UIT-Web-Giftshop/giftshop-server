@@ -4,6 +4,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Attributes;
+using Domain.Entities.Account;
 using Domain.Entities.Order;
 using Domain.Paging;
 using Infrastructure.Interfaces.Repositories;
@@ -35,6 +36,11 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
             var (sortDirect, sortField) = PrepareSortDefinition(request);
             var findOptions = PrepareFindOptions(request, sortField, sortDirect);
             Expression<Func<Order, bool>> filter = q => q.UserEmail == email;
+
+            if (_accessorService.Role() == nameof(UserRoles.ADMIN))
+            {
+                filter = q => true;
+            }
             
             var collectionTarget = BsonCollection.GetCollectionName<Order>();
             var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
