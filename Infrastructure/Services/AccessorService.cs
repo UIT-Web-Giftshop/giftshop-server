@@ -21,6 +21,12 @@ namespace Infrastructure.Services
                 .FindFirstValue(ClaimTypes.Email);
         }
 
+        public string Role()
+        {
+            return _contextAccessor.HttpContext?.User
+                .FindFirstValue(ClaimTypes.Role);
+        }
+
         public string Id()
         {
             return _contextAccessor.HttpContext?.User

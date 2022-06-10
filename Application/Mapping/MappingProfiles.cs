@@ -17,9 +17,9 @@ namespace Application.Mapping
     {
         public MappingProfiles()
         {
-            CreateMap<ProductDetailViewModel, Product>()
-                .ForMember(o => o.Id, opt => opt.Ignore())
-                .ForMember(o => o.Sku, cfg => cfg.Ignore());
+            CreateMap<ProductDetailViewModel, Product>();
+                // .ForMember(o => o.Id, opt => opt.Ignore())
+                // .ForMember(o => o.Sku, cfg => cfg.Ignore());
                 // .ForAllMembers(opts => opts.Condition((src, dest, srcMember) => srcMember is not null));
             CreateMap<Product, ProductDetailViewModel>();
 

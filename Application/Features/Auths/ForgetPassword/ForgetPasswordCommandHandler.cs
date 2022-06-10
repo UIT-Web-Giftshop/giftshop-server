@@ -1,12 +1,17 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Models;
+using Domain.Settings;
 using Infrastructure.Interfaces.Repositories;
 using Infrastructure.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.Options;
+using RazorEmailLibs.Constants;
+using RazorEmailLibs.Views.Emails;
 
 namespace Application.Features.Auths.ForgetPassword
 {
@@ -15,12 +20,14 @@ namespace Application.Features.Auths.ForgetPassword
         private readonly IVerifyTokenRepository _verifyTokenRepository;
         private readonly IMailService _mailService;
         private readonly IUserRepository _userRepository;
+        private readonly DomainSettings _domainSettings;
 
-        public ForgetPasswordCommandHandler(IVerifyTokenRepository verifyTokenRepository, IMailService mailService, IUserRepository userRepository)
+        public ForgetPasswordCommandHandler(IVerifyTokenRepository verifyTokenRepository, IMailService mailService, IUserRepository userRepository, IOptions<DomainSettings> domainSettings)
         {
             _verifyTokenRepository = verifyTokenRepository;
             _mailService = mailService;
             _userRepository = userRepository;
+            _domainSettings = domainSettings.Value;
         }
 
         public async Task<ResponseApi<Unit>> Handle(ForgetPasswordCommand request, CancellationToken cancellationToken)
@@ -49,18 +56,10 @@ namespace Application.Features.Auths.ForgetPassword
             try
             {
                 await _verifyTokenRepository.InsertAsync(verifyToken, cancellationToken);
-
-                var url = $"http://localhost:5001/verify/reset-password?token={verifyToken.Token}";
-                var body = $"Click this link to reset password: <a href='{url}'>{url}</a>";
-                
-                
-                var mailRequest = new MailRequestModel()
-                {
-                    To = verifyToken.Email,
-                    Subject = "Reset Password",
-                    Body = body
-                };
-                await _mailService.SendAsync(mailRequest);
+                var url = $"{_domainSettings.DomainName}/quen-mat-khau?token={verifyToken.Token}";
+                var mailModel = new ResetPasswordViewModel(url);
+                await _mailService.SendWithTemplate(user.Email, "Reset password", new List<IFormFile>(),
+                    MailTemplatesName.RESET_ACCOUNT_PASSWORD, mailModel);
                 
                 return ResponseApi<Unit>.ResponseOk(Unit.Value, "Kiểm tra email của bạn");
             }

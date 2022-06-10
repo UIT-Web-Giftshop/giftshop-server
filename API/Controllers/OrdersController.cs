@@ -31,7 +31,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<IActionResult> GetPagingProfileOrder(
             [FromQuery] PagingRequest pagingRequest,
-            [FromQuery] [DefaultValue("createdAt")] string sortBy,
+            [FromQuery] [DefaultValue("createdAt")] string? sortBy,
             [FromQuery] [DefaultValue(true)] bool isDesc)
         {
             var query = new GetPagingProfileOrdersQuery()

@@ -10,6 +10,8 @@ using Infrastructure.Interfaces.Services;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using MongoDB.Driver;
+using RazorEmailLibs.Constants;
+using RazorEmailLibs.Views.Emails;
 
 namespace Application.Features.Orders.Commands.CreateOrder
 {
@@ -21,9 +23,11 @@ namespace Application.Features.Orders.Commands.CreateOrder
         private readonly IUserRepository _userRepository;
         private readonly ICartRepository _cartRepository;
         private readonly IDiscountService _discountService;
+        private readonly IMailService _mailService;
 
         public CreateProfileOrderCommandHandler(IProductRepository productRepository, IAccessorService accessorService,
-            IUserRepository userRepository, IOrderRepository orderRepository, ICartRepository cartRepository, IDiscountService discountService)
+            IUserRepository userRepository, IOrderRepository orderRepository, ICartRepository cartRepository,
+            IDiscountService discountService, IMailService mailService)
         {
             _productRepository = productRepository;
             _accessorService = accessorService;
@@ -31,20 +35,21 @@ namespace Application.Features.Orders.Commands.CreateOrder
             _orderRepository = orderRepository;
             _cartRepository = cartRepository;
             _discountService = discountService;
+            _mailService = mailService;
         }
 
         public async Task<ResponseApi<Unit>> Handle(CreateProfileOrderCommand request,
             CancellationToken cancellationToken)
         {
             var cartId = _accessorService.GetHeader("cartId");
-            
+
             if (string.IsNullOrEmpty(cartId))
                 return ResponseApi<Unit>.ResponseFail(StatusCodes.Status403Forbidden);
-             
+
             // lay product tu cart
             var userCart = await _cartRepository.GetOneAsync(cartId);
             var userCartItems = userCart.Items;
-            
+
             if (userCartItems.Count <= 0)
                 return ResponseApi<Unit>.ResponseFail("Giỏ hàng trống");
 
@@ -91,7 +96,8 @@ namespace Application.Features.Orders.Commands.CreateOrder
                 UserEmail = _accessorService.Email(),
                 IsPaid = false,
                 Status = nameof(OrderStatus.Pending),
-                CreatedAt = DateTime.UtcNow
+                CreatedAt = DateTime.UtcNow,
+                Address = request.Address
             };
             foreach (var item in productList)
             {
@@ -109,10 +115,14 @@ namespace Application.Features.Orders.Commands.CreateOrder
             tasks[index++] = _orderRepository.InsertAsync(order, cancellationToken);
             tasks[index] = _cartRepository.UpdateOneAsync(
                 cartId,
-                x => x.Set(o => o.Items, userCartItems)); 
-            
+                x => x.Set(o => o.Items, userCartItems));
+
             // wait
             Task.WaitAll(tasks);
+
+            // send mail
+            await _mailService.SendWithTemplate(order.UserEmail, "Hóa đơn đặt hàng", new List<IFormFile>(),
+                MailTemplatesName.RECEIPT_EMAIL, new ReceiptEmailViewModel(order));
 
             return ResponseApi<Unit>.ResponseOk(Unit.Value, "Đặt hàng thành công");
         }

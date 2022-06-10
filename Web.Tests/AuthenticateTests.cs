@@ -36,7 +36,7 @@ namespace Web.Tests
         {
             var mockOptions = new MockIConfigurationAuth().Setup();
             var mockLogger = Mock.Of<ILogger<AuthenticationService>>();
-            _user = new User(){Id = _id, Email = "test02@mail.com"};
+            _user = new User(){Id = _id, Email = "test02@mail.com", Role = "NORMAL"};
             _authService = new AuthenticationService(mockOptions.Object, mockLogger);
         }
 
