@@ -44,7 +44,7 @@ namespace Infrastructure.Services
             {
                 Subject = new ClaimsIdentity(claims),
                 Expires = DateTime.Now.AddMinutes(_authSettings.ExpirationMinutes),
-                SigningCredentials = credentials
+                SigningCredentials = credentials,
             };
             
             // create token

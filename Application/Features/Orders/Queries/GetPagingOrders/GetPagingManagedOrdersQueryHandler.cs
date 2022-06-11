@@ -1,10 +1,7 @@
-﻿using System;
-using System.Linq.Expressions;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
 using Domain.Attributes;
-using Domain.Entities.Account;
 using Domain.Entities.Order;
 using Domain.Paging;
 using Infrastructure.Interfaces.Repositories;
@@ -15,32 +12,24 @@ using MongoDB.Driver;
 
 namespace Application.Features.Orders.Queries.GetPagingOrders
 {
-    public class GetPagingProfileOrdersQueryHandler : IRequestHandler<GetPagingProfileOrdersQuery,
-            ResponseApi<PagingModel<Order>>>
+    public class GetPagingManagedOrdersQueryHandler : IRequestHandler<GetPagingManagedOrdersQuery, ResponseApi<PagingModel<Order>>>
     {
         private readonly IOrderRepository _orderRepository;
         private readonly IAccessorService _accessorService;
         private readonly ICounterRepository _counterRepository;
 
-        public GetPagingProfileOrdersQueryHandler(IOrderRepository orderRepository, IAccessorService accessorService, ICounterRepository counterRepository)
+        public GetPagingManagedOrdersQueryHandler(IOrderRepository orderRepository, IAccessorService accessorService, ICounterRepository counterRepository)
         {
             _orderRepository = orderRepository;
             _accessorService = accessorService;
             _counterRepository = counterRepository;
         }
 
-        public Task<ResponseApi<PagingModel<Order>>> Handle(GetPagingProfileOrdersQuery request,
-            CancellationToken cancellationToken)
+        public Task<ResponseApi<PagingModel<Order>>> Handle(GetPagingManagedOrdersQuery request, CancellationToken cancellationToken)
         {
-            var email = _accessorService.Email();
             var (sortDirect, sortField) = PrepareSortDefinition(request);
             var findOptions = PrepareFindOptions(request, sortField, sortDirect);
-            Expression<Func<Order, bool>> filter = q => q.UserEmail == email;
-
-            if (_accessorService.Role() == nameof(UserRoles.ADMIN))
-            {
-                filter = q => true;
-            }
+            var filter = PrepareFilter(request);
             
             var collectionTarget = BsonCollection.GetCollectionName<Order>();
             var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
@@ -59,7 +48,22 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
             return Task.FromResult(ResponseApi<PagingModel<Order>>.ResponseOk(viewModel));
         }
 
-        private static FindOptions<Order, Order> PrepareFindOptions(GetPagingProfileOrdersQuery request, string sortField, int sortDirect)
+        private static FilterDefinition<Order> PrepareFilter(GetPagingManagedOrdersQuery request)
+        {
+            var filter = Builders<Order>.Filter.Empty;
+            if (!string.IsNullOrEmpty(request.Status))
+            {
+                filter = filter & Builders<Order>.Filter.Eq(x => x.Status, request.Status);
+            }
+            if (!string.IsNullOrEmpty(request.FilterUser))
+            {
+                filter = filter & Builders<Order>.Filter.Regex(x => x.UserEmail, request.FilterUser);
+            }
+
+            return filter;
+        }
+
+        private static FindOptions<Order, Order> PrepareFindOptions(GetPagingManagedOrdersQuery request, string sortField, int sortDirect)
         {
             var findOptions = new FindOptions<Order, Order>
             {
@@ -70,7 +74,7 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
             return findOptions;
         }
 
-        private static (int, string) PrepareSortDefinition(GetPagingProfileOrdersQuery request)
+        private static (int, string) PrepareSortDefinition(GetPagingManagedOrdersQuery request)
         {
             var sortDirect = request.IsDesc ? -1 : 1;
             string sortField = request.SortBy switch

@@ -12,6 +12,7 @@ using Application.Features.Products.Commands.UpdateOneProductStock;
 using Application.Features.Products.Queries.GetOneProductById;
 using Application.Features.Products.Queries.GetOneProductBySku;
 using Application.Features.Products.Queries.GetPagingProducts;
+using Domain.Entities.Account;
 using Domain.Paging;
 using Domain.ViewModels.Product;
 using MediatR;
@@ -20,7 +21,6 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [AllowAnonymous]
     public class ProductsController : BaseApiController
     {
         public ProductsController(IMediator _mediator) : base(_mediator)
@@ -34,6 +34,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("sku/{sku}")]
         public async Task<IActionResult> GetOneProductBySku(string sku)
         {
@@ -41,6 +42,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<IActionResult> GetPagingProducts(
             [FromQuery] GetPagingProductsQuery query,
@@ -50,6 +52,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [AllowAnonymous]
         [HttpGet("trait/{trait}")]
         public async Task<IActionResult> GetPagingProductByTrait(
             [FromQuery] PagingRequest pagingRequest,
@@ -63,15 +66,15 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
-        [Authorize(Roles = "ADMIN")]
         [HttpPost]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         public async Task<IActionResult> AddNewOneProduct([FromBody] ProductDetailViewModel command)
         {
             var result = await _mediator.Send(new AddOneProductCommand { Product = command });
             return HandleResponseStatus(result);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         [HttpPut("{sku}")]
         public async Task<IActionResult> UpdateOneProductInfo(
             string sku,
@@ -84,7 +87,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         [HttpPatch("{sku}/quantity/{stock:int}")]
         public async Task<IActionResult> UpdateOneProductStock(string sku, int stock)
         {
@@ -93,7 +96,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         [HttpPatch("{sku}/price/{price:double}")]
         public async Task<IActionResult> UpdateOneProductPrice(string sku, double price)
         {
@@ -102,7 +105,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         [HttpPatch("state/{state}/{sku}")]
         public async Task<IActionResult> UpdateOneProductState(string sku, ProductState state)
         {
@@ -111,7 +114,7 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
-        [Authorize(Roles = "ADMIN")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         /// <summary>
         /// Use sku as list
         /// </summary>
