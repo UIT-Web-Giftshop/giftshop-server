@@ -23,8 +23,16 @@ namespace Application.Features.Products.Commands.AddOneProduct
 
         public async Task<ResponseApi<string>> Handle(AddOneProductCommand request, CancellationToken cancellationToken)
         {
+            var existedProduct = await _productRepository.FindOneAsync(x => x.Sku == request.Product.Sku, cancellationToken);
+
+            if (existedProduct is not null)
+            {
+                return ResponseApi<string>.ResponseFail("Sản phẩm đã tồn tại");
+            }
+            
             var entity = _mapper.Map<Product>(request.Product);
             entity.CreatedAt = DateTime.Now;
+            
 
             // Repository action
             try
