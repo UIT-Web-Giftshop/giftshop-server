@@ -6,6 +6,8 @@ using Application.Features.Orders.Commands.CreateOrder;
 using Application.Features.Orders.Queries.GetOneOrderById;
 using Application.Features.Orders.Queries.GetPagingOrders;
 using Application.Features.Orders.Queries.GetReportOrder;
+using CloudinaryDotNet.Actions;
+using Domain.Entities.Account;
 using Domain.Paging;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
@@ -40,6 +42,24 @@ namespace API.Controllers
             return HandleResponseStatus(data);
         }
 
+        [HttpGet("managed")]
+        public async Task<IActionResult> GetPagingManagedOrders(
+            [FromQuery] PagingRequest pagingRequest,
+            [FromQuery] string? status,
+            [FromQuery] string? userEmail,
+            [FromQuery] [DefaultValue("createdAt")]
+            string? sortBy,
+            [FromQuery] [DefaultValue(true)] bool isDesc)
+        {
+            var query = new GetPagingManagedOrdersQuery()
+            {
+                PagingRequest = pagingRequest, IsDesc = isDesc, SortBy = sortBy, Status = status, FilterUser = userEmail
+            };
+            var data = await _mediator.Send(query);
+            return HandleResponseStatus(data);
+        }
+
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         [HttpGet("report")]
         public async Task<IActionResult> GetReportOrder(
             [FromQuery] GetReportOrderBetweenTimeQuery query)

@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using Domain.Entities.Account;
 using Infrastructure.Interfaces.Services;
 using Infrastructure.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -29,6 +30,12 @@ namespace API.ServicesExtension
                         ValidateAudience = false
                     };
                 });
+
+            services.AddAuthorization(opts =>
+            {
+                opts.AddPolicy("ADMIN", p => p.RequireRole(nameof(UserRoles.ADMIN)));
+            });
+            
             services.AddScoped<IAuthenticationService, AuthenticationService>();
             services.AddScoped<IAccessorService, AccessorService>();
 

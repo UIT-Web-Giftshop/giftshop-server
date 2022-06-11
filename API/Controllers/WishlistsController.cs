@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers
 {
-    [Authorize(Roles = "ADMIN")]
+    [Authorize]
     public class WishlistsController : BaseApiController
     {
         public WishlistsController(IMediator _mediator) : base(_mediator)
