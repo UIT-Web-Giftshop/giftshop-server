@@ -29,7 +29,7 @@ namespace API.Controllers
         }
         
         [HttpDelete]
-        public async Task<IActionResult> DeleteOneFromWishlist([FromBody] UpdateDeleteWishlistItemCommand command)
+        public async Task<IActionResult> DeleteOneFromWishlist([FromQuery] UpdateDeleteWishlistItemCommand command)
         {
             var data = await _mediator.Send(command);
             return HandleResponseStatus(data);

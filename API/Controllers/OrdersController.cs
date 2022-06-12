@@ -76,6 +76,7 @@ namespace API.Controllers
         }
         
         [HttpPut("{id}/status/{status}")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
         public async Task<IActionResult> UpdateOrderStatus(string id, string status)
         {
             var command = new ChangeOrderStatusCommand() { Id = id, Status = status };
