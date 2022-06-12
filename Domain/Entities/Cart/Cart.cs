@@ -50,5 +50,17 @@ namespace Domain.Entities.Cart
 
             return false;
         }
+
+        public int GetItemValue(string sku)
+        {
+            if (Items is null || Items.Count == 0) return 0;
+            
+            foreach (var item in Items)
+            {
+                if (item.Sku == sku) return item.Quantity;
+            }
+
+            return 0;
+        }
     }
 }
