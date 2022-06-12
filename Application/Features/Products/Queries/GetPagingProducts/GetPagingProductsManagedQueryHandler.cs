@@ -55,7 +55,8 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             var filter = Builders<Product>.Filter.Empty;
             if (!string.IsNullOrEmpty(request.Search))
             {
-                filter = filter & Builders<Product>.Filter.Where(q => q.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase));
+                var lowerSearch = request.Search.ToLower();
+                filter = filter & Builders<Product>.Filter.Where(q => q.Name.ToLower().Contains(lowerSearch));
             }
 
             if (request.ActiveStatus != "all")
