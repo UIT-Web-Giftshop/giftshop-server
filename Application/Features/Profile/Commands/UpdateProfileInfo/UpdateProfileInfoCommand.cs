@@ -23,8 +23,8 @@ namespace Application.Features.Profile.Commands.UpdateProfileInfo
         public UpdateProfileInfoCommandValidator()
         {
             RuleFor(x => x.LastName)
-                .NotEmpty().WithMessage("LastName không được để trống")
-                .Matches("^[a-zA-Z]*$").WithMessage("LastName không hợp lệ");
+                .Matches("^[a-zA-Z]*$").When(x => !string.IsNullOrEmpty(x.LastName))
+                .WithMessage("LastName không hợp lệ");
             RuleFor(x => x.FirstName)
                 .Matches("^[a-zA-Z ]*$").When(x => !string.IsNullOrEmpty(x.FirstName))
                 .WithMessage("FirstName không hợp lệ");

@@ -15,6 +15,8 @@ namespace Application.Features.Products.Queries.GetPagingProducts
         
         public string Search { get; set; }
         
+        public string Trait { get; set; }
+        
         [DefaultValue("price")] public string SortBy { get; set; }
         
         [DefaultValue(true)] public bool IsDesc { get; set; }

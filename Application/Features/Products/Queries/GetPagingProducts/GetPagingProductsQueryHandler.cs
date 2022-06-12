@@ -53,12 +53,19 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             return Task.FromResult(ResponseApi<PagingModel<ProductDetailViewModel>>.ResponseOk(viewModel));
         }
 
-        private static Expression<Func<Product, bool>> PrepareFilter(GetPagingProductsQuery request)
+        private static FilterDefinition<Product> PrepareFilter(GetPagingProductsQuery request)
         {
-            Expression<Func<Product, bool>> filter = q => q.IsActive == true;
+            // Expression<Func<Product, bool>> filter = q => q.IsActive == true;
+            var filter = Builders<Product>.Filter.Where(x => x.IsActive == true);
             if (!string.IsNullOrEmpty(request.Search))
             {
-                filter = q => q.IsActive == true && q.Name.Contains(request.Search);
+                // filter = & q.Name.Contains(request.Search);
+                filter = filter & Builders<Product>.Filter.Where(x => x.Name.Contains(request.Search));
+            }
+
+            if (!string.IsNullOrEmpty(request.Trait))
+            {
+                filter = filter & Builders<Product>.Filter.Where(x => x.Traits.Contains(request.Trait));
             }
 
             return filter;
