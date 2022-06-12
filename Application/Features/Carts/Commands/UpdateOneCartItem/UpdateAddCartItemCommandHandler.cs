@@ -40,7 +40,7 @@ namespace Application.Features.Carts.Commands.UpdateOneCartItem
             if (addProduct is null)
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.BadRequest, ResponseConstants.BAD_REQUEST);
             // check stock
-            if (cart.GetItemValue(request.Sku) + request.Quantity > request.Quantity)
+            if (cart.GetItemValue(request.Sku) + request.Quantity > addProduct.Stock)
                 return ResponseApi<Unit>.ResponseFail((int) HttpStatusCode.BadRequest, "Số lượng sản phẩm không đủ");
             
             // mapping product to cart item scheme
