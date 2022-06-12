@@ -52,6 +52,14 @@ namespace API.Controllers
             return HandleResponseStatus(result);
         }
 
+        [HttpGet("managed")]
+        [Authorize(Roles = nameof(UserRoles.ADMIN))]
+        public async Task<IActionResult> GetPagingProductManged([FromQuery] GetPagingProductsManagedQuery query)
+        {
+            var data = await _mediator.Send(query);
+            return HandleResponseStatus(data);
+        }
+
         [AllowAnonymous]
         [HttpGet("trait/{trait}")]
         public async Task<IActionResult> GetPagingProductByTrait(
