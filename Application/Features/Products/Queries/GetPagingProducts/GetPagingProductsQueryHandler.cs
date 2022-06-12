@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
@@ -58,7 +59,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             if (!string.IsNullOrEmpty(request.Search))
             {
                 // filter = & q.Name.Contains(request.Search);
-                filter = filter & Builders<Product>.Filter.Where(x => x.Name.Contains(request.Search));
+                filter = filter & Builders<Product>.Filter.Where(x => x.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase));
             }
 
             if (!string.IsNullOrEmpty(request.Trait))

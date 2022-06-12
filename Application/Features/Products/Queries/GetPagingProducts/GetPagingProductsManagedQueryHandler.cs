@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic; 
+﻿using System;
+using System.Collections.Generic; 
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
@@ -54,7 +55,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             var filter = Builders<Product>.Filter.Empty;
             if (!string.IsNullOrEmpty(request.Search))
             {
-                filter = filter & Builders<Product>.Filter.Where(q => q.Name.Contains(request.Search));
+                filter = filter & Builders<Product>.Filter.Where(q => q.Name.Contains(request.Search, StringComparison.OrdinalIgnoreCase));
             }
 
             if (request.ActiveStatus != "all")
