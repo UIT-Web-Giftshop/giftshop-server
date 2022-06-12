@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq.Expressions;
+﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using Application.Commons;
@@ -89,7 +87,8 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             {
                 "name" => "name",
                 "price" => "price",
-                _ => "price"
+                "date" => "createdAt",
+                _ => "createdAt"
             };
             return (sortDirect, sortField);
         }
