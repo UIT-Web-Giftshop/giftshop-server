@@ -31,8 +31,8 @@ namespace Application.Features.Coupons.Queries
             var findOptions = PrepareFindOptions(request, sortField, sortDirect);
             var filter = PrepareFilter(request);
 
-            var collectionTarget = BsonCollection.GetCollectionName<Coupon>();
-            var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
+
+            var totalTask = _couponRepository.CountAsync(filter, cancellationToken);
             var dataTask = _couponRepository.FindAsync(filter, findOptions, cancellationToken);
             
             Task.WaitAll(new Task[] {totalTask, dataTask}, cancellationToken);
@@ -40,7 +40,7 @@ namespace Application.Features.Coupons.Queries
             var dataList = dataTask.Result.ToList(cancellationToken);
             var viewModel = new PagingModel<Coupon>()
             {
-                AllTotalCount = totalTask.Result.CurrentCount,
+                AllTotalCount = totalTask.Result,
                 ItemsCount = dataList.Count,
                 Items = dataList
             };

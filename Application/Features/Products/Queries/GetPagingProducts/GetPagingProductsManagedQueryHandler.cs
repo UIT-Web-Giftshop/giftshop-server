@@ -32,8 +32,8 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             var findOptions = PrepareFindOptions(request, sortField, sortDirect);
             var filter = PrepareFilter(request);
             
-            var collectionTarget = BsonCollection.GetCollectionName<Product>();
-            var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
+            // var collectionTarget = BsonCollection.GetCollectionName<Product>();
+            var totalTask = _productRepository.CountAsync(filter, cancellationToken);
             var dataTask = _productRepository.FindAsync(filter, findOptions, cancellationToken);
             
             Task.WaitAll(new Task[] {totalTask, dataTask}, cancellationToken);
@@ -41,7 +41,7 @@ namespace Application.Features.Products.Queries.GetPagingProducts
             var dataList = _mapper.Map<List<Product>>(dataTask.Result.ToList(cancellationToken));
             var viewModel = new PagingModel<Product>()
             {
-                AllTotalCount = totalTask.Result.CurrentCount,
+                AllTotalCount = totalTask.Result,
                 ItemsCount = dataList.Count,
                 Items = dataList
             };

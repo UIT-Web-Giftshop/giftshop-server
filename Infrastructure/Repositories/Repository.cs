@@ -136,6 +136,25 @@ namespace Infrastructure.Repositories
 
         #endregion
 
+        #region Count
+
+        public async Task<long> CountAsync(CancellationToken cancellationToken = default)
+        {
+            return await _mongoCollection.CountDocumentsAsync(FilterDefinition<TEntity>.Empty, cancellationToken: cancellationToken);
+        }
+
+        public Task<long> CountAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default)
+        {
+            return CountAsync((FilterDefinition<TEntity>)filter, cancellationToken);
+        }
+
+        public async Task<long> CountAsync(FilterDefinition<TEntity> filter, CancellationToken cancellationToken = default)
+        {
+            return await _mongoCollection.CountDocumentsAsync(filter, cancellationToken: cancellationToken);
+        }
+
+        #endregion
+
         #region Find
 
         public virtual IFindFluent<TEntity, TEntity> FindFluent(

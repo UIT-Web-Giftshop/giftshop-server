@@ -45,6 +45,14 @@ namespace Infrastructure.Interfaces.Repositories
 
         #endregion
 
+        #region Count
+
+        Task<long> CountAsync(CancellationToken cancellationToken = default);
+        Task<long> CountAsync(Expression<Func<TEntity, bool>> filter, CancellationToken cancellationToken = default);
+        Task<long> CountAsync(FilterDefinition<TEntity> filter, CancellationToken cancellationToken = default);
+
+        #endregion
+
         #region Find fluent
 
         IFindFluent<TEntity, TEntity> FindFluent(

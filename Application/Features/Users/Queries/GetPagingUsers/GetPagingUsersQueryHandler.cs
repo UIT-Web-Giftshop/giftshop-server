@@ -32,8 +32,8 @@ namespace Application.Features.Users.Queries.GetPagingUsers
             var findOptions = PrepareFindOptions(request, sortField, sortDirect);
             var filter = PrepareFilter(request);
 
-            var collectionTarget = BsonCollection.GetCollectionName<User>();
-            var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
+
+            var totalTask = _userRepository.CountAsync(filter, cancellationToken);
             var dataTask = _userRepository.FindAsync(filter, findOptions, cancellationToken);
 
             Task.WaitAll(new Task[] {totalTask, dataTask}, cancellationToken);
@@ -41,7 +41,7 @@ namespace Application.Features.Users.Queries.GetPagingUsers
             var dataList = dataTask.Result.ToList(cancellationToken);
             var viewModel = new PagingModel<User>()
             {
-                AllTotalCount = totalTask.Result.CurrentCount,
+                AllTotalCount = totalTask.Result,
                 ItemsCount = dataList.Count,
                 Items = dataList
             };

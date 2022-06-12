@@ -41,9 +41,8 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
             {
                 filter = q => true;
             }
-            
-            var collectionTarget = BsonCollection.GetCollectionName<Order>();
-            var totalTask = _counterRepository.FindOneAsync(x => x.CollectionName == collectionTarget, cancellationToken);
+
+            var totalTask = _orderRepository.CountAsync(filter, cancellationToken);
             var dataTask = _orderRepository.FindAsync(filter, findOptions, cancellationToken);
             
             Task.WaitAll(new Task[] {totalTask, dataTask}, cancellationToken);
@@ -51,7 +50,7 @@ namespace Application.Features.Orders.Queries.GetPagingOrders
             
             var viewModel = new PagingModel<Order>()
             {
-                AllTotalCount = totalTask.Result.CurrentCount,
+                AllTotalCount = totalTask.Result,
                 ItemsCount = dataList.Count,
                 Items = dataList
             };
