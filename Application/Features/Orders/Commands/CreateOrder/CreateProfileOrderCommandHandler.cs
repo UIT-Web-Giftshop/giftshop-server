@@ -103,7 +103,7 @@ namespace Application.Features.Orders.Commands.CreateOrder
             {
                 order.AddItem(new OrderItem
                 {
-                    Price = item.Price, Quantity = orderItems[item.Sku], ProductSku = item.Sku,
+                    Price = item.Price, Quantity = orderItems[item.Sku], Sku = item.Sku,
                     Name = item.Name, ImageUrl = item.ImageUrl
                 });
             }
