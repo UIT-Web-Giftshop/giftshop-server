@@ -29,7 +29,7 @@ namespace Application.Features.Orders.Queries.GetOneOrderById
 
             Expression<Func<Order, bool>> filter;
 
-            if (_accessorService.Role() != nameof(UserRoles.ADMIN))
+            if (_accessorService.Role() == nameof(UserRoles.ADMIN))
             {
                 filter = x => x.Id == request.Id;
             }
