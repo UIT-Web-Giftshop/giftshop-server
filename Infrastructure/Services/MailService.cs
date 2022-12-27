@@ -74,8 +74,6 @@ namespace Infrastructure.Services
 					smtp.Connect(_mailSettings.Host, _mailSettings.Port, SecureSocketOptions.StartTls);
 					smtp.Authenticate(_mailSettings.Username, _mailSettings.Password);
 				}
-
-				await smtp.SendAsync(email);
 			}
 			catch (Exception e)
 			{
@@ -83,6 +81,7 @@ namespace Infrastructure.Services
 				throw;
 			}
 
+			await smtp.SendAsync(email);
 			smtp.Disconnect(true);
 		}
 
