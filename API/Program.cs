@@ -12,6 +12,8 @@ namespace API
 		{
 			var aspnetEnv = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
 			var config = new ConfigurationBuilder()
+				.AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+				.AddJsonFile($"appsettings.{aspnetEnv ?? "Production"}.json", optional: true)
 				.AddEnvironmentVariables()
 				.Build();
 
