@@ -21,6 +21,15 @@ services:
     depends_on:
       - mongodb
 
+  # mail server
+  mail-server-smtp:
+    image: jijiechen/papercut
+    hostname: mail-server-smtp
+    container_name: giftshop-mail-server
+    ports:
+      - "25:25"
+      - "37408:37408"
+
 volumes:
   mongodb:
   applogs:

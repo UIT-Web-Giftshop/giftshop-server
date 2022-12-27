@@ -13,6 +13,8 @@ services:
     ports:
       - "5000:80"
       - "5001:443"
+    env_file:
+      - ../deploy/.server-dev.env
     volumes:
       - ./Certs:/.https:ro
       - applogs:/app/logs
