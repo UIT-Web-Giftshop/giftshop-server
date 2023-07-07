@@ -19,5 +19,4 @@
 - More detail usage on dockerhub https://hub.docker.com/.
 - Mongoshell docs https://docs.mongodb.com/manual/reference/mongo-shell/
 
-- Enjoy docker magic with fun ^^
 - *Use SeedData endpoint for seeding some sample data*
