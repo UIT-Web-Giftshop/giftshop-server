@@ -4,9 +4,6 @@
 
 ### Run with Visual studio
 - Install Mongodb. Connect and create new `giftshop-demo` database & `products` collection
-- Install dotnet core 5.0 from https://dotnet.microsoft.com/download/dotnet-core/
-- Open Visual Studio and run API project (Do not run IIS option)
-- Open browser from link on CMD/console
 
 ### Run with docker
 - Run `dotnet dev-certs https -eq $env:USERPROFILE\.aspnet\https\aspnetapp.pfx -p local`
